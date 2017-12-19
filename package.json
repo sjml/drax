@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "./php_wrap.sh",
     "build": "ng build --prod",
-    "postbuild": "mkdir -p dist/auth; cp -R php/auth/vendor dist/auth/; cp php/auth/index.php dist/auth; cp php/auth/secrets.php.base dist/auth",
+    "postbuild": "./php_dist.sh",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
