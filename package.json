@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "./php_wrap.sh",
+    "dev": "./php_wrap.sh",
+    "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
     "build": "ng build --prod",
     "postbuild": "./php_dist.sh",
     "test": "ng test",
