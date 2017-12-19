@@ -5,6 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prestart": "./phpstart.sh",
+    "poststop": "./phpstop.sh",
     "build": "ng build --prod",
     "postbuild": "mkdir -p dist/auth; cp -R php/auth/vendor dist/auth/; cp php/auth/index.php dist/auth; cp php/auth/secrets.php.base dist/auth",
     "test": "ng test",
