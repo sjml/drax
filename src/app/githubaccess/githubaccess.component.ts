@@ -65,13 +65,12 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   showUserName() {
-    this.getUserData(this.bearerToken).subscribe(user => {
-      console.log(user);
-      this.response = user['data']['viewer']['login'];
+    this.getUserData(this.bearerToken).then(user => {
+      this.response = 'Logged in as: ' + user['login'] + ' (' + user['name'] + ')';
     });
   }
 
-  getUserData(token: String): Observable<Object> {
+  getUserData(token: String): Promise<Object> {
     return this.http.post(
       this.GITHUB_URL,
       {'query': '{viewer {name avatarUrl login}}'},
@@ -79,6 +78,8 @@ export class GitHubAccessComponent implements OnInit {
         headers: new HttpHeaders().set('Authorization', 'Bearer ' + token),
         responseType: 'json'
       }
-    );
+    ).toPromise().then(response => {
+      return response['data']['viewer'];
+    });
   }
 }
