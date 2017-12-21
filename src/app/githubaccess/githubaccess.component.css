@@ -1,0 +1,8 @@
+.gitHubInfo {
+  background-color: white;
+}
+
+.gitHubInfo .avatar {
+  width: 50px;
+  padding: 10px;
+}

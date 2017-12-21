@@ -14,14 +14,15 @@ export class GitHubAccessComponent implements OnInit {
 
   authed = false;
   bearerToken: String = null;
-  response: String;
+  user: object;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
-      this.showUserName();
+      this.authed = true;
+      this.loadUser();
     }
   }
 
@@ -52,7 +53,7 @@ export class GitHubAccessComponent implements OnInit {
       if (event.data.status === 'OK') {
         localStorage.setItem('gitHubBearerToken', event.data.code);
         this.bearerToken = event.data.code;
-        this.showUserName();
+        this.loadUser();
       }
       // TODO: surface an error somehow if the status is not 'OK'
     }, false);
@@ -60,13 +61,13 @@ export class GitHubAccessComponent implements OnInit {
     const popupRef = window.open(
       'http://localhost:4201/auth/',
       'GitHub Authorization',
-      'scrollbars=yes,width=' + popUpWidth + ',height=' + popUpHeight + ',top=' + top + ', left=' + left
+      'scrollbars=yes,width=' + popUpWidth + ',height=' + popUpHeight + ',top=' + top + ',left=' + left
     );
   }
 
-  showUserName() {
+  loadUser() {
     this.getUserData(this.bearerToken).then(user => {
-      this.response = 'Logged in as: ' + user['login'] + ' (' + user['name'] + ')';
+      this.user = user;
     });
   }
 

@@ -1,12 +1,10 @@
-<div *ngIf="!authed" (click)="attemptAuthorization()">
-  Not Connected (Click to connect)
-</div>
-<div *ngIf="authed">
-  Connected!
-</div>
-
-<div>
-  <code>
-    {{response}}
-  </code>
+<div class="gitHubInfo">
+  <div *ngIf="!authed" (click)="attemptAuthorization()">
+    Not Connected (Click to connect)
+  </div>
+  <div *ngIf="authed">
+    <img class="avatar" src="{{ user.avatarUrl }}" alt="{{user.login}} avatar" />
+    <span class="username">{{ user.login }}</span>
+    <span *ngIf="user.name.length > 0" class="realname">{{ user.name }}</span>
+  </div>
 </div>

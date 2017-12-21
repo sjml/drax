@@ -34,8 +34,6 @@
 
     $result = "{'status': 'OK', 'code': '".$token->getToken()."'}";
   }
-
-  // send it back
   unset($_SESSION['oauth2state']);
 
   // print doc with JS to return result to opener and close window
