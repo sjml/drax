@@ -1,0 +1,12 @@
+<div *ngIf="!authed" (click)="attemptAuthorization()">
+  Not Connected (Click to connect)
+</div>
+<div *ngIf="authed">
+  Connected!
+</div>
+
+<div>
+  <code>
+    {{response}}
+  </code>
+</div>
