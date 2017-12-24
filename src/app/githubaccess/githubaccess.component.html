@@ -1,10 +1,21 @@
-<div class="gitHubInfo">
-  <div *ngIf="!authed" (click)="attemptAuthorization()">
-    Not Connected (Click to connect)
+<div class="sidebar">
+  <div class="gitHubInfo">
+    <div *ngIf="!this.user" (click)="attemptAuthorization()">
+      <span class="icon-github"></span> Click to sign in to GitHub
+    </div>
+    <div *ngIf="this.user">
+      <img class="avatar" src="{{ this.user.avatarUrl }}" alt="{{ this.user.login }} avatar" />
+      <span class="username">{{ this.user.login }}</span>
+      <span *ngIf="this.user.fullName.length > 0" class="realname">{{ this.user.fullName }}</span>
+    </div>
   </div>
-  <div *ngIf="authed">
-    <img class="avatar" src="{{ user.avatarUrl }}" alt="{{user.login}} avatar" />
-    <span class="username">{{ user.login }}</span>
-    <span *ngIf="user.name.length > 0" class="realname">{{ user.name }}</span>
+
+  <div class="repoNav">
+    <a href="#" class="fileItem">
+      README.md
+    </a>
+    <a href="#" class="folderItem">
+      directory42
+    </a>
   </div>
 </div>

@@ -6,22 +6,20 @@ import { of } from 'rxjs/observable/of';
 @Component({
   selector: 'app-githubaccess',
   templateUrl: './githubaccess.component.html',
-  styleUrls: ['./githubaccess.component.css']
+  styleUrls: ['./githubaccess.component.scss']
 })
 export class GitHubAccessComponent implements OnInit {
 
   GITHUB_URL = 'https://api.github.com/graphql';
 
-  authed = false;
   bearerToken: String = null;
-  user: object;
+  user: GitHubUser = null;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
-      this.authed = true;
       this.loadUser();
     }
   }
@@ -67,7 +65,10 @@ export class GitHubAccessComponent implements OnInit {
 
   loadUser() {
     this.getUserData(this.bearerToken).then(user => {
-      this.user = user;
+      this.user = new GitHubUser();
+      this.user.fullName = user['name'];
+      this.user.login = user['login'];
+      this.user.avatarUrl = user['avatarUrl'];
     });
   }
 
@@ -83,4 +84,10 @@ export class GitHubAccessComponent implements OnInit {
       return response['data']['viewer'];
     });
   }
+}
+
+class GitHubUser {
+  public fullName: string;
+  public login: string;
+  public avatarUrl: string;
 }

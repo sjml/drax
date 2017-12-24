@@ -1,0 +1,33 @@
+@import '~sass/variables';
+
+.sidebar {
+  height: 100%;
+  width: $sidebarWidth;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: darkslategray;
+  overflow-x: hidden;
+}
+
+.sidebar .gitHubInfo {
+  border-bottom: $sidebarItemColor solid 1px;
+  background-color: antiquewhite;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+// .gitHubInfo .icon-github {}
+
+.sidebar .repoNav a {
+  text-decoration: none;
+  color: $sidebarItemColor;
+  padding: 6px 8px 6px 16px;
+  display: block;
+  font-size: 25px;
+}
+
+.sidebar .repoNav a:hover {
+  color: #f1f1f1;
+}
