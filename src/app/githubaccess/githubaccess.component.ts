@@ -3,6 +3,29 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
+import { Queries } from './graphqlQueries';
+
+class GitHubUser {
+  public fullName: string;
+  public login: string;
+  public avatarUrl: string;
+}
+
+class GitHubNode {
+  public name: string;
+  public fullPath: string;
+}
+
+class GitHubRepo extends GitHubNode {
+  public defaultBranch: string;
+  public isPrivate: boolean;
+  public description: string;
+}
+
+class GitHubItem extends GitHubNode {
+  public isDirectory: boolean;
+}
+
 @Component({
   selector: 'app-githubaccess',
   templateUrl: './githubaccess.component.html',
@@ -14,6 +37,9 @@ export class GitHubAccessComponent implements OnInit {
 
   bearerToken: String = null;
   user: GitHubUser = null;
+  currentRepo: GitHubRepo = null;
+
+  currentNavList: GitHubNode[] = [];
 
   constructor(private http: HttpClient) { }
 
@@ -21,7 +47,22 @@ export class GitHubAccessComponent implements OnInit {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
       this.loadUser();
+      this.getRepositoryList().then(list => this.currentNavList = list);
     }
+
+    const fakeRepo1 = new GitHubRepo();
+    fakeRepo1.defaultBranch = 'master';
+    fakeRepo1.name = 'repo1';
+    fakeRepo1.description = 'An excellent repository.';
+    fakeRepo1.isPrivate = false;
+
+    const fakeRepo2 = new GitHubRepo();
+    fakeRepo2.defaultBranch = 'v2';
+    fakeRepo2.name = 'repo2';
+    fakeRepo2.description = 'A shitty, secret repository.';
+    fakeRepo2.isPrivate = true;
+
+    this.currentNavList = [fakeRepo1, fakeRepo2];
   }
 
   attemptAuthorization() {
@@ -57,6 +98,7 @@ export class GitHubAccessComponent implements OnInit {
     }, false);
 
     const popupRef = window.open(
+      // TODO: make this URL a configurable parameter
       'http://localhost:4201/auth/',
       'GitHub Authorization',
       'scrollbars=yes,width=' + popUpWidth + ',height=' + popUpHeight + ',top=' + top + ',left=' + left
@@ -72,22 +114,38 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
-  getUserData(token: String): Promise<Object> {
+  private graphQlQuery(query: object): Observable<object> {
+    // TODO: give back nothing if we're not logged in
     return this.http.post(
-      this.GITHUB_URL,
-      {'query': '{viewer {name avatarUrl login}}'},
+      this.GITHUB_URL, query,
       {
-        headers: new HttpHeaders().set('Authorization', 'Bearer ' + token),
+        headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
         responseType: 'json'
       }
-    ).toPromise().then(response => {
+    );
+  }
+
+  getUserData(token: String): Promise<Object> {
+    return this.graphQlQuery(Queries.userInfo).toPromise().then(response => {
       return response['data']['viewer'];
     });
   }
-}
 
-class GitHubUser {
-  public fullName: string;
-  public login: string;
-  public avatarUrl: string;
+  getRepositoryList(): Promise<GitHubRepo[]> {
+    return this.graphQlQuery(Queries.repoInfo).toPromise().then(response => {
+      const repoList = [];
+      for (const repoNode of response['data']['viewer']['repositories']['edges']) {
+        const repo = repoNode.node;
+        // TODO: with this and with user, is there some shorthand to just shunt it in?
+        const newRepo = new GitHubRepo();
+        newRepo.name = repo.name;
+        newRepo.isPrivate = repo.isPrivate;
+        newRepo.description = repo.description;
+        newRepo.defaultBranch = repo.defaultBranchRef.name;
+        newRepo.fullPath = repo.name + ':' + repo.defaultBranchRef.name;
+        repoList.push(newRepo);
+      }
+      return repoList;
+    });
+  }
 }

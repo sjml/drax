@@ -10,24 +10,84 @@
   background-color: darkslategray;
   overflow-x: hidden;
 
-  .gitHubInfo {
+  .gitHubConnectPrompt {
+    :hover {
+      cursor: pointer;
+    }
+
     border-bottom: $sidebarItemColor solid 1px;
     background-color: antiquewhite;
-    margin-bottom: 20px;
     font-size: 20px;
-  }
+    padding: 10px;
 
-  .repoNav {
-    a {
-      text-decoration: none;
-      color: $sidebarItemColor;
-      padding: 6px 8px 6px 16px;
-      display: block;
-      font-size: 25px;
+    display: flex;
+
+    .icon-github {
+      font-size: 40px;
     }
 
-    a:hover {
-      color: #f1f1f1;
+    .loginPrompt {
+      text-align: center;
     }
   }
+
+  .gitHubUserInfo {
+    border-bottom: $sidebarItemColor solid 1px;
+    background-color: antiquewhite;
+    font-size: 20px;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      margin-right: 10px;
+    }
+
+    .username {
+      font-size: 20px;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  .repoInfo {
+    .repoSelect {
+      :hover {
+        cursor: pointer;
+      }
+
+      background-color: burlywood;
+      font-size: 20px;
+      text-align: center;
+    }
+  }
+
+  .gitHubNavList {
+    padding: 0;
+  }
+
+  .gitHubNode {
+    list-style: none;
+    font-size: 20px;
+    color: $sidebarItemColor;
+    padding: 10px 10px 5px 10px;
+    border-bottom: $sidebarItemColor solid 1px;
+  }
+
+  // .repoNav {
+  //   margin-top: 20px;
+
+  //   a {
+  //     text-decoration: none;
+  //     color: $sidebarItemColor;
+  //     padding: 6px 8px 6px 16px;
+  //     display: block;
+  //     font-size: 25px;
+  //   }
+
+  //   a:hover {
+  //     color: #f1f1f1;
+  //   }
+  // }
 }

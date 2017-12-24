@@ -1,21 +1,25 @@
 <div class="sidebar">
-  <div class="gitHubInfo">
-    <div *ngIf="!this.user" (click)="attemptAuthorization()">
-      <span class="icon-github"></span> Click to sign in to GitHub
+  <div class="gitHubWidget">
+    <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
+      <div class="icon-github"></div>
+      <div class="loginPrompt">Click to sign in to GitHub</div>
     </div>
-    <div *ngIf="this.user">
-      <img class="avatar" src="{{ this.user.avatarUrl }}" alt="{{ this.user.login }} avatar" />
-      <span class="username">{{ this.user.login }}</span>
-      <span *ngIf="this.user.fullName.length > 0" class="realname">{{ this.user.fullName }}</span>
+    <div *ngIf="this.user" class="gitHubUserInfo">
+      <img class="avatar" src="{{ this.user.avatarUrl }}&s=48" alt="{{ this.user.login }} avatar" />
+      <div class="username">{{ this.user.login }}</div>
+      <!-- <div *ngIf="this.user.fullName.length > 0" class="realname">{{ this.user.fullName }}</div> -->
     </div>
   </div>
 
-  <div class="repoNav">
-    <a href="#" class="fileItem">
-      README.md
-    </a>
-    <a href="#" class="folderItem">
-      directory42
-    </a>
+  <div *ngIf="this.user" class="repoInfo">
+    <div *ngIf="!this.currentRepo" class="repoSelect">
+      <div class="repoSelectPrompt">Choose a Repository</div>
+    </div>
   </div>
+
+  <ul class="gitHubNavList">
+    <li *ngFor="let node of currentNavList" class="gitHubNode">
+      {{ node.name }}
+    </li>
+  </ul>
 </div>
