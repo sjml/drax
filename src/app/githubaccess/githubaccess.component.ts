@@ -26,6 +26,15 @@ class GitHubItem extends GitHubNode {
   public isDirectory: boolean;
 }
 
+class GitHubContinuation extends GitHubNode {
+  public continuation: string = null;
+}
+
+class GitHubRepoList {
+  public repos: GitHubRepo[] = [];
+  public continuation: string = null;
+}
+
 @Component({
   selector: 'app-githubaccess',
   templateUrl: './githubaccess.component.html',
@@ -47,22 +56,8 @@ export class GitHubAccessComponent implements OnInit {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
       this.loadUser();
-      this.getRepositoryList().then(list => this.currentNavList = list);
+      this.loadRepoList();
     }
-
-    const fakeRepo1 = new GitHubRepo();
-    fakeRepo1.defaultBranch = 'master';
-    fakeRepo1.name = 'repo1';
-    fakeRepo1.description = 'An excellent repository.';
-    fakeRepo1.isPrivate = false;
-
-    const fakeRepo2 = new GitHubRepo();
-    fakeRepo2.defaultBranch = 'v2';
-    fakeRepo2.name = 'repo2';
-    fakeRepo2.description = 'A shitty, secret repository.';
-    fakeRepo2.isPrivate = true;
-
-    this.currentNavList = [fakeRepo1, fakeRepo2];
   }
 
   attemptAuthorization() {
@@ -93,6 +88,7 @@ export class GitHubAccessComponent implements OnInit {
         localStorage.setItem('gitHubBearerToken', event.data.code);
         this.bearerToken = event.data.code;
         this.loadUser();
+        this.loadRepoList();
       }
       // TODO: surface an error somehow if the status is not 'OK'
     }, false);
@@ -114,6 +110,39 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
+  loadRepoList(fromCursor: string = null) {
+    if (fromCursor === null) {
+      this.currentNavList = [];
+    }
+    this.getRepositoryList(fromCursor).then(list => {
+      this.currentNavList = this.currentNavList.concat(list.repos);
+      if (list.continuation !== null) {
+        const cont = new GitHubContinuation();
+        cont.continuation = list.continuation;
+        cont.name = '[CONTINUATION]';
+        this.currentNavList.push(cont);
+      }
+    });
+  }
+
+  onScroll(event: Event) {
+    if (this.currentNavList.length <= 0) {
+      return;
+    }
+
+    const lastItem = this.currentNavList[this.currentNavList.length - 1];
+    if (lastItem instanceof GitHubContinuation) {
+      const offset = event.srcElement.scrollTop + event.srcElement.clientHeight;
+      const max = event.srcElement.scrollHeight;
+
+      if (max - offset < 20) {
+        // TODO: set up a lock so this can't get double-called
+        this.currentNavList.pop();
+        this.loadRepoList((lastItem as GitHubContinuation).continuation);
+      }
+    }
+  }
+
   private graphQlQuery(query: object): Observable<object> {
     // TODO: give back nothing if we're not logged in
     return this.http.post(
@@ -126,15 +155,20 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   getUserData(token: String): Promise<Object> {
-    return this.graphQlQuery(Queries.userInfo).toPromise().then(response => {
+    return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
       return response['data']['viewer'];
     });
   }
 
-  getRepositoryList(): Promise<GitHubRepo[]> {
-    return this.graphQlQuery(Queries.repoInfo).toPromise().then(response => {
-      const repoList = [];
-      for (const repoNode of response['data']['viewer']['repositories']['edges']) {
+  getRepositoryList(cursor: string = null): Promise<GitHubRepoList> {
+    return this.graphQlQuery(Queries.getRepoInfo(cursor)).toPromise().then(response => {
+      const repoListQuery = new GitHubRepoList();
+      const repList = response['data']['viewer']['repositories'];
+      if (repList['pageInfo']['hasNextPage']) {
+        repoListQuery.continuation = repList['pageInfo']['endCursor'];
+      }
+
+      for (const repoNode of repList['edges']) {
         const repo = repoNode.node;
         // TODO: with this and with user, is there some shorthand to just shunt it in?
         const newRepo = new GitHubRepo();
@@ -143,9 +177,10 @@ export class GitHubAccessComponent implements OnInit {
         newRepo.description = repo.description;
         newRepo.defaultBranch = repo.defaultBranchRef.name;
         newRepo.fullPath = repo.name + ':' + repo.defaultBranchRef.name;
-        repoList.push(newRepo);
+        repoListQuery.repos.push(newRepo);
       }
-      return repoList;
+
+      return repoListQuery;
     });
   }
 }

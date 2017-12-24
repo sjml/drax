@@ -1,4 +1,4 @@
-<div class="sidebar">
+<div class="sidebar" (scroll)="onScroll($event)">
   <div class="gitHubWidget">
     <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
       <div class="icon-github"></div>
@@ -11,11 +11,11 @@
     </div>
   </div>
 
-  <div *ngIf="this.user" class="repoInfo">
+  <!-- <div *ngIf="this.user" class="repoInfo">
     <div *ngIf="!this.currentRepo" class="repoSelect">
       <div class="repoSelectPrompt">Choose a Repository</div>
     </div>
-  </div>
+  </div> -->
 
   <ul class="gitHubNavList">
     <li *ngFor="let node of currentNavList" class="gitHubNode">

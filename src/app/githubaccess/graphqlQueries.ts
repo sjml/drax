@@ -1,6 +1,7 @@
 
-export namespace Queries {
-  export const userInfo = {
+export module Queries {
+
+  const userInfo = {
     'query': `
       {
         viewer {
@@ -11,12 +12,15 @@ export namespace Queries {
       }
       `
   };
+  export function getUserInfo(): object {
+    return userInfo;
+  }
 
-  export const repoInfo = {
+  const repoInfo = {
     'query': `
       {
         viewer {
-          repositories (orderBy: {field: CREATED_AT, direction: DESC}, first:20) {
+          repositories (%%CONTINUATION%% first:30, orderBy: {field: CREATED_AT, direction: DESC}) {
             pageInfo {
               endCursor
               hasNextPage
@@ -36,4 +40,16 @@ export namespace Queries {
       }
       `
   };
+
+  export function getRepoInfo(continuation: string = null): object {
+    let contQuery = '';
+    if (continuation !== null) {
+      contQuery = 'after: "' + continuation + '"';
+    }
+    const qString = repoInfo.query.replace('%%CONTINUATION%%', contQuery);
+    const repoInfoQuery = {};
+    repoInfoQuery['query'] = qString;
+
+    return repoInfoQuery;
+  }
 }
