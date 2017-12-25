@@ -1,4 +1,4 @@
-import { GitHubRepo } from './githubaccess.component';
+import { GitHubRepo, GitHubItem } from './githubaccess.component';
 
 export module Queries {
   const userInfoTemplate = {
@@ -66,7 +66,11 @@ export module Queries {
             entries {
               name
               type
-              mode
+              object {
+                ... on Blob {
+                  isBinary
+                }
+              }
             }
           }
         }
@@ -81,6 +85,27 @@ export module Queries {
     const qString = fileListTemplate
                       .replace('%%OWNER%%', repo.owner)
                       .replace('%%NAME%%', repo.name)
+                      .replace('%%EXPRESSION%%', expr);
+
+    return {'query': qString};
+  }
+
+  const fileContentsTemplate = `
+    {
+      repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(expression: "%%EXPRESSION%%") {
+          ... on Blob {
+            text
+          }
+        }
+      }
+    }
+  `;
+  export function getFileContents(item: GitHubItem): object {
+    const expr = item.repo.defaultBranch + ':' + item.fullPath;
+    const qString = fileContentsTemplate
+                      .replace('%%OWNER%%', item.repo.owner)
+                      .replace('%%NAME%%', item.repo.name)
                       .replace('%%EXPRESSION%%', expr);
 
     return {'query': qString};

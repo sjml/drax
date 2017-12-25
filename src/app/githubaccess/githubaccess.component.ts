@@ -25,9 +25,10 @@ export class GitHubRepo extends GitHubNode {
   public owner: string;
 }
 
-class GitHubItem extends GitHubNode {
+export class GitHubItem extends GitHubNode {
   public nodeType = 'ITEM';
   public isDirectory: boolean;
+  public isBinary: boolean;
   public repo: GitHubRepo;
 }
 
@@ -58,7 +59,8 @@ export class GitHubAccessComponent implements OnInit {
   bearerToken: string = null;
   user: GitHubUser = null;
   currentRepo: GitHubRepo = null;
-  currentPath: string[] = [];
+  currentDirPath: string[] = [];
+  currentFilePath: string = null;
 
   currentNavList: GitHubNode[] = [];
 
@@ -157,8 +159,14 @@ export class GitHubAccessComponent implements OnInit {
         const ghItem = new GitHubItem();
         ghItem.repo = repo;
         ghItem.name = entry['name'];
-        ghItem.isDirectory = entry['type'] === 'tree';
-        ghItem.fullPath = repo + '/' + entry['name'];
+        if (entry['type'] === 'tree') {
+          ghItem.isDirectory = true;
+        }
+        else if (entry['type'] === 'blob') {
+          ghItem.isDirectory = false;
+          ghItem.isBinary = entry['object']['isBinary'];
+        }
+        ghItem.fullPath = this.currentDirPath.join('/') + entry['name'];
 
         this.currentNavList.push(ghItem);
       }
@@ -199,9 +207,9 @@ export class GitHubAccessComponent implements OnInit {
       this.loadFileList(this.currentRepo);
     }
     else if (node instanceof GitHubPrevious) {
-      if (this.currentPath.length > 0) {
-        this.currentPath.pop();
-        this.loadFileList(this.currentRepo, this.currentPath);
+      if (this.currentDirPath.length > 0) {
+        this.currentDirPath.pop();
+        this.loadFileList(this.currentRepo, this.currentDirPath);
       }
       else {
         localStorage.removeItem('currentRepo');
@@ -211,8 +219,13 @@ export class GitHubAccessComponent implements OnInit {
     else if (node instanceof GitHubItem) {
       const item = node as GitHubItem;
       if (item.isDirectory) {
-        this.currentPath.push(item.name);
-        this.loadFileList(this.currentRepo, this.currentPath);
+        this.currentDirPath.push(item.name);
+        this.loadFileList(this.currentRepo, this.currentDirPath);
+      }
+      else {
+        this.getFileContents(item).then(text => {
+          console.log(text);
+        });
       }
     }
   }
@@ -220,6 +233,12 @@ export class GitHubAccessComponent implements OnInit {
   getUserData(token: string): Promise<Object> {
     return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
       return response['data']['viewer'];
+    });
+  }
+
+  getFileContents(item: GitHubItem): Promise<string> {
+    return this.graphQlQuery(Queries.getFileContents(item)).toPromise().then(response => {
+      return response['data']['repository']['object']['text'];
     });
   }
 
