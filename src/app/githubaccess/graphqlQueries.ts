@@ -1,7 +1,7 @@
+import { GitHubRepo } from './githubaccess.component';
 
 export module Queries {
-
-  const userInfo = {
+  const userInfoTemplate = {
     'query': `
       {
         viewer {
@@ -13,14 +13,19 @@ export module Queries {
       `
   };
   export function getUserInfo(): object {
-    return userInfo;
+    return userInfoTemplate;
   }
 
-  const repoInfo = {
+  const repoInfoTemplate = {
     'query': `
       {
         viewer {
-          repositories (%%CONTINUATION%% first:30, orderBy: {field: CREATED_AT, direction: DESC}) {
+          repositories (
+            %%CONTINUATION%%
+            first:20,
+            affiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER],
+            orderBy: {field: CREATED_AT, direction: DESC}
+          ) {
             pageInfo {
               endCursor
               hasNextPage
@@ -28,6 +33,7 @@ export module Queries {
             edges {
               node {
                 name
+                owner {login}
                 isPrivate
                 description
                 defaultBranchRef {
@@ -40,16 +46,43 @@ export module Queries {
       }
       `
   };
-
   export function getRepoInfo(continuation: string = null): object {
     let contQuery = '';
     if (continuation !== null) {
       contQuery = 'after: "' + continuation + '"';
     }
-    const qString = repoInfo.query.replace('%%CONTINUATION%%', contQuery);
+    const qString = repoInfoTemplate.query.replace('%%CONTINUATION%%', contQuery);
     const repoInfoQuery = {};
     repoInfoQuery['query'] = qString;
 
     return repoInfoQuery;
+  }
+
+  const fileListTemplate = `
+    {
+      repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(expression: "%%EXPRESSION%%") {
+          ... on Tree {
+            entries {
+              name
+              type
+              mode
+            }
+          }
+        }
+      }
+    }
+  `;
+  export function getFileList(repo: GitHubRepo, path: string = null): object {
+    let expr = repo.defaultBranch + ':';
+    if (path !== null) {
+      expr += path;
+    }
+    const qString = fileListTemplate
+                      .replace('%%OWNER%%', repo.owner)
+                      .replace('%%NAME%%', repo.name)
+                      .replace('%%EXPRESSION%%', expr);
+
+    return {'query': qString};
   }
 }

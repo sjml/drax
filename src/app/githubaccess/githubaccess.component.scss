@@ -9,85 +9,77 @@
   left: 0;
   background-color: darkslategray;
   overflow-x: hidden;
+}
 
-  .gitHubConnectPrompt {
-    :hover {
-      cursor: pointer;
-    }
+.gitHubConnectPrompt {
+  :hover {
+    cursor: pointer;
+  }
 
-    border-bottom: $sidebarItemColor solid 1px;
-    background-color: antiquewhite;
+  border-bottom: $sidebarItemColor solid 1px;
+  background-color: antiquewhite;
+  font-size: 20px;
+  padding: 10px;
+
+  display: flex;
+
+  .icon-github {
+    font-size: 40px;
+  }
+
+  .loginPrompt {
+    text-align: center;
+  }
+}
+
+.gitHubUserInfo {
+  border-bottom: $sidebarItemColor solid 1px;
+  background-color: antiquewhite;
+  font-size: 20px;
+  padding: 10px;
+
+  display: flex;
+  align-items: center;
+
+  .avatar {
+    margin-right: 10px;
+  }
+
+  .username {
     font-size: 20px;
-    padding: 10px;
+    text-align: center;
+    width: 100%;
+  }
+}
 
-    display: flex;
+.gitHubNavList {
+  :hover {
+    background-color: black;
+    color: white;
+  }
+  padding: 0;
+  cursor: pointer;
+}
 
-    .icon-github {
-      font-size: 40px;
-    }
+.gitHubNode {
+  list-style: none;
+  font-size: 20px;
+  color: $sidebarItemColor;
+  padding: 10px 10px 5px 10px;
+  border-bottom: $sidebarItemColor solid 1px;
 
-    .loginPrompt {
-      text-align: center;
-    }
+  display: flex;
+
+  .prefixName {
+    color: #818181;
   }
 
-  .gitHubUserInfo {
-    border-bottom: $sidebarItemColor solid 1px;
-    background-color: antiquewhite;
-    font-size: 20px;
-    padding: 10px;
-
-    display: flex;
-    align-items: center;
-
-    .avatar {
-      margin-right: 10px;
-    }
-
-    .username {
-      font-size: 20px;
-      text-align: center;
-      width: 100%;
-    }
+  .icon {
+    margin-right: 5px;
   }
 
-  .repoInfo {
-    .repoSelect {
-      :hover {
-        cursor: pointer;
-      }
-
-      background-color: burlywood;
-      font-size: 20px;
-      text-align: center;
-    }
+  .nodeName {
+    flex-grow: 1;
   }
 
-  .gitHubNavList {
-    padding: 0;
-  }
-
-  .gitHubNode {
-    list-style: none;
-    font-size: 20px;
-    color: $sidebarItemColor;
-    padding: 10px 10px 5px 10px;
-    border-bottom: $sidebarItemColor solid 1px;
-  }
-
-  // .repoNav {
-  //   margin-top: 20px;
-
-  //   a {
-  //     text-decoration: none;
-  //     color: $sidebarItemColor;
-  //     padding: 6px 8px 6px 16px;
-  //     display: block;
-  //     font-size: 25px;
-  //   }
-
-  //   a:hover {
-  //     color: #f1f1f1;
-  //   }
-  // }
 }

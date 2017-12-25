@@ -12,22 +12,33 @@ class GitHubUser {
 }
 
 class GitHubNode {
+  public nodeType = 'NODE';
   public name: string;
   public fullPath: string;
 }
 
-class GitHubRepo extends GitHubNode {
+export class GitHubRepo extends GitHubNode {
+  public nodeType = 'REPO';
   public defaultBranch: string;
   public isPrivate: boolean;
   public description: string;
+  public owner: string;
 }
 
 class GitHubItem extends GitHubNode {
+  public nodeType = 'ITEM';
   public isDirectory: boolean;
+  public repo: GitHubRepo;
 }
 
 class GitHubContinuation extends GitHubNode {
+  public nodeType = 'CONT';
   public continuation: string = null;
+}
+
+class GitHubPrevious extends GitHubNode {
+  public nodeType = 'PREV';
+  public name = '..';
 }
 
 class GitHubRepoList {
@@ -44,9 +55,10 @@ export class GitHubAccessComponent implements OnInit {
 
   GITHUB_URL = 'https://api.github.com/graphql';
 
-  bearerToken: String = null;
+  bearerToken: string = null;
   user: GitHubUser = null;
   currentRepo: GitHubRepo = null;
+  currentPath: string[] = [];
 
   currentNavList: GitHubNode[] = [];
 
@@ -55,8 +67,15 @@ export class GitHubAccessComponent implements OnInit {
   ngOnInit() {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
-      this.loadUser();
-      this.loadRepoList();
+      this.loadUser().then(user => {
+        const repoCheck = localStorage.getItem('currentRepo');
+        if (repoCheck !== null) {
+          this.currentRepo = JSON.parse(repoCheck) as GitHubRepo;
+          this.loadFileList(this.currentRepo);
+        } else {
+          this.loadRepoList();
+        }
+      });
     }
   }
 
@@ -90,23 +109,23 @@ export class GitHubAccessComponent implements OnInit {
         this.loadUser();
         this.loadRepoList();
       }
-      // TODO: surface an error somehow if the status is not 'OK'
     }, false);
 
     const popupRef = window.open(
-      // TODO: make this URL a configurable parameter
       'http://localhost:4201/auth/',
       'GitHub Authorization',
       'scrollbars=yes,width=' + popUpWidth + ',height=' + popUpHeight + ',top=' + top + ',left=' + left
     );
   }
 
-  loadUser() {
-    this.getUserData(this.bearerToken).then(user => {
+  loadUser(): Promise<GitHubUser> {
+    return this.getUserData(this.bearerToken).then(user => {
       this.user = new GitHubUser();
       this.user.fullName = user['name'];
       this.user.login = user['login'];
       this.user.avatarUrl = user['avatarUrl'];
+
+      return this.user;
     });
   }
 
@@ -125,6 +144,27 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
+  loadFileList(repo: GitHubRepo, path: string[] = null) {
+    let pathString: string = null;
+    if (path !== null) {
+      pathString = path.join('/');
+    }
+
+    this.currentNavList = [];
+    this.currentNavList.push(new GitHubPrevious());
+    this.graphQlQuery(Queries.getFileList(repo, pathString)).toPromise().then(response => {
+      for (const entry of response['data']['repository']['object']['entries']) {
+        const ghItem = new GitHubItem();
+        ghItem.repo = repo;
+        ghItem.name = entry['name'];
+        ghItem.isDirectory = entry['type'] === 'tree';
+        ghItem.fullPath = repo + '/' + entry['name'];
+
+        this.currentNavList.push(ghItem);
+      }
+    });
+  }
+
   onScroll(event: Event) {
     if (this.currentNavList.length <= 0) {
       return;
@@ -136,7 +176,6 @@ export class GitHubAccessComponent implements OnInit {
       const max = event.srcElement.scrollHeight;
 
       if (max - offset < 20) {
-        // TODO: set up a lock so this can't get double-called
         this.currentNavList.pop();
         this.loadRepoList((lastItem as GitHubContinuation).continuation);
       }
@@ -144,7 +183,6 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   private graphQlQuery(query: object): Observable<object> {
-    // TODO: give back nothing if we're not logged in
     return this.http.post(
       this.GITHUB_URL, query,
       {
@@ -154,7 +192,32 @@ export class GitHubAccessComponent implements OnInit {
     );
   }
 
-  getUserData(token: String): Promise<Object> {
+  handleClick(node: GitHubNode) {
+    if (node instanceof GitHubRepo) {
+      this.currentRepo = node as GitHubRepo;
+      localStorage.setItem('currentRepo', JSON.stringify(this.currentRepo));
+      this.loadFileList(this.currentRepo);
+    }
+    else if (node instanceof GitHubPrevious) {
+      if (this.currentPath.length > 0) {
+        this.currentPath.pop();
+        this.loadFileList(this.currentRepo, this.currentPath);
+      }
+      else {
+        localStorage.removeItem('currentRepo');
+        this.loadRepoList();
+      }
+    }
+    else if (node instanceof GitHubItem) {
+      const item = node as GitHubItem;
+      if (item.isDirectory) {
+        this.currentPath.push(item.name);
+        this.loadFileList(this.currentRepo, this.currentPath);
+      }
+    }
+  }
+
+  getUserData(token: string): Promise<Object> {
     return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
       return response['data']['viewer'];
     });
@@ -170,13 +233,16 @@ export class GitHubAccessComponent implements OnInit {
 
       for (const repoNode of repList['edges']) {
         const repo = repoNode.node;
-        // TODO: with this and with user, is there some shorthand to just shunt it in?
         const newRepo = new GitHubRepo();
         newRepo.name = repo.name;
         newRepo.isPrivate = repo.isPrivate;
         newRepo.description = repo.description;
-        newRepo.defaultBranch = repo.defaultBranchRef.name;
-        newRepo.fullPath = repo.name + ':' + repo.defaultBranchRef.name;
+        newRepo.owner = repo.owner.login;
+        newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : null;
+        newRepo.fullPath = newRepo.owner + '/' + newRepo.name;
+        if (newRepo.defaultBranch !== null) {
+          newRepo.fullPath += ':' + newRepo.defaultBranch;
+        }
         repoListQuery.repos.push(newRepo);
       }
 
