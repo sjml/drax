@@ -30,25 +30,15 @@ export class EditorComponent implements AfterViewInit {
   }
   get file(): GitHubFile { return this._file; }
 
-  @Input() config: object;
-  @Output() change = new EventEmitter();
-  @Output() focus = new EventEmitter();
-  @Output() blur = new EventEmitter();
-  @Output() cursorActivity = new EventEmitter();
 
   @ViewChild('host') host: ElementRef;
-
   @Output() instance: CodeMirror.Editor = null;
+
 
   constructor() { }
 
-  onChange(_) {}
-  onTouched() {}
-  registerOnChange(fn) { this.onChange = fn; }
-  registerOnTouched(fn) { this.onTouched = fn; }
-
   ngAfterViewInit() {
-    this.config  = {
+    const config  = {
       mode: 'markdown',
       theme: 'drax',
       indentUnit: 4,
@@ -58,7 +48,7 @@ export class EditorComponent implements AfterViewInit {
       lineWrapping: true,
       autofocus: true,
     };
-    this.instance = CodeMirror.fromTextArea(this.host.nativeElement, this.config);
+    this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.instance.setValue(this.host.nativeElement.innerText);
 
     this.instance.on('change', () => {
