@@ -5,12 +5,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
+import { EditorComponent } from './editor/editor.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GitHubAccessComponent
+    GitHubAccessComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 * let you choose different branches
+* check if continuation is visible on first load (tall monitor)
 * put path in location
   * be able to pull from location to set path to repo/dir/file
   * AppRoutingModule?

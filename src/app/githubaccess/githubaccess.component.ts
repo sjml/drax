@@ -42,6 +42,11 @@ class GitHubPrevious extends GitHubNode {
   public name = '..';
 }
 
+export class GitHubFile {
+  public contents: string = null;
+  public item: GitHubItem = null;
+}
+
 class GitHubRepoList {
   public repos: GitHubRepo[] = [];
   public continuation: string = null;
@@ -61,6 +66,8 @@ export class GitHubAccessComponent implements OnInit {
   currentRepo: GitHubRepo = null;
   currentDirPath: string[] = [];
   currentFilePath: string = null;
+
+  workingFile: GitHubFile = null;
 
   currentNavList: GitHubNode[] = [];
 
@@ -224,7 +231,9 @@ export class GitHubAccessComponent implements OnInit {
       }
       else {
         this.getFileContents(item).then(text => {
-          console.log(text);
+          this.workingFile = new GitHubFile();
+          this.workingFile.contents = text;
+          this.workingFile.item = item;
         });
       }
     }
