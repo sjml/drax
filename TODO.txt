@@ -1,3 +1,5 @@
+# TODO
+
 * let you choose different branches
 * check if continuation is visible on first load (tall monitor)
 * put path in location
@@ -10,6 +12,14 @@
 * give back nothing from graphql query if we're not logged in
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
-
-
-
+* only show markdown files?
+  * `.markdown`
+  * `.mdown`
+  * `.mkdn`
+  * `.md`
+  * `.mkd`
+  * `.mdwn`
+  * `.mdtxt`
+  * `.mdtext`
+  * `.text`
+  * `.Rmd`

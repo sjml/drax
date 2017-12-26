@@ -5,7 +5,7 @@
       <div class="loginPrompt">Click to sign in to GitHub</div>
     </div>
     <div *ngIf="this.user" class="gitHubUserInfo">
-      <img class="avatar" src="{{ this.user.avatarUrl }}&s=48" alt="{{ this.user.login }} avatar" />
+      <img class="avatar" src="{{ this.user.avatarUrl }}&s=96" alt="{{ this.user.login }} avatar" />
       <div class="username">{{ this.user.login }}</div>
       <!-- <div *ngIf="this.user.fullName.length > 0" class="realname">{{ this.user.fullName }}</div> -->
     </div>
@@ -28,4 +28,7 @@
   </ul>
 </div>
 
-<app-editor [file]="workingFile"></app-editor>
+<div class="main">
+  <app-editor [file]="workingFile"></app-editor>
+</div>
+

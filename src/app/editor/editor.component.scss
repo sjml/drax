@@ -1,6 +1,57 @@
-@import '~sass/variables';
+$textColor: #2e383c;
+$propFont: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+$monoFont:  Courier New, Courier, monospace;
 
-.main {
-  margin-left: $sidebarWidth;
-  padding: 0px 10px;
+::ng-deep {
+  .cm-s-drax.CodeMirror {
+    height: 450px;
+
+    background: #fcfcfc;
+    color: $textColor;
+    line-height:1.5;
+
+    font-family: $propFont;
+  }
+
+  .cm-s-drax{
+    .cm-comment {
+      font-family: $monoFont;
+    }
+
+    div.CodeMirror-selected { background: lightblue; }
+
+    .CodeMirror-gutters {
+      background: #eef8ff; border-right: 1px solid #aaa;
+    }
+    .CodeMirror-guttermarker { color: #ffee80; }
+    .CodeMirror-guttermarker-subtle { color: #d0d0d0; }
+    .CodeMirror-linenumber { color: #8a8a8a; }
+
+    .CodeMirror-cursor { border-left: 1px solid $textColor; }
+
+    .cm-link { color: #1e4cb1; }
+    .cm-url { color: #7e8ca0; }
+
+    .cm-header-1 {
+      font-size: 250%;
+    }
+
+    .cm-header-2 {
+      font-size: 200%;
+    }
+
+    .cm-header-3 {
+      font-size: 150%;
+    }
+
+    .cm-header-4 {
+      font-size: 125%;
+    }
+
+    .CodeMirror-line
+
+    .cm-quote {
+      color: lighten($textColor, 35%);
+    }
+  }
 }

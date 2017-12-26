@@ -11,6 +11,12 @@
   overflow-x: hidden;
 }
 
+.main {
+  margin-left: $sidebarWidth;
+  padding: 0px 10px;
+}
+
+
 .gitHubConnectPrompt {
   :hover {
     cursor: pointer;
@@ -43,6 +49,8 @@
 
   .avatar {
     margin-right: 10px;
+    width: 48px;
+    height: 48px;
   }
 
   .username {

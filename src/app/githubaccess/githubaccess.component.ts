@@ -45,6 +45,7 @@ class GitHubPrevious extends GitHubNode {
 export class GitHubFile {
   public contents: string = null;
   public item: GitHubItem = null;
+  public isDirty = false;
 }
 
 class GitHubRepoList {
