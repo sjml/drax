@@ -19,7 +19,16 @@ import { GitHubFile, GitHubRepo } from '../githubaccess/githubaccess.component';
 })
 export class EditorComponent implements AfterViewInit {
 
-  @Input() file: GitHubFile;
+  _file: GitHubFile = null;
+  @Input() set file(v: GitHubFile) {
+    if (v !== this._file) {
+      this._file = v;
+      if (this._file !== null) {
+        this.instance.setValue(this._file.contents);
+      }
+    }
+  }
+  get file(): GitHubFile { return this._file; }
 
   @Input() config: object;
   @Output() change = new EventEmitter();
@@ -32,28 +41,6 @@ export class EditorComponent implements AfterViewInit {
   @Output() instance: CodeMirror.Editor = null;
 
   constructor() { }
-
-  _value = '';
-  get value() { return this._value; }
-  @Input() set value(v) {
-    if (v !== this._value) {
-      this._value = v;
-      this.onChange(v);
-    }
-  }
-
-  updateValue(value) {
-    this.value = value;
-    this.onTouched();
-    this.change.emit(value);
-  }
-
-  writeValue(value) {
-    this._value = value || '';
-    if (this.instance) {
-      this.instance.setValue(this._value);
-    }
-  }
 
   onChange(_) {}
   onTouched() {}
@@ -72,23 +59,10 @@ export class EditorComponent implements AfterViewInit {
       autofocus: true,
     };
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, this.config);
-    this.instance.setValue(this._value);
     this.instance.setValue(this.host.nativeElement.innerText);
 
     this.instance.on('change', () => {
-      this.updateValue(this.instance.getValue());
-    });
-
-    this.instance.on('focus', (instance) => {
-      this.focus.emit({instance});
-    });
-
-    this.instance.on('cursorActivity', (instance) => {
-      this.cursorActivity.emit({instance});
-    });
-
-    this.instance.on('blur', (instance) => {
-      this.blur.emit({instance});
+      this._file.contents = this.instance.getValue();
     });
   }
 

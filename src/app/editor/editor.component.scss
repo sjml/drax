@@ -32,8 +32,12 @@ $monoFont:  Courier New, Courier, monospace;
     .cm-link { color: #1e4cb1; }
     .cm-url { color: #7e8ca0; }
 
+    .cm-header {
+      line-height: 120%;
+    }
+
     .cm-header-1 {
-      font-size: 250%;
+      font-size: 225%;
     }
 
     .cm-header-2 {

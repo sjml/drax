@@ -174,7 +174,13 @@ export class GitHubAccessComponent implements OnInit {
           ghItem.isDirectory = false;
           ghItem.isBinary = entry['object']['isBinary'];
         }
-        ghItem.fullPath = pathString + '/' + entry['name'];
+        if (pathString !== null) {
+          ghItem.fullPath = pathString + '/';
+        }
+        else {
+          ghItem.fullPath = '';
+        }
+        ghItem.fullPath += entry['name'];
 
         this.currentNavList.push(ghItem);
       }
