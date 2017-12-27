@@ -1,0 +1,8 @@
+<div class="toolbar">
+  <button *ngFor="let button of items"
+    class="tbButton {{ button.state }}"
+    (click)="handleClick(button)"
+    >
+    <span class="icon {{ button.icon }}"></span>
+  </button>
+</div>

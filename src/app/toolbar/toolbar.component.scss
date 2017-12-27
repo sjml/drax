@@ -1,0 +1,40 @@
+@import '~sass/variables';
+
+$baseButtonColor: rgb(232, 244, 255);
+
+.toolbar {
+  display: flex;
+  border-bottom: $textColor solid 1px;
+  padding: 10px;
+}
+
+.tbButton {
+  background-color: $baseButtonColor;
+  color: $textColor;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  border: 0px;
+  padding: 0;
+  margin-left: 5px;
+  cursor: pointer;
+
+  .icon {
+    font-size: 20px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.tbButton.disabled {
+  background-color: lighten($baseButtonColor, 5%);
+  cursor: default;
+  .icon {
+    color: lighten($textColor, 50%);
+  }
+}
+
+.tbButton:not(.disabled):hover {
+  background-color: darken($color: $baseButtonColor, $amount: 5%);
+}

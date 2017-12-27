@@ -6,13 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
 import { EditorComponent } from './editor/editor.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     GitHubAccessComponent,
-    EditorComponent
+    EditorComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,

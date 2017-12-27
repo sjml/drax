@@ -43,9 +43,15 @@ class GitHubPrevious extends GitHubNode {
 }
 
 export class GitHubFile {
+  public isDirty = false;
+  public readonly pristine: string = null;
   public contents: string = null;
   public item: GitHubItem = null;
-  public isDirty = false;
+
+  constructor(originalContents: string) {
+    this.pristine = originalContents;
+    this.contents = originalContents;
+  }
 }
 
 class GitHubRepoList {
@@ -238,8 +244,7 @@ export class GitHubAccessComponent implements OnInit {
       }
       else {
         this.getFileContents(item).then(text => {
-          this.workingFile = new GitHubFile();
-          this.workingFile.contents = text;
+          this.workingFile = new GitHubFile(text);
           this.workingFile.item = item;
         });
       }

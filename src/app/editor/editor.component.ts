@@ -19,6 +19,10 @@ import { GitHubFile, GitHubRepo } from '../githubaccess/githubaccess.component';
 })
 export class EditorComponent implements AfterViewInit {
 
+  @ViewChild('host') host: ElementRef;
+  instance: CodeMirror.Editor = null;
+
+
   _file: GitHubFile = null;
   @Input() set file(v: GitHubFile) {
     if (v !== this._file) {
@@ -30,9 +34,7 @@ export class EditorComponent implements AfterViewInit {
   }
   get file(): GitHubFile { return this._file; }
 
-
-  @ViewChild('host') host: ElementRef;
-  @Output() instance: CodeMirror.Editor = null;
+  changeGeneration = 0;
 
 
   constructor() { }
@@ -50,9 +52,20 @@ export class EditorComponent implements AfterViewInit {
     };
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.instance.setValue(this.host.nativeElement.innerText);
+    this.changeGeneration = this.instance.getDoc().changeGeneration();
 
     this.instance.on('change', () => {
       this._file.contents = this.instance.getValue();
+
+      if (
+        (!this.instance.getDoc().isClean(this.changeGeneration))
+        && (this._file.contents !== this._file.pristine)
+        ) {
+        this._file.isDirty = true;
+      }
+      else {
+        this._file.isDirty = false;
+      }
     });
   }
 
