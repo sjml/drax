@@ -7,8 +7,13 @@
     background: #fcfcfc;
     color: $textColor;
     line-height:1.5;
+    margin-top: 10px;
 
     font-family: $propFont;
+  }
+
+  .locked .cm-s-drax.CodeMirror {
+    background-color: rgb(235, 235, 235);
   }
 
   .cm-s-drax{

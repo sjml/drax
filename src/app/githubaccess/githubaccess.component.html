@@ -28,6 +28,8 @@
 </div>
 
 <div class="main">
-  <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
+  <div *ngIf="workingFile">
+    <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
+  </div>
 </div>
 

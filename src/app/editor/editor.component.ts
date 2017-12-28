@@ -12,6 +12,11 @@ import 'codemirror/mode/markdown/markdown';
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
+export enum EditorMode {
+  Edit = 'edit',
+  Locked = 'locked'
+}
+
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -27,11 +32,13 @@ export class EditorComponent implements AfterViewInit {
 
   @Input() ghAccess: GitHubAccessComponent;
 
+  mode: EditorMode;
+
   _file: GitHubFile = null;
   @Input() set file(v: GitHubFile) {
     if (v !== this._file) {
       this._file = v;
-      if (this._file !== null) {
+      if (this._file !== null && this.instance !== null) {
         this.instance.setValue(this._file.contents);
       }
     }
@@ -41,7 +48,9 @@ export class EditorComponent implements AfterViewInit {
   changeGeneration = 0;
 
 
-  constructor() { }
+  constructor() {
+    this.mode = EditorMode.Edit;
+  }
 
   ngAfterViewInit() {
     const config  = {
@@ -55,7 +64,13 @@ export class EditorComponent implements AfterViewInit {
       autofocus: true,
     };
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.instance.setValue(this.host.nativeElement.innerText);
+
+    if (this._file !== null) {
+      this.instance.setValue(this._file.contents);
+    }
+    else {
+      this.instance.setValue(this.host.nativeElement.innerText);
+    }
     this.changeGeneration = this.instance.getDoc().changeGeneration();
 
     this.instance.on('change', () => {
@@ -82,6 +97,16 @@ export class EditorComponent implements AfterViewInit {
     this.instance.focus();
   }
 
+  setMode(newMode: EditorMode) {
+    this.mode = newMode;
+    if (this.mode === EditorMode.Locked) {
+      this.instance.setOption('readOnly', 'nocursor');
+    }
+    else {
+      this.instance.setOption('readOnly', false);
+    }
+  }
+
   private getWorkingRange(): CodeMirror.Range {
     const doc = this.instance.getDoc();
 
@@ -94,9 +119,19 @@ export class EditorComponent implements AfterViewInit {
     return workingRange;
   }
 
-  save(): Promise<boolean> {
+  prepForSave(): boolean {
+    this.setMode(EditorMode.Locked);
+    return true;
+  }
+
+  cancelSave(): boolean {
+    this.setMode(EditorMode.Edit);
+    return true;
+  }
+
+  save(commitMessage: string): Promise<boolean> {
     // TODO: set the toolbar icon spinning or something until this is done
-    return this.ghAccess.pushFile(this._file, 'testing commit from drax').then(val => {
+    return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
       if (val['success']) {
         this.changeGeneration = this.instance.getDoc().changeGeneration();
         this.change.emit(false);

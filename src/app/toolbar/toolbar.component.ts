@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { EditorComponent } from '../editor/editor.component';
+import { EditorComponent, EditorMode } from '../editor/editor.component';
 
 abstract class ToolbarItem {
   public itemType = 'ITEM';
@@ -48,13 +48,15 @@ export class ToolbarComponent implements OnInit {
 
   @Input('editor') editor: EditorComponent;
 
+  commitMessage = '';
+
   constructor() { }
 
   ngOnInit() {
     this.editor.change.subscribe(isDirty => this.handleEditorChange(isDirty));
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-                 false, ButtonState.Disabled, () => { this.editor.save(); return true; }),
+                 false, ButtonState.Disabled, () => this.editor.prepForSave()),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
@@ -67,6 +69,20 @@ export class ToolbarComponent implements OnInit {
       // links
       // images?
     );
+  }
+
+  cancelSave() {
+    this.editor.cancelSave();
+    this.editor.takeFocus();
+  }
+
+  doSave() {
+    if (this.commitMessage.length > 0) {
+      this.editor.save(this.commitMessage).then(val => {
+        this.editor.setMode(EditorMode.Edit);
+        this.editor.takeFocus();
+      });
+    }
   }
 
   handleClick(button: Button) {

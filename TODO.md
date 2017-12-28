@@ -5,6 +5,7 @@
     * enable/disable
 
 ## UI
+* flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
 * put path in location
   * be able to pull from location to set path to repo/dir/file
@@ -44,19 +45,18 @@
   * `.Rmd`
 
 ## Features
-1. Push back changed file with customized message
-2. Detect if file in repo has changed since we started editing
-3. Merge changes? 
-4. Remote configuration
-5. Release script for putting on public host.
-6. UI revamp + editing toolbar
+1. Detect if file in repo has changed since we started editing
+2. Merge changes? 
+3. Remote configuration
+4. Release script for putting on public host.
+5. UI revamp + editing toolbar
     - lists (unordered and numbered)
         - if nesting, alternate bullet items (*-+)
     - blockquotes
     - horizontal rules
     - links
     - images? 
-7. Annotation system
+6. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -65,6 +65,6 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-8. Image uploading
-9. Frontmatter parsing into options? 
-10. Offline mode
+7. Image uploading
+8. Frontmatter parsing into options? 
+9. Offline mode
