@@ -236,22 +236,23 @@ export class EditorComponent implements AfterViewInit {
           doc.replaceRange('',
                            CodeMirror.Pos(tok[0], tok[1].start),
                            CodeMirror.Pos(tok[0], tok[1].end),
+                           'wrappedFormatting'
                           );
         }
       }
 
       workingRange = this.getWorkingRange();
-      doc.setSelection(workingRange.from(), workingRange.to());
+      doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
       if (turningOn) {
-        doc.replaceRange(formatting[0], workingRange.to());
-        doc.replaceRange(formatting[0], workingRange.from());
+        doc.replaceRange(formatting[0], workingRange.to(), workingRange.to(), 'wrappedFormatting');
+        doc.replaceRange(formatting[0], workingRange.from(), workingRange.from(), 'wrappedFormatting');
         const from = workingRange.from();
         from.ch += formatting[0].length;
         const to = workingRange.to();
         if (workingRange.to().line === workingRange.from().line) {
           to.ch += formatting[0].length;
         }
-        doc.setSelection(workingRange.from(), workingRange.to());
+        doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
       }
     });
   }
