@@ -72,6 +72,9 @@ export class EditorComponent implements AfterViewInit {
     });
   }
 
+  takeFocus() {
+    this.instance.focus();
+  }
 
   private getWorkingRange(): CodeMirror.Range {
     const doc = this.instance.getDoc();

@@ -68,6 +68,7 @@ export class ToolbarComponent implements OnInit {
       return;
     }
     button.callback();
+    this.editor.takeFocus();
   }
 
 }
