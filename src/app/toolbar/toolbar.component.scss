@@ -43,6 +43,8 @@ $baseButtonColor: rgb(232, 244, 255);
   background-color: darken($color: $baseButtonColor, $amount: 20%);
 }
 
+// Usability gods, forgive me.
+//   (I assume keyboard users will be using shortcuts instead of the toolbar.)
 .tbButton:focus {
   outline: none;
 }
