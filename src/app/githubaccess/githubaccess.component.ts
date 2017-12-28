@@ -213,14 +213,13 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   // this annoyingly has to be done with the old API. :'(
-  pushFile(file: GitHubFile, message: string): Promise<boolean> {
-    return this.getLatestOid(file.item).then(latestOid => {
+  pushFile(file: GitHubFile, message: string): Promise<object> {
+    return this.getLatestOid(file.item).then<object>(latestOid => {
       if (latestOid !== file.lastGet) {
-        console.error('ID mismatch!');
-        return false;
+        return {success: false, message: 'ID mismatch!'};
       }
 
-      this.http.put(
+      return this.http.put(
         'https://api.github.com/repos/' +
         `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath}`,
         {
@@ -237,12 +236,11 @@ export class GitHubAccessComponent implements OnInit {
           file.lastGet = response['content']['sha'];
           file.isDirty = false;
           file.pristine = file.contents;
+          return {success: true};
         })
         .catch(error => {
           // TODO: grace
-          console.error('PUT failed!');
-          console.error(error);
-          return false;
+          return {success: false, message: 'PUT failed!', error: error};
         })
       ;
     });

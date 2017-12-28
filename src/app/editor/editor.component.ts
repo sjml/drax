@@ -94,10 +94,20 @@ export class EditorComponent implements AfterViewInit {
     return workingRange;
   }
 
-  save() {
-    // TODO: figure out some way to set the toolbar icon spinning until this is done
-    this.ghAccess.pushFile(this._file, 'testing commit from drax');
-    return true;
+  save(): Promise<boolean> {
+    // TODO: set the toolbar icon spinning or something until this is done
+    return this.ghAccess.pushFile(this._file, 'testing commit from drax').then(val => {
+      if (val['success']) {
+        this.changeGeneration = this.instance.getDoc().changeGeneration();
+        this.change.emit(false);
+        return true;
+      }
+      else {
+        console.error(val['message']);
+        console.error(val['error']);
+        return false;
+      }
+    });
   }
 
   cycleHeaderLevel() {
