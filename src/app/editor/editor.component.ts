@@ -92,7 +92,7 @@ export class EditorComponent implements AfterViewInit {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.type === null || startTok.type.indexOf('header') === -1) {
+      if (startTok.type === null || startTok.type.indexOf('header') >= 0) {
         // not a header; make it one
         doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0));
       }
@@ -114,17 +114,22 @@ export class EditorComponent implements AfterViewInit {
   }
 
   toggleBold() {
-    this.toggleWrappedFormatting('**', 'strong');
+    this.toggleWrappedFormatting(['**'], 'strong');
     return true;
   }
 
   toggleItalics() {
-    this.toggleWrappedFormatting('_', 'em');
+    this.toggleWrappedFormatting(['_', '*'], 'em');
     return true;
   }
 
   // there is almost certainly a more efficient way to do this
-  toggleWrappedFormatting(formatting: string, symbolType: string) {
+  toggleWrappedFormatting(formatting: string[], symbolType: string) {
+    if (formatting.length === 0 || symbolType.length === 0) {
+      // TODO: have this throw an error?
+      return;
+    }
+
     const doc = this.instance.getDoc();
 
     let workingRange = this.getWorkingRange();
@@ -224,7 +229,7 @@ export class EditorComponent implements AfterViewInit {
     this.instance.operation(() => {
       // clear out any interior markers
       for (const tok of tokens.reverse()) {
-        if (tok[1].string === formatting) {
+        if (formatting.indexOf(tok[1].string) >= 0) {
           doc.replaceRange('',
                            CodeMirror.Pos(tok[0], tok[1].start),
                            CodeMirror.Pos(tok[0], tok[1].end),
@@ -235,13 +240,13 @@ export class EditorComponent implements AfterViewInit {
       workingRange = this.getWorkingRange();
       doc.setSelection(workingRange.from(), workingRange.to());
       if (turningOn) {
-        doc.replaceRange(formatting, workingRange.to());
-        doc.replaceRange(formatting, workingRange.from());
+        doc.replaceRange(formatting[0], workingRange.to());
+        doc.replaceRange(formatting[0], workingRange.from());
         const from = workingRange.from();
-        from.ch += formatting.length;
+        from.ch += formatting[0].length;
         const to = workingRange.to();
         if (workingRange.to().line === workingRange.from().line) {
-          to.ch += formatting.length;
+          to.ch += formatting[0].length;
         }
         doc.setSelection(workingRange.from(), workingRange.to());
       }
