@@ -22,7 +22,7 @@ export module Queries {
         viewer {
           repositories (
             %%CONTINUATION%%
-            first:20,
+            first:50,
             affiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER],
             orderBy: {field: CREATED_AT, direction: DESC}
           ) {
