@@ -54,7 +54,7 @@ export class ToolbarComponent implements OnInit {
     this.editor.change.subscribe(isDirty => this.handleEditorChange(isDirty));
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-                 false, ButtonState.Disabled, () => this.editor.save()),
+                 false, ButtonState.Disabled, () => { this.editor.save(); return true; }),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
