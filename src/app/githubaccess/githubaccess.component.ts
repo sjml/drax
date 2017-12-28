@@ -44,13 +44,15 @@ class GitHubPrevious extends GitHubNode {
 
 export class GitHubFile {
   public isDirty = false;
-  public readonly pristine: string = null;
+  public pristine: string = null;
   public contents: string = null;
   public item: GitHubItem = null;
+  public lastGet: string;
 
-  constructor(originalContents: string) {
+  constructor(originalContents: string, oid: string) {
     this.pristine = originalContents;
     this.contents = originalContents;
+    this.lastGet = oid;
   }
 }
 
@@ -161,7 +163,7 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   loadFileList(repo: GitHubRepo, path: string[] = null) {
-    let pathString: string = null;
+    let pathString = '';
     if (path !== null) {
       pathString = path.join('/');
     }
@@ -180,7 +182,7 @@ export class GitHubAccessComponent implements OnInit {
           ghItem.isDirectory = false;
           ghItem.isBinary = entry['object']['isBinary'];
         }
-        if (pathString !== null) {
+        if (pathString.length > 0) {
           ghItem.fullPath = pathString + '/';
         }
         else {
@@ -208,6 +210,42 @@ export class GitHubAccessComponent implements OnInit {
         this.loadRepoList((lastItem as GitHubContinuation).continuation);
       }
     }
+  }
+
+  // this annoyingly has to be done with the old API. :'(
+  pushFile(file: GitHubFile, message: string): Promise<boolean> {
+    return this.getLatestOid(file.item).then(latestOid => {
+      if (latestOid !== file.lastGet) {
+        console.error('ID mismatch!');
+        return false;
+      }
+
+      this.http.put(
+        'https://api.github.com/repos/' +
+        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath}`,
+        {
+          message: message,
+          content: btoa(file.contents),
+          sha: file.lastGet
+        },
+        {
+          headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
+          responseType: 'json'
+        }
+      ).toPromise()
+        .then(response => {
+          file.lastGet = response['content']['sha'];
+          file.isDirty = false;
+          file.pristine = file.contents;
+        })
+        .catch(error => {
+          // TODO: grace
+          console.error('PUT failed!');
+          console.error(error);
+          return false;
+        })
+      ;
+    });
   }
 
   private graphQlQuery(query: object): Observable<object> {
@@ -243,23 +281,32 @@ export class GitHubAccessComponent implements OnInit {
         this.loadFileList(this.currentRepo, this.currentDirPath);
       }
       else {
-        this.getFileContents(item).then(text => {
-          this.workingFile = new GitHubFile(text);
+        this.getFileContents(item).then(info => {
+          this.workingFile = new GitHubFile(info['text'], info['oid']);
           this.workingFile.item = item;
         });
       }
     }
   }
 
-  getUserData(token: string): Promise<Object> {
+  getUserData(token: string): Promise<object> {
     return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
       return response['data']['viewer'];
     });
   }
 
-  getFileContents(item: GitHubItem): Promise<string> {
+  getFileContents(item: GitHubItem): Promise<object> {
     return this.graphQlQuery(Queries.getFileContents(item)).toPromise().then(response => {
-      return response['data']['repository']['object']['text'];
+      const obj = response['data']['repository']['object'];
+      return {text: obj['text'], oid: obj['oid']};
+    });
+  }
+
+  // TODO: make this a custom query to not fetch the text, too
+  getLatestOid(item: GitHubItem): Promise<string> {
+    return this.graphQlQuery(Queries.getFileContents(item)).toPromise().then(response => {
+      const obj = response['data']['repository']['object'];
+      return obj['oid'];
     });
   }
 

@@ -51,9 +51,10 @@ export class ToolbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.editor.change.subscribe(isDirty => this.handleEditorChange(isDirty));
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-                 false, ButtonState.Inactive, () => true),
+                 false, ButtonState.Disabled, () => this.editor.save()),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
@@ -74,6 +75,15 @@ export class ToolbarComponent implements OnInit {
     }
     button.callback();
     this.editor.takeFocus();
+  }
+
+  handleEditorChange(isDirty: boolean) {
+    if (isDirty) {
+      (this.items[0] as Button).state = ButtonState.Inactive;
+    }
+    else {
+      (this.items[0] as Button).state = ButtonState.Disabled;
+    }
   }
 
 }

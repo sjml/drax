@@ -77,9 +77,9 @@ export module Queries {
       }
     }
   `;
-  export function getFileList(repo: GitHubRepo, path: string = null): object {
+  export function getFileList(repo: GitHubRepo, path: string): object {
     let expr = repo.defaultBranch + ':';
-    if (path !== null) {
+    if (path.length > 0) {
       expr += path;
     }
     const qString = fileListTemplate
@@ -96,6 +96,7 @@ export module Queries {
         object(expression: "%%EXPRESSION%%") {
           ... on Blob {
             text
+            oid
           }
         }
       }

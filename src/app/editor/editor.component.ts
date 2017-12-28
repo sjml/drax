@@ -10,7 +10,7 @@ import { Component,
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 
-import { GitHubFile, GitHubRepo } from '../githubaccess/githubaccess.component';
+import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
 @Component({
   selector: 'app-editor',
@@ -22,6 +22,10 @@ export class EditorComponent implements AfterViewInit {
   @ViewChild('host') host: ElementRef;
   instance: CodeMirror.Editor = null;
 
+  @Output() change = new EventEmitter<boolean>();
+  @Output() cursorActivity = new EventEmitter();
+
+  @Input() ghAccess: GitHubAccessComponent;
 
   _file: GitHubFile = null;
   @Input() set file(v: GitHubFile) {
@@ -69,6 +73,8 @@ export class EditorComponent implements AfterViewInit {
       else {
         this._file.isDirty = false;
       }
+
+      this.change.emit(this._file.isDirty);
     });
   }
 
@@ -86,6 +92,12 @@ export class EditorComponent implements AfterViewInit {
     }
 
     return workingRange;
+  }
+
+  save() {
+    // TODO: figure out some way to set the toolbar icon spinning until this is done
+    this.ghAccess.pushFile(this._file, 'testing commit from drax');
+    return true;
   }
 
   cycleHeaderLevel() {

@@ -7,7 +7,6 @@
     <div *ngIf="this.user" class="gitHubUserInfo">
       <img class="avatar" src="{{ this.user.avatarUrl }}&s=96" alt="{{ this.user.login }} avatar" />
       <div class="username">{{ this.user.login }}</div>
-      <!-- <div *ngIf="this.user.fullName.length > 0" class="realname">{{ this.user.fullName }}</div> -->
     </div>
   </div>
 
@@ -29,6 +28,6 @@
 </div>
 
 <div class="main">
-  <app-editor [file]="workingFile"></app-editor>
+  <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
 </div>
 
