@@ -16,16 +16,16 @@ class Button extends ToolbarItem {
   icon: string;
   isToggle = true;
   state: ButtonState = ButtonState.Inactive;
-  fn = null;
+  callback: () => boolean = null;
 
-  constructor(name: string, tooltip: string, icon: string, isToggle: boolean, startingState: ButtonState, fn) {
+  constructor(name: string, tooltip: string, icon: string, isToggle: boolean, startingState: ButtonState, fn: () => boolean) {
     super();
     this.name = name;
     this.toolTip = tooltip;
     this.icon = icon;
     this.isToggle = isToggle;
     this.state = startingState;
-    this.fn = fn;
+    this.callback = fn;
   }
 }
 
@@ -48,12 +48,18 @@ export class ToolbarComponent implements OnInit {
   ngOnInit() {
     this.items.push(
       // new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-      //            false, ButtonState.Inactive),
+      //            false, ButtonState.Inactive, () => true),
       // new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
-                 true, ButtonState.Inactive, this.editor.toggleBold),
+                 true, ButtonState.Inactive, () => this.editor.toggleBold()),
       new Button('Italics', 'Change text to italics', 'icon-italic',
-                 true, ButtonState.Inactive, this.editor.toggleItalics),
+                 true, ButtonState.Inactive, () => this.editor.toggleItalics()),
+      new Button('Header', 'Cycle through header levels', 'icon-header',
+                 true, ButtonState.Inactive, () => this.editor.cycleHeaderLevel()),
+      // quotes
+      // lists (ul and #)
+      // links
+      // images?
     );
   }
 
@@ -61,15 +67,7 @@ export class ToolbarComponent implements OnInit {
     if (button.state === ButtonState.Disabled) {
       return;
     }
-    // console.log(button.name + ' pressed!');
-    // button.fn();
-
-    if (button.name === 'Bold') {
-      this.editor.toggleBold();
-    }
-    else if (button.name === 'Italics') {
-      this.editor.toggleItalics();
-    }
+    button.callback();
   }
 
 }

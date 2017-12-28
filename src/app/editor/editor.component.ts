@@ -11,7 +11,6 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 
 import { GitHubFile, GitHubRepo } from '../githubaccess/githubaccess.component';
-import { worker } from 'cluster';
 
 @Component({
   selector: 'app-editor',
@@ -74,7 +73,7 @@ export class EditorComponent implements AfterViewInit {
   }
 
 
-  getWorkingRange(): CodeMirror.Range {
+  private getWorkingRange(): CodeMirror.Range {
     const doc = this.instance.getDoc();
 
     const workingRange: CodeMirror.Range = this.instance.findWordAt(doc.getCursor());
@@ -86,12 +85,42 @@ export class EditorComponent implements AfterViewInit {
     return workingRange;
   }
 
+  cycleHeaderLevel() {
+    const range = this.getWorkingRange();
+    const doc = this.instance.getDoc();
+
+    for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+      const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+
+      if (startTok.type === null || startTok.type.indexOf('header') === -1) {
+        // not a header; make it one
+        doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0));
+      }
+      else if (startTok.string === '# ') {
+        doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+      }
+      else if (startTok.string === '## ') {
+        doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+      }
+      else if (startTok.string === '### ') {
+        doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+      }
+      else if (startTok.string === '#### ') {
+        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+      }
+    }
+
+    return true;
+  }
+
   toggleBold() {
     this.toggleWrappedFormatting('**', 'strong');
+    return true;
   }
 
   toggleItalics() {
     this.toggleWrappedFormatting('_', 'em');
+    return true;
   }
 
   // there is almost certainly a more efficient way to do this

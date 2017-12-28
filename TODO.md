@@ -16,6 +16,8 @@
 ## Bugs
 * check if continuation is visible on first load (tall monitor)
 * set up a lock so onScroll response can't get double-called
+* wrapped formatting across multiple paragraphs breaks
+* italics doesn't detect single * formatting, only _
 
 ## Polish
 * update to use proper GraphQL variables instead of replacing
