@@ -38,3 +38,11 @@ $baseButtonColor: rgb(232, 244, 255);
 .tbButton:not(.disabled):hover {
   background-color: darken($color: $baseButtonColor, $amount: 5%);
 }
+
+.tbButton:not(.disabled):active {
+  background-color: darken($color: $baseButtonColor, $amount: 20%);
+}
+
+.tbButton:focus {
+  outline: none;
+}

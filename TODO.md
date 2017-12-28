@@ -3,7 +3,6 @@
 ## Dev
 * use actual button styling/logic instead of reproducing it?
     * enable/disable
-* figure out if there's a class that goes with the press event
 
 ## UI
 * let you choose different branches
