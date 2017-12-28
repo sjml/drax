@@ -2,7 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { EditorComponent } from '../editor/editor.component';
 
-class ToolbarItem {}
+abstract class ToolbarItem {
+  public itemType = 'ITEM';
+}
 
 enum ButtonState {
   Disabled = 'disabled',
@@ -11,12 +13,13 @@ enum ButtonState {
 }
 
 class Button extends ToolbarItem {
-  name: string;
-  toolTip: string;
-  icon: string;
-  isToggle = true;
-  state: ButtonState = ButtonState.Inactive;
-  callback: () => boolean = null;
+  public itemType = 'BUTTON';
+  public name: string;
+  public toolTip: string;
+  public icon: string;
+  public isToggle = true;
+  public state: ButtonState = ButtonState.Inactive;
+  public callback: () => boolean = null;
 
   constructor(name: string, tooltip: string, icon: string, isToggle: boolean, startingState: ButtonState, fn: () => boolean) {
     super();
@@ -29,7 +32,9 @@ class Button extends ToolbarItem {
   }
 }
 
-class Separator extends ToolbarItem {}
+class Separator extends ToolbarItem {
+  public itemType = 'SEP';
+}
 
 
 @Component({
@@ -47,9 +52,9 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.items.push(
-      // new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-      //            false, ButtonState.Inactive, () => true),
-      // new Separator(),
+      new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
+                 false, ButtonState.Inactive, () => true),
+      new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
       new Button('Italics', 'Change text to italics', 'icon-italic',

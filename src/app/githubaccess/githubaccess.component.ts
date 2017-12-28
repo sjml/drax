@@ -11,7 +11,7 @@ class GitHubUser {
   public avatarUrl: string;
 }
 
-class GitHubNode {
+abstract class GitHubNode {
   public nodeType = 'NODE';
   public name: string;
   public fullPath: string;

@@ -8,6 +8,12 @@ $baseButtonColor: rgb(232, 244, 255);
   padding: 10px;
 }
 
+.tbSep {
+  margin-left: 5px;
+  height: 110%;
+  border-left: $textColor solid 1px;
+}
+
 .tbButton {
   background-color: $baseButtonColor;
   color: $textColor;

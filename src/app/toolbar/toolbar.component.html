@@ -1,8 +1,13 @@
 <div class="toolbar">
-  <button *ngFor="let button of items"
-    class="tbButton {{ button.state }}"
-    (click)="handleClick(button)"
-    >
-    <span class="icon {{ button.icon }}"></span>
-  </button>
+  <div *ngFor="let item of items">
+    <button
+      *ngIf="item.itemType === 'BUTTON'"
+      class="tbButton {{ item.state }}"
+      (click)="handleClick(item)"
+      >
+        <span class="icon {{ item.icon }}"></span>
+    </button>
+    <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
+  </div>
+
 </div>
