@@ -92,7 +92,7 @@ export class EditorComponent implements AfterViewInit {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.type === null || startTok.type.indexOf('header') >= 0) {
+      if (startTok.type === null || startTok.type.indexOf('header') < 0) {
         // not a header; make it one
         doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0));
       }
