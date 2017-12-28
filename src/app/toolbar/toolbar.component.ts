@@ -52,8 +52,8 @@ export class ToolbarComponent implements OnInit {
       // new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, this.editor.toggleBold),
-      // new Button('Italics', 'Change text to italics', 'icon-italic',
-      //            true, ButtonState.Inactive),
+      new Button('Italics', 'Change text to italics', 'icon-italic',
+                 true, ButtonState.Inactive, this.editor.toggleItalics),
     );
   }
 
@@ -63,7 +63,13 @@ export class ToolbarComponent implements OnInit {
     }
     // console.log(button.name + ' pressed!');
     // button.fn();
-    this.editor.toggleBold();
+
+    if (button.name === 'Bold') {
+      this.editor.toggleBold();
+    }
+    else if (button.name === 'Italics') {
+      this.editor.toggleItalics();
+    }
   }
 
 }

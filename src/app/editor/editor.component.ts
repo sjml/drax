@@ -87,6 +87,15 @@ export class EditorComponent implements AfterViewInit {
   }
 
   toggleBold() {
+    this.toggleWrappedFormatting('**', 'strong');
+  }
+
+  toggleItalics() {
+    this.toggleWrappedFormatting('_', 'em');
+  }
+
+  // there is almost certainly a more efficient way to do this
+  toggleWrappedFormatting(formatting: string, symbolType: string) {
     const doc = this.instance.getDoc();
 
     let workingRange = this.getWorkingRange();
@@ -145,49 +154,48 @@ export class EditorComponent implements AfterViewInit {
       });
     }
 
-
-    let turningBold = true;
+    let turningOn = true;
     if (tokens.length === 1) {
-      if (tokens[0][1].type === 'strong') {
-        turningBold = false;
+      if (tokens[0][1].type === symbolType) {
+        turningOn = false;
       }
     }
     else {
-      // if selection swaps between bold and not bold:
+      // if selection swaps between formatted and not formatted:
       //   - if only two stretches, toggle to the last one
-      //   - if more, make everything bold
-      let boldStretchesCount = 0;
-      let isBold = false;
+      //   - if more, make everything formatted
+      let formattedStretchesCount = 0;
+      let isFormatted = false;
       let hasPlain = false;
       for (const tok of tokens) {
-        if (tok[1].type === 'strong') {
-          if (!isBold) {
-            boldStretchesCount += 1;
+        if (tok[1].type === symbolType) {
+          if (!isFormatted) {
+            formattedStretchesCount += 1;
           }
-          isBold = true;
+          isFormatted = true;
         }
         else {
-          isBold = false;
+          isFormatted = false;
           hasPlain = true;
         }
       }
-      if (boldStretchesCount === 1) {
+      if (formattedStretchesCount === 1) {
         if (hasPlain) {
-          turningBold = tokens[tokens.length - 1][1].type === 'strong';
+          turningOn = tokens[tokens.length - 1][1].type === symbolType;
         }
         else {
-          turningBold = false;
+          turningOn = false;
         }
       }
       else {
-        turningBold = true;
+        turningOn = true;
       }
     }
 
     this.instance.operation(() => {
       // clear out any interior markers
       for (const tok of tokens.reverse()) {
-        if (tok[1].string === '**') {
+        if (tok[1].string === formatting) {
           doc.replaceRange('',
                            CodeMirror.Pos(tok[0], tok[1].start),
                            CodeMirror.Pos(tok[0], tok[1].end),
@@ -197,14 +205,14 @@ export class EditorComponent implements AfterViewInit {
 
       workingRange = this.getWorkingRange();
       doc.setSelection(workingRange.from(), workingRange.to());
-      if (turningBold) {
-        doc.replaceRange('**', workingRange.to());
-        doc.replaceRange('**', workingRange.from());
+      if (turningOn) {
+        doc.replaceRange(formatting, workingRange.to());
+        doc.replaceRange(formatting, workingRange.from());
         const from = workingRange.from();
-        from.ch += 2;
+        from.ch += formatting.length;
         const to = workingRange.to();
         if (workingRange.to().line === workingRange.from().line) {
-          to.ch += 2;
+          to.ch += formatting.length;
         }
         doc.setSelection(workingRange.from(), workingRange.to());
       }
