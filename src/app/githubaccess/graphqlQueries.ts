@@ -1,5 +1,7 @@
 import { GitHubRepo, GitHubItem } from './githubaccess.component';
 
+// TODO: unify the formatting of all these
+
 export module Queries {
   const userInfoTemplate = {
     'query': `
@@ -58,6 +60,29 @@ export module Queries {
     return repoInfoQuery;
   }
 
+  const singleRepoInfoTemplate = {
+    'query': `
+      {
+        repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+          name
+          owner {login}
+          isPrivate
+          description
+          defaultBranchRef {
+            name
+          }
+        }
+      }
+      `
+  };
+  export function getSingleRepoInfo(owner: string, repoName: string): object {
+    const qString = singleRepoInfoTemplate.query
+                      .replace('%%OWNER%%', owner)
+                      .replace('%%NAME%%', repoName);
+
+    return {query: qString};
+  }
+
   const fileListTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
@@ -87,7 +112,7 @@ export module Queries {
                       .replace('%%NAME%%', repo.name)
                       .replace('%%EXPRESSION%%', expr);
 
-    return {'query': qString};
+    return {query: qString};
   }
 
   const fileContentsTemplate = `
@@ -95,7 +120,7 @@ export module Queries {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
         object(expression: "%%EXPRESSION%%") {
           ... on Blob {
-            text
+            %%TEXT%%
             oid
           }
         }
@@ -103,12 +128,42 @@ export module Queries {
     }
   `;
   export function getFileContents(item: GitHubItem): object {
+    const qString = fileContentsTemplate
+                      .replace('%%OWNER%%', item.repo.owner)
+                      .replace('%%NAME%%', item.repo.name)
+                      .replace('%%EXPRESSION%%', `${item.repo.defaultBranch}:${item.fullPath}`)
+                      .replace('%%TEXT%%', 'text');
+    return {query: qString};
+  }
+
+  export function getFileSha(item: GitHubItem): object {
     const expr = item.repo.defaultBranch + ':' + item.fullPath;
     const qString = fileContentsTemplate
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
+                      .replace('%%EXPRESSION%%', expr)
+                      .replace('%%TEXT%%', '');
+
+    return {query: qString};
+  }
+
+  const pathInfoTemplate = `
+    {
+      repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(expression: "%%EXPRESSION%%") {
+          __typename
+          oid
+        }
+      }
+    }
+  `;
+  export function getPathInfo(repo: GitHubRepo, path: string): object {
+    const expr = repo.defaultBranch + ':' + path;
+    const qString = pathInfoTemplate
+                      .replace('%%OWNER%%', repo.owner)
+                      .replace('%%NAME%%', repo.name)
                       .replace('%%EXPRESSION%%', expr);
 
-    return {'query': qString};
+    return {query: qString};
   }
 }
