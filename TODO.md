@@ -7,9 +7,7 @@
 ## UI
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
-* put path in location
-  * be able to pull from location to set path to repo/dir/file
-  * AppRoutingModule?
+* icon for repos (and chevron at right)
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go

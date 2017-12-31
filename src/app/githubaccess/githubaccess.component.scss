@@ -16,7 +16,6 @@
   padding: 0px 10px;
 }
 
-
 .gitHubConnectPrompt {
   :hover {
     cursor: pointer;
@@ -60,13 +59,31 @@
   }
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.upwardsLink {
+  color: $sidebarItemColor;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 18px;
+  background-color: rgb(34, 34, 34);
+}
+
+.upwardsLink:hover {
+  background-color: black;
+  color: white;
+}
+
 .gitHubNavList {
   :hover {
     background-color: black;
     color: white;
   }
   padding: 0;
-  cursor: pointer;
 }
 
 .gitHubNode {

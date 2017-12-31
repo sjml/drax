@@ -10,13 +10,16 @@
     </div>
   </div>
 
-  <span *ngIf="upwardsLink">
-    <a routerLink="{{upwardsLink}}">{{upwardsLinkLabel}}</a>
-  </span>
+  <div *ngIf="upwardsLink" class="upwardsLink">
+    <a routerLink="{{upwardsLink}}">
+    <div><span class="icon-left-big icon"></span>{{upwardsLinkLabel}}</div>
+    </a>
+  </div>
   <ul class="gitHubNavList">
     <li *ngFor="let node of currentNavList"
       class="gitHubNode"
       >
+      <span *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></span>
       <span *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></span>
       <span *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></span>
       <span class="nodeName">
@@ -30,7 +33,7 @@
           </div>
         </a>
       </span>
-      <span *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-right-open chevron"></span>
+      <span *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></span>
     </li>
   </ul>
 </div>

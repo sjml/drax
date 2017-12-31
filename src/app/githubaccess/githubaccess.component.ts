@@ -281,8 +281,9 @@ export class GitHubAccessComponent implements OnInit {
     this.upwardsLinkLabel = null;
     this.upwardsLink = null;
 
-    if (cursor === null) {
-      this.currentNavList = [];
+    let index = 0;
+    if (cursor !== null) {
+      index = this.currentNavList.length;
     }
     return this.graphQlQuery(Queries.getRepoInfo(cursor)).toPromise().then(response => {
       const repList = response['data']['viewer']['repositories'];
@@ -301,8 +302,9 @@ export class GitHubAccessComponent implements OnInit {
         // TODO: play around with a repo that has no default branch (no pushes)
         newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : '';
 
-        this.currentNavList.push(newRepo);
+        this.currentNavList[index++] = newRepo;
       }
+      this.currentNavList.length = index;
 
       return continuation;
     });
@@ -314,16 +316,26 @@ export class GitHubAccessComponent implements OnInit {
       return;
     }
 
-    this.currentNavList = [];
     this.repositoryListCursor = null;
 
+    // TODO: UGH this is convoluted spaghetti
     if (item.dirPath !== null) {
       const pathSegs = item.dirPath.split('/');
       this.upwardsLinkLabel = pathSegs.pop();
       if (this.upwardsLinkLabel.length === 0) {
-        this.upwardsLinkLabel = `${item.repo.owner}/${item.repo.name}:${item.branch}`;
+        if (item.fileName.length === 0) {
+          this.upwardsLinkLabel = 'Repository List';
+        }
+        else {
+          this.upwardsLinkLabel = `${item.repo.owner}/${item.repo.name}:${item.branch}`;
+        }
       }
-      this.upwardsLink = item.getRouterPath(true);
+      if (this.upwardsLinkLabel === 'Repository List') {
+        this.upwardsLink = '/';
+      }
+      else {
+        this.upwardsLink = item.getRouterPath(true);
+      }
     }
     else {
       this.upwardsLink = '/';
@@ -331,6 +343,7 @@ export class GitHubAccessComponent implements OnInit {
     }
 
     this.graphQlQuery(Queries.getFileList(item)).toPromise().then(response => {
+      let index = 0;
       for (const entry of response['data']['repository']['object']['entries']) {
         const ghItem = new GitHubItem();
         ghItem.repo = item.repo;
@@ -345,8 +358,9 @@ export class GitHubAccessComponent implements OnInit {
         }
         ghItem.dirPath = item.fullPath();
 
-        this.currentNavList.push(ghItem);
+        this.currentNavList[index++] = ghItem;
       }
+      this.currentNavList.length = index;
     });
   }
 
@@ -393,19 +407,17 @@ export class GitHubAccessComponent implements OnInit {
   // this annoyingly has to be done with the old API. :'(
   pushFile(file: GitHubFile, message: string): Promise<object> {
     return this.getPathInfo(file.item).then<object>(info => {
-      if (   !info['repository']
-          || !info['repository']['object']
-          || !info['repository']['object']['oid']
-        ) {
-          return {success: false, message: 'Non-existent object.'};
-        }
-      if (info['repository']['object']['oid'] !== file.item.lastGet) {
+      // TODO: grace
+      if (!info || !info['object'] || !info['object']['oid']) {
+        return {success: false, message: 'Non-existent object.'};
+      }
+      if (info['object']['oid'] !== file.item.lastGet) {
         return {success: false, message: 'ID mismatch!'};
       }
 
       return this.http.put(
         'https://api.github.com/repos/' +
-        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath}`,
+        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath()}`,
         {
           message: message,
           content: btoa(file.contents),
