@@ -130,17 +130,6 @@ export module Queries {
     return {query: qString};
   }
 
-  export function getFileSha(item: GitHubItem): object {
-    const expr = item.branch + ':' + item.fullPath;
-    const qString = fileContentsTemplate
-                      .replace('%%OWNER%%', item.repo.owner)
-                      .replace('%%NAME%%', item.repo.name)
-                      .replace('%%EXPRESSION%%', expr)
-                      .replace('%%TEXT%%', '');
-
-    return {query: qString};
-  }
-
   const pathInfoTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
@@ -151,7 +140,6 @@ export module Queries {
       }
     }
   `;
-
   export function getPathInfo(item: GitHubItem): object {
     let branch = item.branch;
     if (branch === null || branch.length === 0) {
