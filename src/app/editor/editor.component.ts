@@ -7,8 +7,9 @@ import { Component,
          EventEmitter,
        } from '@angular/core';
 
-import * as CodeMirror from 'codemirror';
-import 'codemirror/mode/markdown/markdown';
+const CodeMirror = require('codemirror/lib/codemirror');
+require('codemirror/mode/markdown/markdown');
+require('codemirror/addon/edit/continuelist');
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
@@ -72,6 +73,9 @@ export class EditorComponent implements AfterViewInit {
       electricChars: false,
       lineWrapping: true,
       autofocus: true,
+      extraKeys: {
+        Enter: 'newlineAndIndentContinueMarkdownList'
+      }
     };
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
 
