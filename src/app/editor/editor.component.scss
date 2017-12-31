@@ -1,5 +1,14 @@
 @import '~sass/variables';
 
+.fileInfo {
+  text-align: center;
+  color: rgb(66, 66, 66);
+
+  .repoInfo {
+    color: rgb(117, 117, 117);
+  }
+}
+
 ::ng-deep {
   .cm-s-drax.CodeMirror {
     height: 450px;

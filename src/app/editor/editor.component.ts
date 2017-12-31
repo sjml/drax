@@ -27,23 +27,33 @@ export class EditorComponent implements AfterViewInit {
   @ViewChild('host') host: ElementRef;
   instance: CodeMirror.Editor = null;
 
-  @Output() change = new EventEmitter<boolean>();
+  @Output() change = new EventEmitter();
   @Output() cursorActivity = new EventEmitter();
 
   @Input() ghAccess: GitHubAccessComponent;
 
   mode: EditorMode;
+  checkInterval: number = null;
 
   _file: GitHubFile = null;
   @Input() set file(v: GitHubFile) {
     if (v !== this._file) {
+      this.fileOutOfSync = false;
+      window.clearInterval(this.checkInterval);
+      this.checkInterval = null;
+
       this._file = v;
       if (this._file !== null && this.instance !== null) {
         this.instance.setValue(this._file.contents);
       }
+
+      if (this._file !== null) {
+        this.checkInterval = window.setInterval(() => this.checkAgainstServer(), 60 * 1000);
+      }
     }
   }
   get file(): GitHubFile { return this._file; }
+  fileOutOfSync: boolean;
 
   changeGeneration = 0;
 
@@ -89,7 +99,7 @@ export class EditorComponent implements AfterViewInit {
         this._file.isDirty = false;
       }
 
-      this.change.emit(this._file.isDirty);
+      this.change.emit();
     });
   }
 
@@ -107,18 +117,6 @@ export class EditorComponent implements AfterViewInit {
     }
   }
 
-  private getWorkingRange(): CodeMirror.Range {
-    const doc = this.instance.getDoc();
-
-    const workingRange: CodeMirror.Range = this.instance.findWordAt(doc.getCursor());
-    if (doc.somethingSelected()) {
-      workingRange.anchor = doc.getCursor('anchor');
-      workingRange.head = doc.getCursor('head');
-    }
-
-    return workingRange;
-  }
-
   prepForSave(): boolean {
     this.setMode(EditorMode.Locked);
     return true;
@@ -134,7 +132,7 @@ export class EditorComponent implements AfterViewInit {
     return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
       if (val['success']) {
         this.changeGeneration = this.instance.getDoc().changeGeneration();
-        this.change.emit(false);
+        this.change.emit();
         return true;
       }
       else {
@@ -143,6 +141,47 @@ export class EditorComponent implements AfterViewInit {
         return false;
       }
     });
+  }
+
+  checkAgainstServer() {
+    if (this._file === null) {
+      return;
+    }
+    this.ghAccess.getPathInfo(this._file.item).then(response => {
+      if (response === null || response['object'] === null) {
+        console.error('File no longer exists.');
+        return;
+      }
+      if (this._file.item.lastGet === response['object']['oid']) {
+        // console.log('All good!');
+      }
+      else {
+        // console.log('File has changed...');
+        this.fileOutOfSync = true;
+        this.change.emit();
+      }
+    });
+  }
+
+  refreshContents(): boolean {
+    this.ghAccess.getFileContents(this._file.item).then(newFile => {
+      this.file = newFile;
+    });
+    return true;
+  }
+
+  /***** Text Formatting ******/
+
+  private getWorkingRange(): CodeMirror.Range {
+    const doc = this.instance.getDoc();
+
+    const workingRange: CodeMirror.Range = this.instance.findWordAt(doc.getCursor());
+    if (doc.somethingSelected()) {
+      workingRange.anchor = doc.getCursor('anchor');
+      workingRange.head = doc.getCursor('head');
+    }
+
+    return workingRange;
   }
 
   cycleHeaderLevel() {

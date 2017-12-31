@@ -53,10 +53,12 @@ export class ToolbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.editor.change.subscribe(isDirty => this.handleEditorChange(isDirty));
+    this.editor.change.subscribe(() => this.handleEditorChange());
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
                  false, ButtonState.Disabled, () => this.editor.prepForSave()),
+      new Button('Refresh', 'Refresh file from GitHub', 'icon-arrows-cw',
+                 false, ButtonState.Disabled, () => this.editor.refreshContents()),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
@@ -93,13 +95,20 @@ export class ToolbarComponent implements OnInit {
     this.editor.takeFocus();
   }
 
-  handleEditorChange(isDirty: boolean) {
-    if (isDirty) {
+  // TODO: be smarter about this than directly using array index
+  handleEditorChange() {
+    if (this.editor.file.isDirty) {
       (this.items[0] as Button).state = ButtonState.Inactive;
     }
     else {
       (this.items[0] as Button).state = ButtonState.Disabled;
     }
-  }
 
+    if (this.editor.fileOutOfSync) {
+      (this.items[1] as Button).state = ButtonState.Inactive;
+    }
+    else {
+      (this.items[1] as Button).state = ButtonState.Disabled;
+    }
+  }
 }
