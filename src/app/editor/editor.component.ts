@@ -1,5 +1,6 @@
 import { Component,
          AfterViewInit,
+         OnDestroy,
          Input,
          Output,
          ViewChild,
@@ -23,7 +24,7 @@ export enum EditorMode {
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements AfterViewInit {
+export class EditorComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('host') host: ElementRef;
   instance: CodeMirror.Editor = null;
@@ -105,6 +106,12 @@ export class EditorComponent implements AfterViewInit {
 
       this.change.emit();
     });
+  }
+
+  ngOnDestroy() {
+    if (this.checkInterval !== null) {
+      window.clearInterval(this.checkInterval);
+    }
   }
 
   takeFocus() {
