@@ -106,9 +106,13 @@ export class GitHubAccessComponent implements OnInit {
   ngOnInit() {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
-      this.loadUser();
+      this.loggedIn();
     }
 
+  }
+
+  loggedIn() {
+    this.loadUser();
     this.route.params.subscribe(_ => {
       this.loadFromLocation();
     });
@@ -139,9 +143,9 @@ export class GitHubAccessComponent implements OnInit {
 
     window.addEventListener('message', (event) => {
       if (event.data.status === 'OK') {
-        localStorage.setItem('gitHubBearerToken', event.data.code);
         this.bearerToken = event.data.code;
-        this.loadUser();
+        localStorage.setItem('gitHubBearerToken', event.data.code);
+        this.loggedIn();
       }
     }, false);
 
@@ -233,13 +237,17 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   loadUser(): Promise<GitHubUser> {
-    return this.getUserData(this.bearerToken).then(user => {
+    return this.getUserData().then(user => {
       this.user = new GitHubUser();
       this.user.fullName = user['name'];
       this.user.login = user['login'];
       this.user.avatarUrl = user['avatarUrl'];
 
       return this.user;
+    }).catch(err => {
+      console.error('Could not load GitHub User.');
+      console.error(err);
+      return null;
     });
   }
 
@@ -367,6 +375,10 @@ export class GitHubAccessComponent implements OnInit {
   /******** Remote Data Access *******/
 
   private graphQlQuery(query: object): Observable<object> {
+    if (this.bearerToken === null) {
+      console.error('No bearer token.');
+      return null;
+    }
     return this.http.post(
       this.GITHUB_URL, query,
       {
@@ -376,7 +388,7 @@ export class GitHubAccessComponent implements OnInit {
     );
   }
 
-  getUserData(token: string): Promise<object> {
+  getUserData(): Promise<object> {
     return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
       return response['data']['viewer'];
     });

@@ -13,6 +13,7 @@
 ## Bugs
 * set up a lock so onScroll response can't get double-called
 * wrapped formatting across multiple paragraphs breaks
+* patch codemirror's markdown processing so italics and bold don't carry across list items
 
 ## Polish
 * update to use proper GraphQL variables instead of replacing
