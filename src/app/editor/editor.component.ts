@@ -7,9 +7,9 @@ import { Component,
          EventEmitter,
        } from '@angular/core';
 
-const CodeMirror = require('codemirror/lib/codemirror');
-require('codemirror/mode/markdown/markdown');
-require('codemirror/addon/edit/continuelist');
+import * as CodeMirror from 'codemirror/lib/codemirror';
+import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/edit/continuelist';
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
