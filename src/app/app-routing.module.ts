@@ -3,7 +3,7 @@ import { RouterModule, Routes, UrlSegment, UrlMatchResult } from '@angular/route
 
 import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
 
-function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
+export function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
   if (urlSegs.length < 2) {
     return {consumed: urlSegs, posParams: {}};
   }
@@ -35,7 +35,7 @@ function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
   return {consumed: consumed, posParams: params};
 }
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     matcher: repoBranchMatcher,
     component: GitHubAccessComponent

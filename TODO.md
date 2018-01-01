@@ -19,6 +19,7 @@
 * surface an error if authorization status is not 'OK'
 * make auth URL a configurable parameter (4201)
 * give back nothing from graphql query if we're not logged in
+* use getenv('variable_name') as option when constructing secrets in PHP
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
