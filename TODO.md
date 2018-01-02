@@ -43,17 +43,16 @@
   * `.Rmd`
 
 ## Features
-1. Remote configuration
-2. Release script for putting on public host.
+1. Release script for putting on public host.
     - check when dir is a few levels deep :-/
-3. UI revamp + expanded editing toolbar
+2. UI revamp + expanded editing toolbar
     - lists (unordered and numbered)
         - if nesting, alternate bullet items (*-+)
     - blockquotes
     - horizontal rules
     - links
     - images? 
-4. Annotation system
+3. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -62,7 +61,7 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-5. Image uploading
-6. Merge changes if we're out of sync with the server
-7. Frontmatter parsing into options? 
-8. Offline mode
+4. Image uploading
+5. Merge changes if we're out of sync with the server
+6. Frontmatter parsing into options? 
+7. Offline mode

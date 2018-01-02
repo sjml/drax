@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
@@ -24,6 +24,10 @@ export class GitHubRepo extends GitHubNavNode {
   public isPrivate: boolean;
   public description: string;
   public defaultBranch: string;
+  public config: object = {
+    ignoreHiddenFiles: true,
+    contentRoot: ''
+  };
 
   public getRouterPath() {
     if (this.defaultBranch !== null) {
@@ -100,6 +104,7 @@ export class GitHubAccessComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
+    private router: Router,
     private location: Location
   ) { }
 
@@ -178,16 +183,26 @@ export class GitHubAccessComponent implements OnInit {
     this.checkRepoAndFile();
   }
 
+  private checkRoot(dirPath: string, contentRoot: string): boolean {
+    if (contentRoot.length === 0) {
+      return true;
+    }
+    if (dirPath === null) {
+      return false;
+    }
+    if (dirPath.startsWith(contentRoot)) {
+      return true;
+    }
+    return false;
+  }
+
   async checkRepoAndFile() {
     let repoGood = null;
     let pathGood = false;
 
+    await this.loadRepo(this.repo).then(resp => repoGood = resp);
     if (this.item.branch === null) {
-      await this.loadRepo(this.repo).then(resp => repoGood = resp);
       this.item.branch = this.repo.defaultBranch;
-    }
-    else {
-      this.loadRepo(this.repo).then(resp => repoGood = resp);
     }
 
     // are we a file or directory? need to get info.
@@ -196,6 +211,9 @@ export class GitHubAccessComponent implements OnInit {
         repoGood = false;
       }
       else if (response['object'] === null) {
+        pathGood = false;
+      }
+      else if (!this.checkRoot(this.item.fullPath(), this.repo.config['contentRoot'])) {
         pathGood = false;
       }
       else {
@@ -207,11 +225,15 @@ export class GitHubAccessComponent implements OnInit {
 
     // (if it's null, the check hasn't completed yet)
     if (repoGood === false) {
-      // TODO: redirect to repo list -- this.router.navigate(['/component-one']);
+      this.router.navigateByUrl('/');
       return;
     }
     if (!pathGood) {
-      // TODO: redirect to repo
+      let redirect = this.repo.getRouterPath();
+      if (this.repo.config['contentRoot'].length > 0) {
+        redirect += `/${this.repo.config['contentRoot']}`;
+      }
+      this.router.navigateByUrl(redirect);
       this.item = null;
       return;
     }
@@ -262,7 +284,20 @@ export class GitHubAccessComponent implements OnInit {
       repo.defaultBranch = response['defaultBranchRef']['name'];
       repo.isPrivate = response['isPrivate'];
       repo.description = response['description'];
-      return true;
+
+      // check for remote configuration
+      const item = new GitHubItem();
+      item.repo = repo;
+      item.branch = repo.defaultBranch;
+      item.dirPath = '.drax';
+      item.fileName = 'config.json';
+      return this.getFileContents(item).then(fileResponse => {
+        if (fileResponse !== null) {
+          const remoteConfig = JSON.parse(fileResponse.contents);
+          repo.config = Object.assign(repo.config, remoteConfig);
+        }
+        return true;
+      });
     });
   }
 
@@ -293,7 +328,7 @@ export class GitHubAccessComponent implements OnInit {
     if (cursor !== null) {
       index = this.currentNavList.length;
     }
-    return this.graphQlQuery(Queries.getRepoInfo(cursor)).toPromise().then(response => {
+    return this.graphQlQuery(Queries.getRepoInfo(cursor), 'repoList').toPromise().then(response => {
       const repList = response['data']['viewer']['repositories'];
       let continuation: string = null;
       if (repList['pageInfo']['hasNextPage']) {
@@ -328,21 +363,29 @@ export class GitHubAccessComponent implements OnInit {
 
     // TODO: UGH this is convoluted spaghetti
     if (item.dirPath !== null) {
-      const pathSegs = item.dirPath.split('/');
-      this.upwardsLinkLabel = pathSegs.pop();
-      if (this.upwardsLinkLabel.length === 0) {
-        if (item.fileName.length === 0) {
-          this.upwardsLinkLabel = 'Repository List';
-        }
-        else {
-          this.upwardsLinkLabel = `${item.repo.owner}/${item.repo.name}:${item.branch}`;
-        }
-      }
-      if (this.upwardsLinkLabel === 'Repository List') {
+      if (item.fullPath() === item.repo.config['contentRoot']) {
         this.upwardsLink = '/';
+        this.upwardsLinkLabel = 'Repository List';
       }
       else {
-        this.upwardsLink = item.getRouterPath(true);
+        console.log(item.fullPath());
+        console.log(item.repo.config['contentRoot']);
+        const pathSegs = item.dirPath.split('/');
+        this.upwardsLinkLabel = pathSegs.pop();
+        if (this.upwardsLinkLabel.length === 0) {
+          if (item.fileName.length === 0) {
+            this.upwardsLinkLabel = 'Repository List';
+          }
+          else {
+            this.upwardsLinkLabel = `${item.repo.owner}/${item.repo.name}:${item.branch}`;
+          }
+        }
+        if (this.upwardsLinkLabel === 'Repository List') {
+          this.upwardsLink = '/';
+        }
+        else {
+          this.upwardsLink = item.getRouterPath(true);
+        }
       }
     }
     else {
@@ -350,7 +393,7 @@ export class GitHubAccessComponent implements OnInit {
       this.upwardsLinkLabel = 'Repository List';
     }
 
-    this.graphQlQuery(Queries.getFileList(item)).toPromise().then(response => {
+    this.graphQlQuery(Queries.getFileList(item), 'fileList').toPromise().then(response => {
       let index = 0;
       for (const entry of response['data']['repository']['object']['entries']) {
         const ghItem = new GitHubItem();
@@ -366,7 +409,9 @@ export class GitHubAccessComponent implements OnInit {
         }
         ghItem.dirPath = item.fullPath();
 
-        this.currentNavList[index++] = ghItem;
+        if (!item.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
+          this.currentNavList[index++] = ghItem;
+        }
       }
       this.currentNavList.length = index;
     });
@@ -374,7 +419,9 @@ export class GitHubAccessComponent implements OnInit {
 
   /******** Remote Data Access *******/
 
-  private graphQlQuery(query: object): Observable<object> {
+  private graphQlQuery(query: object, queryLog: string): Observable<object> {
+    console.log(`Query: ${queryLog}`);
+    // console.log(query);
     if (this.bearerToken === null) {
       console.error('No bearer token.');
       return null;
@@ -389,26 +436,30 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   getUserData(): Promise<object> {
-    return this.graphQlQuery(Queries.getUserInfo()).toPromise().then(response => {
+    return this.graphQlQuery(Queries.getUserInfo(), 'userData').toPromise().then(response => {
       return response['data']['viewer'];
     });
   }
 
   getSingleRepo(repo: GitHubRepo): Promise<object> {
-    return this.graphQlQuery(Queries.getSingleRepoInfo(repo)).toPromise().then(response => {
+    return this.graphQlQuery(Queries.getSingleRepoInfo(repo), 'singleRepo').toPromise().then(response => {
       return response['data']['repository'];
     });
   }
 
   getPathInfo(item: GitHubItem): Promise<object> {
-    return this.graphQlQuery(Queries.getPathInfo(item)).toPromise().then(response => {
+    return this.graphQlQuery(Queries.getPathInfo(item), 'pathInfo').toPromise().then(response => {
       return response['data']['repository'];
     });
   }
 
   getFileContents(item: GitHubItem): Promise<GitHubFile> {
-    return this.graphQlQuery(Queries.getFileContents(item)).toPromise().then(response => {
+    const q = Queries.getFileContents(item);
+    return this.graphQlQuery(Queries.getFileContents(item), 'fileContents').toPromise().then(response => {
       const obj = response['data']['repository']['object'];
+      if (obj === null) {
+        return null;
+      }
       const file = new GitHubFile(obj['text']);
       file.item = this.item;
       file.item.lastGet = obj['oid'];
