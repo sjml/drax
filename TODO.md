@@ -3,7 +3,6 @@
 ## UI
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
-* icon for repos (and chevron at right)
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
@@ -18,7 +17,6 @@
 ## Polish
 * update to use proper GraphQL variables instead of replacing
 * surface an error if authorization status is not 'OK'
-* make auth URL a configurable parameter (4201)
 * give back nothing from graphql query if we're not logged in
 * use getenv('variable_name') as option when constructing secrets in PHP
 
@@ -28,7 +26,6 @@
 * need to store repository info too... 😬
 
 ## Configuration
-* hide dotfiles
 * only show markdown files?
   * `.markdown`
   * `.mdown`
@@ -43,16 +40,14 @@
   * `.Rmd`
 
 ## Features
-1. Release script for putting on public host.
-    - check when dir is a few levels deep :-/
-2. UI revamp + expanded editing toolbar
+1. UI revamp + expanded editing toolbar
     - lists (unordered and numbered)
         - if nesting, alternate bullet items (*-+)
     - blockquotes
     - horizontal rules
     - links
     - images? 
-3. Annotation system
+2. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -61,7 +56,7 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-4. Image uploading
-5. Merge changes if we're out of sync with the server
-6. Frontmatter parsing into options? 
-7. Offline mode
+3. Image uploading
+4. Merge changes if we're out of sync with the server
+5. Frontmatter parsing into options? 
+6. Offline mode

@@ -7,7 +7,8 @@
     "dev": "./php_wrap.sh",
     "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
     "build": "ng build --prod",
-    "postbuild": "./php_dist.sh",
+    "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
+    "deploy": "node deploy",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -47,6 +48,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.1.2",
+    "ssh2": "^0.5.5",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
     "typescript": "~2.4.2"

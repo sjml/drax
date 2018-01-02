@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
+import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
 
 class GitHubUser {
@@ -102,6 +103,7 @@ export class GitHubAccessComponent implements OnInit {
   private repositoryListCursor: string = null;
 
   constructor(
+    private config: ConfigService,
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
@@ -113,7 +115,6 @@ export class GitHubAccessComponent implements OnInit {
     if (this.bearerToken !== null) {
       this.loggedIn();
     }
-
   }
 
   loggedIn() {
@@ -155,7 +156,7 @@ export class GitHubAccessComponent implements OnInit {
     }, false);
 
     const popupRef = window.open(
-      'http://localhost:4201/auth/',
+      this.config.getConfig('authUrl'),
       'GitHub Authorization',
       'scrollbars=yes,width=' + popUpWidth + ',height=' + popUpHeight + ',top=' + top + ',left=' + left
     );
