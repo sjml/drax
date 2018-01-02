@@ -202,7 +202,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.type === null || startTok.type.indexOf('header') < 0) {
+      if (startTok.type === null || startTok.type.split(' ').indexOf('header') < 0) {
         // not a header; make it one
         doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0));
       }
@@ -300,7 +300,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     let turningOn = true;
     if (tokens.length === 1) {
-      if (tokens[0][1].type === symbolType) {
+      if (tokens[0][1].type.split(' ').indexOf(symbolType) >= 0) {
         turningOn = false;
       }
     }
@@ -312,7 +312,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       let isFormatted = false;
       let hasPlain = false;
       for (const tok of tokens) {
-        if (tok[1].type === symbolType) {
+        if (tok[1].type.split(' ').indexOf(symbolType) >= 0) {
           if (!isFormatted) {
             formattedStretchesCount += 1;
           }
@@ -325,7 +325,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
       if (formattedStretchesCount === 1) {
         if (hasPlain) {
-          turningOn = tokens[tokens.length - 1][1].type === symbolType;
+          turningOn = tokens[tokens.length - 1][1].type.split(' ').indexOf(symbolType) >= 0;
         }
         else {
           turningOn = false;

@@ -27,7 +27,8 @@ export class GitHubRepo extends GitHubNavNode {
   public defaultBranch: string;
   public config: object = {
     ignoreHiddenFiles: true,
-    contentRoot: ''
+    contentRoot: '',
+    showOnlyMarkdown: false
   };
 
   public getRouterPath() {

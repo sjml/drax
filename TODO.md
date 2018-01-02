@@ -12,13 +12,13 @@
 ## Bugs
 * set up a lock so onScroll response can't get double-called
 * wrapped formatting across multiple paragraphs breaks
-* patch codemirror's markdown processing so italics and bold don't carry across list items
 
 ## Polish
 * update to use proper GraphQL variables instead of replacing
 * surface an error if authorization status is not 'OK'
 * give back nothing from graphql query if we're not logged in
 * use getenv('variable_name') as option when constructing secrets in PHP
+* add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
