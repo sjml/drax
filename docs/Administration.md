@@ -4,6 +4,7 @@ Note: this document is for systems administrators who want to run their own vers
 
 If you just want to edit and annotate documents, this doesn't apply to you. Just go to the [Drax home page](https://drax.io) and get started. 
 
+
 ## Repository Configuration
 As the owner of a repository, you can add some configuration options for Drax that will affect how it interacts with your specific repository. At the root level, create a folder called `.drax` and put a file called `config.json` there. (Obviously make sure to commit and push this to GitHub so Drax can see it.) 
 
@@ -11,8 +12,9 @@ The following values are supported:
 * `ignoreHiddenFiles`: Any file that starts with a `.` won't be displayed in the Drax file explorer. If a user tries to navigate to one directly from the URL, they'll be redirected to the repository root. Default value: `true`
 * `contentRoot`: If you only want to limit the editable area of the repository, you can set a root directory that user's won't be able to explore or edit above. If you're working with [Hugo](https://gohugo.io/), for example, this might be `content`. Default value: empty string (entire repository is available)
 
+
 ## Installation
-Drax is designed to be easily deployable. The frontend is an [Angular](https://angular.io) application, and the only thing it needs a server for is user authentication with GitHub. This means it won't work on a purely static hosting system like [surge.sh](http://surge.sh), since there's no way of doing the backend check. 
+Drax is designed to be easily deployable. The frontend is an [Angular](https://angular.io) application, and the only thing it needs a server for is user authentication with GitHub. This means it won't work on a purely static hosting system like [Surge](http://surge.sh), since there's no way of doing the backend check. 
 
 Out of the box this check uses PHP. I know, I know. Ew, right? I dislike PHP as much as [the next programmer](https://eev.ee/blog/2012/04/09/php-a-fractal-of-bad-design/), but it's still the most easily deployable server-side programming language we've got. Practically every budget web host in the world supports PHP, and getting it working is as simple as throwing the files into the webroot. Nothing else comes close. 
 
@@ -24,6 +26,7 @@ So, to install, it's just two steps.
 
 Of course, it won't be usable at all in this state. **You have to configure it first.** That's a little more complicated.
 
+
 ### Authentication Configuration
 You need a GitHub account, which you probably already have if you're reading this. [Create a new OAuth application](https://github.com/settings/applications/new); you need to have your own dedicated app in GitHub's system. Call it whatever you want, and use whatever icons make sense for you, but take care with the callback URL at the bottom of the creation screen. That needs to be `/auth` relative to the Drax's hosted directory on your site. So if you were serving you installation from `http://drax.example.com`, this URL would need to be `http://drax.example.com/auth`. If you serve it from `https://example.com/drax/`, then the callback needs to be `https://example.com/drax/auth`. 
 
@@ -32,6 +35,7 @@ Once you've created your application, you'll be given two random strings that yo
 (Remember that you will have to repeat this step if you update your installation of Drax and don't keep the secrets file.)
 
 Your secrets file should ***never*** be put into source control. The distribution has a `.gitignore` file that should keep you from doing it accidentally, but be careful. 
+
 
 ### Site Configuration
 At this point, your installation of Drax should be working in the default mode, more or less what you see at the [Drax home page](https://drax.io). This works pretty well, but if you just wanted the default mode, you probably wouldn't be installing this yourself. 

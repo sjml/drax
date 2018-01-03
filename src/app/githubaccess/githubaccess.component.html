@@ -1,4 +1,8 @@
-<div class="sidebar" (scroll)="onScroll($event)">
+<a href="#sidebar" id="sidebarLink" class="sidebar-link">
+    <span class="icon-hamburger"></span>
+</a>
+
+<div id="sidebar" (scroll)="onScroll($event)">
   <div class="gitHubWidget">
     <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
       <div class="icon-github"></div>
@@ -10,35 +14,37 @@
     </div>
   </div>
 
-  <div *ngIf="upwardsLink" class="upwardsLink">
-    <a routerLink="{{upwardsLink}}">
-    <div><span class="icon-left-big icon"></span>{{upwardsLinkLabel}}</div>
-    </a>
-  </div>
-  <ul class="gitHubNavList">
-    <li *ngFor="let node of currentNavList"
-      class="gitHubNode"
-      >
-      <span *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></span>
-      <span *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></span>
-      <span *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></span>
-      <span class="nodeName">
-        <a routerLink="{{ node.getRouterPath() }}">
-          <div *ngIf="node.nodeType === 'REPO'">
-            <span *ngIf="node.owner !== this.user.login" class="prefixName" >
-              {{node.owner}}/</span>{{ node.name }}
-          </div>
-          <div *ngIf="node.nodeType === 'ITEM'">
-            {{ node.fileName }}
-          </div>
+  <div class="pure-menu">
+    <div *ngIf="upwardsLink" class="upwardsLink">
+      <a routerLink="{{upwardsLink}}">
+      <div><span class="icon-left-big icon"></span>{{upwardsLinkLabel}}</div>
+      </a>
+    </div>
+    <ul class="gitHubNavList pure-menu-list">
+      <li *ngFor="let node of currentNavList"
+        class="gitHubNode pure-menu-item"
+        >
+        <a routerLink="{{ node.getRouterPath() }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
+        <span *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></span>
+        <span *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></span>
+        <span *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></span>
+        <span class="nodeName">
+            <div *ngIf="node.nodeType === 'REPO'">
+              <span *ngIf="node.owner !== this.user.login" class="prefixName" >
+                {{node.owner}}/</span>{{ node.name }}
+            </div>
+            <div *ngIf="node.nodeType === 'ITEM'">
+              {{ node.fileName }}
+            </div>
+          </span>
+          <span *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></span>
         </a>
-      </span>
-      <span *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></span>
-    </li>
-  </ul>
+      </li>
+    </ul>
+  </div>
 </div>
 
-<div class="main">
+<div id="main">
   <div *ngIf="workingFile">
     <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
   </div>

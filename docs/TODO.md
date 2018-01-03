@@ -12,8 +12,10 @@
 ## Bugs
 * set up a lock so onScroll response can't get double-called
 * wrapped formatting across multiple paragraphs breaks
+* changing the contents of the one doc shows up in the undo history
 
 ## Polish
+* store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
 * surface an error if authorization status is not 'OK'
 * give back nothing from graphql query if we're not logged in

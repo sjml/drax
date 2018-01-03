@@ -10,7 +10,7 @@ It doesn't do access control or user accounts; GitHub handles all of that.
 
 
 ## Admin
-Drax was designed to be easy and cheap to deploy. Its [releases](https://github.com/sjml/drax/releases) are simple directories that can be thrown on a shared webhost and work with some simple configuration. Check out the [installation docs](./docs/Administration.md#installation) for how to customize a version of Drax for your own usage. 
+Drax was designed to be easy and cheap to deploy. (It even goes so far as to use the oh-so-unfashionable hash routing to enable this simplicity.) Its [releases](https://github.com/sjml/drax/releases) are boring old directories that can just be thrown on a shared webhost and work with some simple configuration. Check out the [installation docs](./docs/Administration.md#installation) for how to customize a version of Drax for your own usage. 
 
 Repository owners can also do some [configuration](./docs/Administration.md#repository-configuration) to change how any Drax editor will treat the repo. 
 
