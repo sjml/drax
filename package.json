@@ -8,6 +8,7 @@
     "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
     "build": "ng build --prod",
     "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
+    "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "node deploy",
     "test": "ng test",
     "lint": "ng lint",

@@ -11,11 +11,7 @@ As with most Node-based projects, things are run through the `npm` command.
 ## Developing
 Much like when [administering a Drax site](./Administration.md), you'll need to make your own GitHub OAuth application and put the keys into `php/auth/secrets.php`. 
 
-From the root directory of Drax, you need to do two things to get started. 
-* Run `npm install` to get all the dependencies and little goodies.
-* Navigate to the `php` directory and run the following commands to get the PHP dependencies:
-    * `php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"`
-    * `php composer.phar install`
+From the root directory of Drax, you just need to run `npm install` to get all the dependencies and little goodies. It will also try and install then necessary PHP stuff, so be on the lookout for errors unrelated to Node. 
 
 After that, running `npm run dev` will do two things: 
 * Start the Angular dev server listening on `localhost:4200`
