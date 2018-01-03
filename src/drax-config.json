@@ -1,3 +1,4 @@
 {
-  "authUrl": "./auth/"
+  "authUrl": "./auth/",
+  "singleRepo": null
 }

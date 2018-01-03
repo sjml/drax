@@ -18,7 +18,10 @@
 * surface an error if authorization status is not 'OK'
 * give back nothing from graphql query if we're not logged in
 * use getenv('variable_name') as option when constructing secrets in PHP
+    - conditional include of secrets file, pull from env if not there, show error
 * add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
+* add indicator for when repo has remote configuration ("Drax-enabled!")
+* logo
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
@@ -47,7 +50,10 @@
     - horizontal rules
     - links
     - images? 
-2. Annotation system
+2. New document creation system (templates?)
+    - new directories? New repositories? 
+3. History/restore? 
+4. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -56,7 +62,10 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-3. Image uploading
-4. Merge changes if we're out of sync with the server
-5. Frontmatter parsing into options? 
-6. Offline mode
+5. Image uploading
+6. HTML preview + side-by-side
+7. About pages / tutorial?
+8. Single repo mode
+9. Merge changes if we're out of sync with the server
+10. Frontmatter parsing into options? 
+11. Offline mode

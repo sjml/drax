@@ -1,5 +1,5 @@
 # Drax
-Drax is a web-hosted text editor designed for use with GitHub repos and Markdown. It is named for a Bond villain, not the destroyer. It was first conceived to work with [Hugo](http://gohugo.io/). 
+Drax is a web-hosted text editor designed for use with GitHub repos and Markdown. It is named for a Bond villain, not the destroyer.
 
 Unlike other online collaboration tools, it only does GitHub, and it only does Markdown. This lets it be more lightweight and streamlined. 
 
