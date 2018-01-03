@@ -1,6 +1,7 @@
 @import './assets/fontello/css/fontello.css';
 
 $sidebarWidth: 250px;
+$autoHideWidth: 48em;
 
 body {
   color: #777;
@@ -185,10 +186,9 @@ small screens.
 /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
 /*
-Hides the menu at `48em`, but modify this based on your app's needs.
+Hides the hamburger above $autoHideWidth
 */
-@media (min-width: 48em) {
-
+@media (min-width: $autoHideWidth) {
   .header,
   .content {
       padding-left: 2em;
@@ -196,7 +196,7 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   }
 
   #layout {
-      padding-left: $sidebarWidth; /* left col width "#sidebar" */
+      padding-left: $sidebarWidth;
       left: 0;
   }
   #sidebar {
@@ -214,7 +214,7 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   }
 }
 
-@media (max-width: 48em) {
+@media (max-width: $autoHideWidth) {
   /* Only apply this when the window is small. Otherwise, the following
   case results in extra padding on the left:
       * Make the window small.
