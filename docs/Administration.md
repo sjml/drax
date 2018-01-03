@@ -38,5 +38,5 @@ At this point, your installation of Drax should be working in the default mode, 
 
 You can edit the `drax-config.json` file in the root of the distribution to change the site's behavior. The following values are supported: 
 * `authUrl`: If you need to run the authorization server somewhere else (another domain or another port, for example), you can put the URL for it here and Drax will try to run the GitHub login through there. Default: `./auth`
-* `singleRepo`: If you want your site to only allow viewing and editing of a particular repository, put it's abbreviated form here. So if you only wanted to allow editing of the [Drax repository](https://github.com/sjml/drax), you would put `sjml/drax`. 
+* `singleRepo`: If you want your site to only allow viewing and editing of a particular repository, put it's abbreviated form here. So if you only wanted to allow editing of the [Drax repository](https://github.com/sjml/drax), you would put `sjml/drax`. Default is null, which allows editing of any repository which the logged-in user can acess. 
 
