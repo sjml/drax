@@ -1,0 +1,129 @@
+@import '~sass/variables';
+@import '~sass/mixins';
+
+.sidebar-link {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  background: #000;
+  background: rgba(0,0,0,0.7);
+  font-size: 25px;
+  z-index: 10;
+  height: auto;
+  padding: 10px;
+  color: #fff;
+}
+
+#sidebar, .sidebar-link {
+  @include transition($sidebarTransition);
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+    background: #000;
+}
+
+#layout.active #sidebar {
+  left: $sidebarWidth;
+  width: $sidebarWidth;
+}
+
+#layout.active .sidebar-link {
+  left: $sidebarWidth;
+}
+
+#sidebar {
+  width: $sidebarWidth;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: #191818;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#layout:not(.active) #sidebar {
+  margin-left: -$sidebarWidth;
+}
+
+#sidebar a {
+    color: #999;
+    border: none;
+    padding: 0.6em 0 0.6em 0.6em;
+}
+
+#sidebar .pure-menu,
+#sidebar .pure-menu ul {
+  border: none;
+  background: transparent;
+}
+
+  /*
+  Add that light border to separate items into groups.
+  */
+  #sidebar .pure-menu ul,
+  #sidebar .pure-menu .menu-item-divided {
+      border-top: 1px solid #333;
+  }
+      /*
+      Change color of the anchor links on hover/focus.
+      */
+      #sidebar .pure-menu li a:hover,
+      #sidebar .pure-menu li a:focus {
+          background: #333;
+      }
+
+  /*
+  This styles the selected menu item `<li>`.
+  */
+  #sidebar .pure-menu-selected,
+  #sidebar .pure-menu-heading {
+      background: #1f8dd6;
+  }
+      /*
+      This styles a link within a selected menu item `<li>`.
+      */
+      #sidebar .pure-menu-selected {
+          color: #fff;
+      }
+
+  /*
+  This styles the menu heading.
+  */
+  #sidebar .pure-menu-heading {
+      font-size: 110%;
+      color: #fff;
+      margin: 0;
+  }
+
+  @media (max-width: $sidebarWidthThreshold) {
+    /* Only apply this when the window is small. Otherwise, the following
+    case results in extra padding on the left:
+        * Make the window small.
+        * Tap the menu to trigger the active state.
+        * Make the window large again.
+    */
+    #layout.active {
+        position: relative;
+        left: $sidebarWidth;
+    }
+    #sidebar {
+        left: -$sidebarWidth;
+    }
+  }
+
+  @media (min-width: $sidebarWidthThreshold) {
+
+    .sidebar-link {
+        position: fixed;
+        left: $sidebarWidth;
+        display: none;
+    }
+
+    #layout.active .sidebar-link {
+        left: $sidebarWidth;
+    }
+  }

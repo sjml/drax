@@ -1,0 +1,13 @@
+@import '~sass/variables';
+@import '~sass/mixins';
+
+#layout {
+  @include transition($sidebarTransition);
+}
+
+@media (min-width: $sidebarWidthThreshold) {
+  #layout {
+      padding-left: $sidebarWidth;
+      left: 0;
+  }
+}

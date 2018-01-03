@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
+import { environment } from '../../environments/environment';
 import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
 
@@ -422,8 +423,10 @@ export class GitHubAccessComponent implements OnInit {
   /******** Remote Data Access *******/
 
   private graphQlQuery(query: object, queryLog: string): Observable<object> {
-    console.log(`Query: ${queryLog}`);
-    // console.log(query);
+    if (!environment.production) {
+      console.log(`Query: ${queryLog}`);
+      // console.log(query);
+    }
     if (this.bearerToken === null) {
       console.error('No bearer token.');
       return null;
