@@ -37,6 +37,7 @@ There's a deployment script that uses [Shipit](https://github.com/shipitjs/shipi
 * `user`: username on your deployment server
 * `server`: address of your deployment server
 * `deployDir`: directory on server where the application will be served, relative to your `~` home path
-* `clientID` and `clientSecret`: your GitHub app credentials
+
+In the server's deployment directory you'll need a config directory that contains your `secrets.php` and `drax-config.json` file for this installation.
 
 From the root directory run `npm run deploy`. Note that you'll have to set your remote host to serve from the "current" directory if you do this. (If this is confusing, read up on how [shipit-deploy](https://github.com/shipitjs/shipit-deploy) works.)

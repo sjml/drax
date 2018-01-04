@@ -40,22 +40,29 @@ module.exports = function(shipit) {
 
   shipit.blTask('prep', function () {
     shipit.log(chalk.green('Prepping distribution'));
-    const baseFile = `${shipit.config.workspace}/dist/auth/secrets.php.base`;
-    const confFile = `${shipit.config.workspace}/dist/auth/secrets.php`;
-    let template = fs.readFileSync(baseFile, 'utf8');
-    template = template
-                .replace('YOUR_CLIENT_ID_HERE', keys.clientID)
-                .replace('YOUR_CLIENT_SECRET_HERE', keys.clientSecret)
-              ;
-    fs.writeFileSync(confFile, template);
-    return shipit.local(`rm ${baseFile}`);
+    const confFile = `${shipit.releasePath}/auth/secrets.php`;
+    const commands = [
+      'cp ../../config/secrets.php ./auth/',
+      'cp ../../config/drax-config.json ./'
+    ];
+    return shipit.remote(
+            commands.join('; '),
+            {cwd: `${shipit.releasePath}`}
+          )
+          .then(function () {
+            shipit.emit('prepped');
+          });
+  });
+
+  shipit.task('pwd', function () {
+    return shipit.remote('pwd');
   });
 
   shipit.on('fetched', function () {
     return shipit.start('build');
   });
 
-  shipit.on('built', function () {
+  shipit.on('updated', function () {
     return shipit.start('prep');
   });
 };

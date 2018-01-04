@@ -54,6 +54,7 @@
     - blockquotes
     - horizontal rules
     - links
+    - scroll to top when changing files
 2. New document creation system (templates?)
     - new directories? New repositories? 
 3. History/restore? 
