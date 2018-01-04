@@ -380,8 +380,6 @@ export class GitHubAccessComponent implements OnInit {
         this.upwardsLinkLabel = 'Repository List';
       }
       else {
-        console.log(item.fullPath());
-        console.log(item.repo.config['contentRoot']);
         const pathSegs = item.dirPath.split('/');
         this.upwardsLinkLabel = pathSegs.pop();
         if (this.upwardsLinkLabel.length === 0) {

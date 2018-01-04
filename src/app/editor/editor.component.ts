@@ -46,7 +46,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       this._file = v;
       if (this._file !== null && this.instance !== null) {
-        this.instance.setValue(this._file.contents);
+        const newDoc = CodeMirror.Doc(this._file.contents, 'markdown');
+        this.instance.swapDoc(newDoc);
+        this.instance.refresh();
+        // TODO: figure out if we can be more precise and do this
+        //       to just a single element instead of the whole window
+        window.scrollTo(0, 0);
       }
 
       if (this._file !== null) {
@@ -78,14 +83,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         Enter: 'newlineAndIndentContinueMarkdownList'
       }
     };
-    this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
 
     if (this._file !== null) {
-      this.instance.setValue(this._file.contents);
+      this.host.nativeElement.value = this._file.contents;
     }
-    else {
-      this.instance.setValue(this.host.nativeElement.innerText);
-    }
+
+    this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.changeGeneration = this.instance.getDoc().changeGeneration();
 
     this.instance.on('change', () => {
