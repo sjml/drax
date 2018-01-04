@@ -9,7 +9,7 @@
     "build": "ng build --prod",
     "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json; rm -rf dist/assets/fontello",
     "postinstall": "cd php/auth; ./install.sh;",
-    "deploy": "node deploy",
+    "deploy": "npx shipit default deploy",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

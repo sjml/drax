@@ -32,4 +32,11 @@ Values in `drax-config.dev.json` will override those in `drax-config.json` while
 Run `npm run build` to get compiled, minified, deployable app in the `dist` directory. 
 
 ## Deploying
-The included deploy script, accessed via `npm run deploy`, is made for drax.io and not super configurable, but is at least straightforward and can be easily changed for your needs. Some day this will be part of a proper task runner. Maybe. 
+There's a deployment script that uses [Shipit](https://github.com/shipitjs/shipit), looking for configuration settings in a `deploy-keys.json` file. In that file, you need: 
+* `repo`: path to the remote git repository
+* `user`: username on your deployment server
+* `server`: address of your deployment server
+* `deployDir`: directory on server where the application will be served, relative to your `~` home path
+* `clientID` and `clientSecret`: your GitHub app credentials
+
+From the root directory run `npm run deploy`. Note that you'll have to set your remote host to serve from the "current" directory if you do this. (If this is confusing, read up on how [shipit-deploy](https://github.com/shipitjs/shipit-deploy) works.)
