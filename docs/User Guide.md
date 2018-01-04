@@ -29,4 +29,4 @@ In Markdown you don't have control over things like font size or color; those ar
 
 
 ## Advanced Usage
-If you're interested in administering a repository for use with Drax, or instally your own version of it, please see the [administration documentation](./Administration.md). If you want to modify Drax or fix a bug that you found, see [development documentation](./Developing.md). 
+If you're interested in administering a repository for use with Drax, or installing your own version of it, please see the [administration documentation](./Administration.md). If you want to modify Drax or fix a bug that you found, see [development documentation](./Developing.md). 
