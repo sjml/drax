@@ -9,8 +9,6 @@
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
-* use actual button styling/logic instead of reproducing it?
-    * enable/disable
 
 ## Bugs
 * set up a lock so onScroll response can't get double-called
