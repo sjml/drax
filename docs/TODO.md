@@ -17,6 +17,7 @@
 * wrapped formatting across multiple paragraphs breaks
 * changing the contents of the one doc shows up in the undo history
 * some strangeness around formatting toggles at word border
+* chevrons can get out of alignment on long names (isbw-python-widget is example)
 
 ## Polish
 * store docs so undo history is preserved across navigation
@@ -49,13 +50,12 @@
   * `.Rmd`
 
 ## Features
-1. UI revamp + expanded editing toolbar
+1. expanded editing toolbar
     - lists (unordered and numbered)
         - if nesting, alternate bullet items (*-+)
     - blockquotes
     - horizontal rules
     - links
-    - images? 
 2. New document creation system (templates?)
     - new directories? New repositories? 
 3. History/restore? 
