@@ -1,6 +1,9 @@
 # TODO
 
 ## UI
+* tooltips for toolbar buttons and logout
+* make toolbar sticky
+* be able to sweep sidebar away when working
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
 * fix layout of long directory names (consider tooltip for long names in general?)
@@ -13,6 +16,7 @@
 * set up a lock so onScroll response can't get double-called
 * wrapped formatting across multiple paragraphs breaks
 * changing the contents of the one doc shows up in the undo history
+* some strangeness around formatting toggles at word border
 
 ## Polish
 * store docs so undo history is preserved across navigation

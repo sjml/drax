@@ -1,0 +1,65 @@
+@import '~sass/variables';
+
+$baseButtonColor: rgb(232, 244, 255);
+$panelColor: rgb(211, 211, 211);
+
+.toolbar {
+  display: flex;
+  border-bottom: #999 solid 1px;
+  padding: 10px;
+}
+
+.tbSep {
+  margin: 5px;
+}
+
+.pure-button .icon {
+  font-size: 25px;
+}
+
+.pure-button {
+  padding: 7px;
+}
+
+.memoPanel {
+  width: 400px;
+  background-color: rgb(250, 250, 250);
+  padding-right: 5px;
+  padding-bottom: 5px;
+
+  textarea {
+    resize: none;
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 95%;
+  }
+
+  .buttonBar {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .panelButton {
+    font-size: 22px;
+  }
+
+  .panelButton:not(.disabled) {
+    cursor: pointer;
+  }
+
+  .panelButton.icon-cancel {
+    color: darkred;
+  }
+  .panelButton.icon-cancel:hover {
+    color: rgb(100, 1, 1);
+  }
+  .panelButton.icon-ok {
+    color: darkgreen;
+  }
+  .panelButton.icon-ok:not(.disabled):hover {
+    color: rgb(0, 58, 0);
+  }
+  .panelButton.icon-ok.disabled {
+    color: #d3e9d3;
+  }
+}

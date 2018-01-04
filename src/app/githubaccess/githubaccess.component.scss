@@ -24,6 +24,40 @@
     background: #000;
 }
 
+.gitHubWidget {
+  background-color: aliceblue;
+  font-size: 20px;
+  padding: 10px;
+
+  .icon {
+    font-size: 48px;
+  }
+}
+
+.gitHubWidget > div {
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+  }
+
+  .username {
+    flex-grow: 1;
+  }
+
+  .icon-logout:hover {
+    cursor: pointer;
+  }
+}
+
+.gitHubConnectPrompt:hover {
+  cursor: pointer;
+}
+
 #layout.active #sidebar {
   left: $sidebarWidth;
   width: $sidebarWidth;
@@ -41,7 +75,8 @@
   bottom: 0;
   z-index: 1000;
   background: #191818;
-  overflow-y: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -50,9 +85,9 @@
 }
 
 #sidebar a {
-    color: #999;
-    border: none;
-    padding: 0.6em 0 0.6em 0.6em;
+  color: #999;
+  border: none;
+  padding: 0.6em 0 0.6em 0.6em;
 }
 
 #sidebar .pure-menu,
@@ -61,43 +96,48 @@
   background: transparent;
 }
 
-  /*
-  Add that light border to separate items into groups.
-  */
-  #sidebar .pure-menu ul,
-  #sidebar .pure-menu .menu-item-divided {
-      border-top: 1px solid #333;
-  }
-      /*
-      Change color of the anchor links on hover/focus.
-      */
-      #sidebar .pure-menu li a:hover,
-      #sidebar .pure-menu li a:focus {
-          background: #333;
-      }
+#sidebar .pure-menu li {
+  border-top: 1px solid #333;
+}
 
-  /*
-  This styles the selected menu item `<li>`.
-  */
-  #sidebar .pure-menu-selected,
-  #sidebar .pure-menu-heading {
-      background: #1f8dd6;
-  }
-      /*
-      This styles a link within a selected menu item `<li>`.
-      */
-      #sidebar .pure-menu-selected {
-          color: #fff;
-      }
+#sidebar .pure-menu li a:hover,
+#sidebar .pure-menu li a:focus {
+  background: #333;
+}
 
-  /*
-  This styles the menu heading.
-  */
-  #sidebar .pure-menu-heading {
-      font-size: 110%;
-      color: #fff;
-      margin: 0;
+
+#sidebar .pure-menu-selected {
+    background: #1f8dd6;
+    color: #fff;
+}
+
+#sidebar .pure-menu li.upwardsLink a {
+  display: flex;
+  background-color: #333;
+  color: #fff;
+  border-bottom: 2px solid #555;
+}
+
+#sidebar .pure-menu li.upwardsLink:hover a {
+  background-color: #1f8dd6;
+}
+
+.gitHubNode a {
+  display: flex;
+
+  .prefixName {
+    color: rgb(95, 95, 95);
   }
+
+  .icon {
+    margin-right: 5px;
+  }
+
+  .nodeName {
+    flex-grow: 1;
+  }
+}
+
 
   @media (max-width: $sidebarWidthThreshold) {
     /* Only apply this when the window is small. Otherwise, the following

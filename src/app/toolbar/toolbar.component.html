@@ -2,7 +2,8 @@
   <div *ngFor="let item of items">
     <button
       *ngIf="item.itemType === 'BUTTON'"
-      class="tbButton {{ item.state }}"
+      class="pure-button"
+      [class.pure-button-disabled]="editor.mode !== 'edit' || item.state === 'disabled'"
       (click)="handleClick(item)"
       >
         <span class="icon {{ item.icon }}"></span>

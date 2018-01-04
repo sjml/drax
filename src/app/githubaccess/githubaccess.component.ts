@@ -126,6 +126,15 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
+  logout() {
+    localStorage.removeItem('gitHubBearerToken');
+    this.user = null;
+    this.workingFile = null;
+    this.repo = null;
+    this.currentNavList = [];
+    this.router.navigateByUrl('/');
+  }
+
   attemptAuthorization() {
     const popUpWidth  = 400;
     const popUpHeight = 500;

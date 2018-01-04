@@ -1,0 +1,78 @@
+@import '~sass/variables';
+
+.fileInfo {
+  text-align: center;
+  color: rgb(66, 66, 66);
+
+  .repoInfo {
+    color: rgb(117, 117, 117);
+  }
+}
+
+.drax-editor {
+  max-width: 850px;
+  margin: auto;
+}
+
+// Actual code styling below here
+::ng-deep {
+  .cm-s-drax.CodeMirror {
+    height: auto;
+    padding: 10px;
+
+    background: #fcfcfc;
+    color: $textColor;
+    line-height:1.5;
+    margin-top: 10px;
+
+    font-family: $propFont;
+  }
+
+  .locked .cm-s-drax.CodeMirror {
+    background-color: rgb(235, 235, 235);
+  }
+
+  .cm-s-drax{
+    .cm-comment {
+      font-family: $monoFont;
+    }
+
+    div.CodeMirror-selected { background: lightblue; }
+
+    .CodeMirror-gutters {
+      background: #eef8ff; border-right: 1px solid #aaa;
+    }
+    .CodeMirror-guttermarker { color: #ffee80; }
+    .CodeMirror-guttermarker-subtle { color: #d0d0d0; }
+    .CodeMirror-linenumber { color: #8a8a8a; }
+
+    .CodeMirror-cursor { border-left: 1px solid $textColor; }
+
+    .cm-link { color: #1e4cb1; }
+    .cm-url { color: #7e8ca0; }
+
+    .cm-header {
+      line-height: 120%;
+    }
+
+    .cm-header-1 {
+      font-size: 225%;
+    }
+
+    .cm-header-2 {
+      font-size: 200%;
+    }
+
+    .cm-header-3 {
+      font-size: 150%;
+    }
+
+    .cm-header-4 {
+      font-size: 125%;
+    }
+
+    .CodeMirror-line .cm-quote {
+      color: lighten($textColor, 35%);
+    }
+  }
+}

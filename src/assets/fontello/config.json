@@ -179,6 +179,18 @@
       "css": "hamburger",
       "code": 61641,
       "src": "fontawesome"
+    },
+    {
+      "uid": "3a00327e61b997b58518bd43ed83c3df",
+      "css": "login",
+      "code": 59408,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "0d20938846444af8deb1920dc85a29fb",
+      "css": "logout",
+      "code": 59409,
+      "src": "fontawesome"
     }
   ]
 }

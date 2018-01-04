@@ -5,39 +5,41 @@
 <div id="sidebar" (scroll)="onScroll($event)">
   <div class="gitHubWidget">
     <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
-      <div class="icon-github"></div>
-      <div class="loginPrompt">Click to sign in to GitHub</div>
+      <div class="icon-github icon"></div>
+      <div class="loginPrompt">Click to sign in with GitHub</div>
     </div>
     <div *ngIf="this.user" class="gitHubUserInfo">
       <img class="avatar" src="{{ this.user.avatarUrl }}&s=96" alt="{{ this.user.login }} avatar" />
       <div class="username">{{ this.user.login }}</div>
+      <span class="icon-logout" (click)="logout()"></span>
     </div>
   </div>
 
   <div class="pure-menu">
-    <div *ngIf="upwardsLink" class="upwardsLink">
-      <a routerLink="{{upwardsLink}}">
-      <div><span class="icon-left-big icon"></span>{{upwardsLinkLabel}}</div>
-      </a>
-    </div>
     <ul class="gitHubNavList pure-menu-list">
+      <li *ngIf="upwardsLink" class="pure-menu-item upwardsLink">
+        <a class="pure-menu-link" routerLink="{{upwardsLink}}">
+          <span class="icon-left-big icon"></span>
+          <div>{{upwardsLinkLabel}}</div>
+        </a>
+      </li>
       <li *ngFor="let node of currentNavList"
         class="gitHubNode pure-menu-item"
         >
         <a routerLink="{{ node.getRouterPath() }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
-        <span *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></span>
-        <span *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></span>
-        <span *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></span>
-        <span class="nodeName">
+          <div *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></div>
+          <div *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></div>
+          <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></div>
+          <div class="nodeName">
             <div *ngIf="node.nodeType === 'REPO'">
-              <span *ngIf="node.owner !== this.user.login" class="prefixName" >
-                {{node.owner}}/</span>{{ node.name }}
+              <div *ngIf="node.owner !== this.user.login" class="prefixName" >
+                {{node.owner}}/</div>{{ node.name }}
             </div>
             <div *ngIf="node.nodeType === 'ITEM'">
               {{ node.fileName }}
             </div>
-          </span>
-          <span *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></span>
+          </div>
+          <div *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></div>
         </a>
       </li>
     </ul>

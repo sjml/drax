@@ -300,7 +300,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     let turningOn = true;
     if (tokens.length === 1) {
-      if (tokens[0][1].type.split(' ').indexOf(symbolType) >= 0) {
+      if (tokens[0][1].type && tokens[0][1].type.split(' ').indexOf(symbolType) >= 0) {
         turningOn = false;
       }
     }
@@ -312,7 +312,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       let isFormatted = false;
       let hasPlain = false;
       for (const tok of tokens) {
-        if (tok[1].type.split(' ').indexOf(symbolType) >= 0) {
+        if (tok[1].type && tok[1].type.split(' ').indexOf(symbolType) >= 0) {
           if (!isFormatted) {
             formattedStretchesCount += 1;
           }
@@ -325,7 +325,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
       if (formattedStretchesCount === 1) {
         if (hasPlain) {
-          turningOn = tokens[tokens.length - 1][1].type.split(' ').indexOf(symbolType) >= 0;
+          const lastTok = tokens[tokens.length - 1][1];
+          turningOn = lastTok.type && lastTok.type.split(' ').indexOf(symbolType) >= 0;
         }
         else {
           turningOn = false;
