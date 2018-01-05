@@ -8,7 +8,7 @@ import { Component,
          EventEmitter,
        } from '@angular/core';
 
-import * as CodeMirror from 'codemirror/lib/codemirror';
+import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/edit/continuelist';
 
@@ -318,8 +318,38 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       });
     }
 
+    if (tokens.length === 0) {
+      this.instance.operation(() => {
+        doc.replaceRange(
+            `${formatting[0]}${formatting[0]}`,
+            workingRange.from(),
+            workingRange.to(),
+            'wrappedFormatting'
+        );
+        workingRange.anchor.ch += formatting[0].length;
+        workingRange.head.ch += formatting[0].length;
+        doc.setSelection(
+          workingRange.anchor,
+          workingRange.head,
+          {origin: 'wrappedFormatting'}
+        );
+      });
+      return;
+    }
+
     let turningOn = true;
     if (tokens.length === 1) {
+      if (tokens[0][1].string === `${formatting[0]}${formatting[0]}`) {
+        const line = workingRange.from().line;
+        doc.replaceRange(
+            '',
+            CodeMirror.Pos(tokens[0][0], tokens[0][1].start),
+            CodeMirror.Pos(tokens[0][0], tokens[0][1].end),
+            'wrappedFormatting'
+        );
+        return;
+      }
+
       if (tokens[0][1].type && tokens[0][1].type.split(' ').indexOf(symbolType) >= 0) {
         turningOn = false;
       }
@@ -381,6 +411,37 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
           to.ch += formatting[0].length;
         }
         doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
+      }
+      else {
+        const startTok = tokens[0];
+        const endTok = tokens[tokens.length - 1];
+
+        if (   (startTok[1].string.trim().length === 0)
+            && (  endTok[1].string.trim().length === 0) ) {
+              // this is in the middle of a big formatted stretch
+              let reversed = false;
+              if (startTok[0] > endTok[0]) {
+                reversed = true;
+              }
+              else if (startTok[0] === endTok[0]) {
+                if (startTok[1].start > endTok[1].end) {
+                  reversed = true;
+                }
+              }
+              let from: CodeMirror.Position = null;
+              let to: CodeMirror.Position = null;
+              if (reversed) {
+                from = CodeMirror.Pos(endTok[0], endTok[1].start);
+                to = CodeMirror.Pos(startTok[0], startTok[1].end);
+              }
+              else {
+                from = CodeMirror.Pos(startTok[0], startTok[1].start);
+                to = CodeMirror.Pos(endTok[0], endTok[1].end);
+              }
+
+              doc.replaceRange(formatting[0], to, to, 'wrappedFormatting');
+              doc.replaceRange(formatting[0], from, from, 'wrappedFormatting');
+        }
       }
     });
   }

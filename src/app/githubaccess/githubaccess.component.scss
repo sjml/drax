@@ -140,7 +140,7 @@ a {
 }
 
 
-@media (min-width: $sidebarWidthThreshold + 1) {
+@media (min-width: $sidebarWidthThreshold) {
   .sidebar-link {
     display: none;
   }
