@@ -1,17 +1,10 @@
 @import '~sass/variables';
 
-.fileInfo {
-  text-align: center;
-  color: rgb(66, 66, 66);
-
-  .repoInfo {
-    color: rgb(117, 117, 117);
-  }
-}
 
 .drax-editor {
-  max-width: 850px;
+  max-width: $editorMaxWidth;
   margin: auto;
+  margin-top: $editorbarHeight;
 }
 
 // Actual code styling below here

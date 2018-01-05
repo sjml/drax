@@ -2,7 +2,6 @@
 
 ## UI
 * tooltips for toolbar buttons and logout
-* make toolbar sticky
 * be able to sweep sidebar away when working
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
@@ -13,6 +12,7 @@
 ## Bugs
 * set up a lock so onScroll response can't get double-called
 * wrapped formatting across multiple paragraphs breaks
+* triggering wrapping with no selection on an empty line
 * some strangeness around formatting toggles at word border
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
 
@@ -47,13 +47,9 @@
   * `.Rmd`
 
 ## Features
-1. expanded editing toolbar
-    - sticky toolbar
-    - lists (unordered and numbered)
-        - if nesting, alternate bullet items (*-+)
-    - blockquotes
-    - horizontal rules
-    - links
+1. expanded editing GUI
+    - finish button implementations
+    - word count
 2. New document creation system (templates?)
     - new directories? New repositories? 
 3. History/restore? 

@@ -1,48 +1,50 @@
-<a href="#sidebar" id="sidebarLink" class="sidebar-link">
+<div id="slider" [class.open]="isOpen">
+  <a class="sidebar-link" (click)="toggleOpen()">
     <span class="icon-hamburger"></span>
-</a>
+  </a>
 
-<div id="sidebar" (scroll)="onScroll($event)">
-  <div class="gitHubWidget">
-    <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
-      <div class="icon-github icon"></div>
-      <div class="loginPrompt">Click to sign in with GitHub</div>
+  <div id="sidebar" (scroll)="onScroll($event)">
+    <div class="gitHubWidget">
+      <div *ngIf="!this.user" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
+        <div class="icon-github icon"></div>
+        <div class="loginPrompt">Click to sign in with GitHub</div>
+      </div>
+      <div *ngIf="this.user" class="gitHubUserInfo">
+        <img class="avatar" src="{{ this.user.avatarUrl }}&s=96" alt="{{ this.user.login }} avatar" />
+        <div class="username">{{ this.user.login }}</div>
+        <span class="icon-logout" (click)="logout()"></span>
+      </div>
     </div>
-    <div *ngIf="this.user" class="gitHubUserInfo">
-      <img class="avatar" src="{{ this.user.avatarUrl }}&s=96" alt="{{ this.user.login }} avatar" />
-      <div class="username">{{ this.user.login }}</div>
-      <span class="icon-logout" (click)="logout()"></span>
-    </div>
-  </div>
 
-  <div class="pure-menu">
-    <ul class="gitHubNavList pure-menu-list">
-      <li *ngIf="upwardsLink" class="pure-menu-item upwardsLink">
-        <a class="pure-menu-link" routerLink="{{upwardsLink}}">
-          <span class="icon-left-big icon"></span>
-          <div>{{upwardsLinkLabel}}</div>
-        </a>
-      </li>
-      <li *ngFor="let node of currentNavList"
-        class="gitHubNode pure-menu-item"
-        >
-        <a routerLink="{{ node.getRouterPath() }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
-          <div *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></div>
-          <div *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></div>
-          <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></div>
-          <div class="nodeName">
-            <div *ngIf="node.nodeType === 'REPO'">
-              <div *ngIf="node.owner !== this.user.login" class="prefixName" >
-                {{node.owner}}/</div>{{ node.name }}
+    <div class="pure-menu">
+      <ul class="gitHubNavList pure-menu-list">
+        <li *ngIf="upwardsLink" class="pure-menu-item upwardsLink">
+          <a class="pure-menu-link" routerLink="{{upwardsLink}}">
+            <span class="icon-left-big icon"></span>
+            <div>{{upwardsLinkLabel}}</div>
+          </a>
+        </li>
+        <li *ngFor="let node of currentNavList"
+          class="gitHubNode pure-menu-item"
+          >
+          <a routerLink="{{ node.getRouterPath() }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
+            <div *ngIf="node.nodeType === 'REPO'" class="icon-database icon"></div>
+            <div *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="icon-folder icon"></div>
+            <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="icon-document icon"></div>
+            <div class="nodeName">
+              <div *ngIf="node.nodeType === 'REPO'">
+                <div *ngIf="node.owner !== this.user.login" class="prefixName" >
+                  {{node.owner}}/</div>{{ node.name }}
+              </div>
+              <div *ngIf="node.nodeType === 'ITEM'">
+                {{ node.fileName }}
+              </div>
             </div>
-            <div *ngIf="node.nodeType === 'ITEM'">
-              {{ node.fileName }}
-            </div>
-          </div>
-          <div *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></div>
-        </a>
-      </li>
-    </ul>
+            <div *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="icon-right-open chevron"></div>
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 

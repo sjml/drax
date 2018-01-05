@@ -1,21 +1,24 @@
 @import '~sass/variables';
 @import '~sass/mixins';
 
+
 .sidebar-link {
   position: fixed;
   display: block;
-  top: 0;
+  top: ($editorbarHeight - (35px + 20px)) / 2;
   left: 0;
+  width: 35px;
+  height: 35px;
   background: #000;
   background: rgba(0,0,0,0.7);
   font-size: 25px;
   z-index: 10;
-  height: auto;
   padding: 10px;
   color: #fff;
+  cursor: pointer;
 }
 
-#sidebar, .sidebar-link {
+#main, #sidebar, .sidebar-link {
   @include transition($sidebarTransition);
 }
 
@@ -58,20 +61,11 @@
   cursor: pointer;
 }
 
-#layout.active #sidebar {
-  left: $sidebarWidth;
-  width: $sidebarWidth;
-}
-
-#layout.active .sidebar-link {
-  left: $sidebarWidth;
-}
-
-#sidebar {
+#slider #sidebar {
   width: $sidebarWidth;
   position: fixed;
   top: 0;
-  left: 0;
+  left: -$sidebarWidth;
   bottom: 0;
   z-index: 1000;
   background: #191818;
@@ -80,45 +74,52 @@
   -webkit-overflow-scrolling: touch;
 }
 
-#layout:not(.active) #sidebar {
-  margin-left: -$sidebarWidth;
+#slider.open {
+  #sidebar {
+    left: 0;
+  }
+
+  .sidebar-link {
+    left: $sidebarWidth;
+  }
 }
 
-#sidebar a {
+
+
+a {
   color: #999;
   border: none;
   padding: 0.6em 0 0.6em 0.6em;
 }
 
-#sidebar .pure-menu,
-#sidebar .pure-menu ul {
+.pure-menu,
+.pure-menu ul {
   border: none;
   background: transparent;
 }
 
-#sidebar .pure-menu li {
+.pure-menu li {
   border-top: 1px solid #333;
 }
 
-#sidebar .pure-menu li a:hover,
-#sidebar .pure-menu li a:focus {
+.pure-menu li a:hover,
+.pure-menu li a:focus {
   background: #333;
 }
 
-
-#sidebar .pure-menu-selected {
+.pure-menu-selected {
     background: #1f8dd6;
     color: #fff;
 }
 
-#sidebar .pure-menu li.upwardsLink a {
+.pure-menu li.upwardsLink a {
   display: flex;
   background-color: #333;
   color: #fff;
   border-bottom: 2px solid #555;
 }
 
-#sidebar .pure-menu li.upwardsLink:hover a {
+.pure-menu li.upwardsLink:hover a {
   background-color: #1f8dd6;
 }
 
@@ -139,31 +140,16 @@
 }
 
 
-  @media (max-width: $sidebarWidthThreshold) {
-    /* Only apply this when the window is small. Otherwise, the following
-    case results in extra padding on the left:
-        * Make the window small.
-        * Tap the menu to trigger the active state.
-        * Make the window large again.
-    */
-    #layout.active {
-        position: relative;
-        left: $sidebarWidth;
-    }
-    #sidebar {
-        left: -$sidebarWidth;
-    }
+@media (min-width: $sidebarWidthThreshold + 1) {
+  .sidebar-link {
+    display: none;
   }
 
-  @media (min-width: $sidebarWidthThreshold) {
-
-    .sidebar-link {
-        position: fixed;
-        left: $sidebarWidth;
-        display: none;
-    }
-
-    #layout.active .sidebar-link {
-        left: $sidebarWidth;
-    }
+  #slider #sidebar {
+    left: 0;
   }
+
+  #main {
+    margin-left: $sidebarWidth;
+  }
+}

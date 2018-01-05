@@ -1,23 +1,29 @@
-<div class="toolbar">
-  <div *ngFor="let item of items">
-    <button
-      *ngIf="item.itemType === 'BUTTON'"
-      class="pure-button"
-      [class.pure-button-disabled]="editor.mode !== 'edit' || item.state === 'disabled'"
-      (click)="handleClick(item)"
-      >
-        <span class="icon {{ item.icon }}"></span>
-    </button>
-    <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
+<div class="editorBar">
+  <div class="fileInfo">
+    <span class="repoInfo">{{editor.file.item.repo.owner}}/{{editor.file.item.repo.name}}/</span>{{editor.file.item.fullPath()}}
   </div>
-</div>
-<div class="memo" [class.hidden]="editor.mode === 'edit'">
-  <div class="arrow-up"></div>
-  <div class="memoPanel">
-    <textarea placeholder="Describe your changes here." [(ngModel)]="commitMessage"></textarea>
-    <div class="buttonBar">
-      <span class="panelButton icon-cancel" (click)="cancelSave()"></span>
-      <span class="panelButton icon-ok" [class.disabled]="commitMessage.length === 0" (click)="doSave()"></span>
+  <div class="toolbar">
+    <div *ngFor="let item of items">
+      <button
+        *ngIf="item.itemType === 'BUTTON'"
+        class="pure-button"
+        [class.pure-button-disabled]="editor.mode !== 'edit' || item.state === 'disabled'"
+        (click)="handleClick(item)"
+        >
+          <span class="icon {{ item.icon }}"></span>
+      </button>
+      <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
     </div>
   </div>
+  <div class="memo" [class.hidden]="editor.mode === 'edit'">
+    <div class="arrow-up"></div>
+    <div class="memoPanel">
+      <textarea placeholder="Describe your changes here." [(ngModel)]="commitMessage"></textarea>
+      <div class="buttonBar">
+        <span class="panelButton icon-cancel" (click)="cancelSave()"></span>
+        <span class="panelButton icon-ok" [class.disabled]="commitMessage.length === 0" (click)="doSave()"></span>
+      </div>
+    </div>
+  </div>
+
 </div>

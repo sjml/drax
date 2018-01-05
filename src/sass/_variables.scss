@@ -1,6 +1,9 @@
-$sidebarWidth: 250px;
-$sidebarWidthThreshold: 48em;
+$sidebarWidth: 256px;
+$editorMaxWidth: 768px;
+$sidebarWidthThreshold: 1280px;
 $sidebarTransition: all 0.2s ease-out;
+
+$editorbarHeight: 90px;
 
 $textColor: #2e383c;
 $propFont: 'Cabin', sans-serif;

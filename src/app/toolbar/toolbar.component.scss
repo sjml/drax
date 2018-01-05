@@ -3,10 +3,33 @@
 $baseButtonColor: rgb(232, 244, 255);
 $panelColor: rgb(211, 211, 211);
 
-.toolbar {
-  display: flex;
+.editorBar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: $editorbarHeight;
+  z-index: 5;
+  background-color: white;
   border-bottom: #999 solid 1px;
+}
+
+
+.toolbar {
   padding: 10px;
+  margin-left: 70px;
+
+  display: flex;
+}
+
+.fileInfo {
+  margin-left: 70px;
+  padding-top: 3px;
+  padding-left: 15px;
+  color: rgb(66, 66, 66);
+
+  .repoInfo {
+    color: rgb(117, 117, 117);
+  }
 }
 
 .tbSep {

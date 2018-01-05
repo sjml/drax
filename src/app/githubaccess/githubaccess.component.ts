@@ -91,6 +91,8 @@ export class GitHubAccessComponent implements OnInit {
 
   GITHUB_URL = 'https://api.github.com/graphql';
 
+  isOpen = false;
+
   bearerToken: string = null;
   user: GitHubUser = null;
   repo: GitHubRepo = null;
@@ -117,6 +119,10 @@ export class GitHubAccessComponent implements OnInit {
     if (this.bearerToken !== null) {
       this.loggedIn();
     }
+  }
+
+  toggleOpen() {
+    this.isOpen = !this.isOpen;
   }
 
   loggedIn() {

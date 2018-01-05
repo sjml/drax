@@ -71,7 +71,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     const config  = {
-      mode: 'markdown',
+      mode: {
+        name: 'markdown',
+        strikethrough: true
+      },
       theme: 'drax',
       indentUnit: 4,
       smartIndent: false,
@@ -233,6 +236,20 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   toggleItalics() {
     this.toggleWrappedFormatting(['_', '*'], 'em');
+    return true;
+  }
+
+  toggleCode() {
+    this.toggleWrappedFormatting(['`'], 'comment');
+    return true;
+  }
+
+  toggleStrikethrough() {
+    this.toggleWrappedFormatting(['~~'], 'strikethrough');
+    return true;
+  }
+
+  toggleBlockQuote() {
     return true;
   }
 

@@ -56,20 +56,35 @@ export class ToolbarComponent implements OnInit {
     this.editor.change.subscribe(() => this.handleEditorChange());
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-                 false, ButtonState.Disabled, () => this.editor.prepForSave()),
+                  false, ButtonState.Disabled, () => this.editor.prepForSave()),
       new Button('Refresh', 'Refresh file from GitHub', 'icon-arrows-cw',
-                 false, ButtonState.Disabled, () => this.editor.refreshContents()),
+                  false, ButtonState.Disabled, () => this.editor.refreshContents()),
+      new Button('History', 'View history of file changes', 'icon-history',
+                  false, ButtonState.Disabled, () => true),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
-                 true, ButtonState.Inactive, () => this.editor.toggleBold()),
+                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
       new Button('Italics', 'Change text to italics', 'icon-italic',
-                 true, ButtonState.Inactive, () => this.editor.toggleItalics()),
+                  true, ButtonState.Inactive, () => this.editor.toggleItalics()),
       new Button('Header', 'Cycle through header levels', 'icon-header',
-                 true, ButtonState.Inactive, () => this.editor.cycleHeaderLevel()),
-      // quotes
-      // lists (ul and #)
-      // links
-      // images?
+                  true, ButtonState.Inactive, () => this.editor.cycleHeaderLevel()),
+      new Separator(),
+      new Button('Link', 'Add website link', 'icon-link',
+                  false, ButtonState.Disabled, () => true),
+      new Button('Bulleted List', 'Create a bulleted list', 'icon-list-bullet',
+                  false, ButtonState.Disabled, () => true),
+      new Button('Numbered List', 'Create a numbered list', 'icon-list-numbered',
+                  false, ButtonState.Disabled, () => true),
+      new Separator(),
+      new Button('Code', 'Change text to monospaced', 'icon-code',
+                  false, ButtonState.Inactive, () => this.editor.toggleCode()),
+      new Button('Strikethrough', 'Cross out text', 'icon-strike',
+                  false, ButtonState.Inactive, () => this.editor.toggleStrikethrough()),
+      new Button('Blockquote', 'Create a blockquote', 'icon-quote-left',
+                  false, ButtonState.Disabled, () => this.editor.toggleBlockQuote()),
+      new Separator(),
+      new Button('Preview', 'View the rendered page alongside your Markdown', 'icon-columns',
+                  false, ButtonState.Disabled, () => true),
     );
   }
 
