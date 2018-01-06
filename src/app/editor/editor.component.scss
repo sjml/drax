@@ -64,8 +64,14 @@
       font-size: 125%;
     }
 
+    .CodeMirror-line .cm-quote:first-of-type {
+      margin-left: 30px;
+    }
+
     .CodeMirror-line .cm-quote {
       color: lighten($textColor, 35%);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
   }
 }

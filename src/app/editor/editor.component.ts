@@ -201,62 +201,143 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     return workingRange;
   }
 
-  cycleHeaderLevel() {
+  cycleHeaderLevel(): boolean {
     const range = this.getWorkingRange();
     const doc = this.instance.getDoc();
 
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.type === null || startTok.type.split(' ').indexOf('header') < 0) {
+      if (startTok.state.header === 0) {
         // not a header; make it one
-        doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0));
+        doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
       }
       else if (startTok.string === '# ') {
-        doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+        doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
       }
       else if (startTok.string === '## ') {
-        doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+        doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
       }
       else if (startTok.string === '### ') {
-        doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+        doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
       }
       else if (startTok.string === '#### ') {
-        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end));
+        // max header; clear it
+        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
       }
     }
 
     return true;
   }
 
-  toggleBold() {
+  toggleBlockQuote(): boolean {
+    const range = this.getWorkingRange();
+    const doc = this.instance.getDoc();
+
+    for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+      const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+
+      if (startTok.state.quote === 0) {
+        // not a quote; make it one
+        doc.replaceRange('> ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bqCycle');
+      }
+      // only letting one level of quotes, blow away the extras if toggling off
+      else {  // if (startTok.string === '> ') {
+        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bqCycle');
+      }
+    }
+
+    return true;
+  }
+
+  toggleBulletList(): boolean {
+    const bullets: string[] = ['* ', '+ ', '- '];
+    const range = this.getWorkingRange();
+    const doc = this.instance.getDoc();
+
+    let lineCount = 0;
+    let bulletedCount = 0;
+
+    for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+      const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+      if (!startTok) {
+        continue;
+      }
+
+      lineCount++;
+      if (startTok.state.list && bullets.indexOf(startTok.string) >= 0) {
+        bulletedCount++;
+      }
+    }
+
+    this.instance.operation(() => {
+      for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+        const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+        if (!startTok) { // ignore blank lines
+          continue;
+        }
+        if (lineCount === bulletedCount) {
+          // remove all list starters
+          if (startTok.state.list) {
+            doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bulletToggle');
+          }
+        }
+        else {
+          // bullet everything
+          if (!startTok.state.list) {
+            doc.replaceRange('* ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bulletToggle');
+          }
+        }
+      }
+    });
+
+    return true;
+  }
+
+  createLink(): boolean {
+    const selection = this.getWorkingRange();
+    const doc = this.instance.getDoc();
+
+    const closing = '](http://)';
+
+    this.instance.operation(() => {
+      doc.replaceRange(closing, selection.to(), selection.to(), 'linkCreation');
+      doc.replaceRange('[', selection.from(), selection.from(), 'linkCreation');
+
+      // leaving subtraction by zero to remind myself that
+      //   the offset from the back is intentional, to put the
+      //   cursor right before the closing parenthesis
+      selection.to().ch += closing.length - 0;
+      doc.setCursor(selection.to());
+    });
+
+    return true;
+  }
+
+  toggleBold(): boolean {
     this.toggleWrappedFormatting(['**'], 'strong');
     return true;
   }
 
-  toggleItalics() {
+  toggleItalics(): boolean {
     this.toggleWrappedFormatting(['_', '*'], 'em');
     return true;
   }
 
-  toggleCode() {
-    this.toggleWrappedFormatting(['`'], 'comment');
+  toggleCode(): boolean {
+    this.toggleWrappedFormatting(['`'], 'code');
     return true;
   }
 
-  toggleStrikethrough() {
+  toggleStrikethrough(): boolean {
     this.toggleWrappedFormatting(['~~'], 'strikethrough');
-    return true;
-  }
-
-  toggleBlockQuote() {
     return true;
   }
 
   // there is almost certainly a more efficient way to do this
   toggleWrappedFormatting(formatting: string[], symbolType: string) {
     if (formatting.length === 0 || symbolType.length === 0) {
-      // TODO: have this throw an error?
+      console.error('Tried to wrap formatting with no strings or symbol.');
       return;
     }
 
@@ -350,7 +431,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      if (tokens[0][1].type && tokens[0][1].type.split(' ').indexOf(symbolType) >= 0) {
+      if (tokens[0][1].state[symbolType]) {
         turningOn = false;
       }
     }
@@ -362,7 +443,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       let isFormatted = false;
       let hasPlain = false;
       for (const tok of tokens) {
-        if (tok[1].type && tok[1].type.split(' ').indexOf(symbolType) >= 0) {
+        if (tok[1].state[symbolType]) {
           if (!isFormatted) {
             formattedStretchesCount += 1;
           }
@@ -376,7 +457,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       if (formattedStretchesCount === 1) {
         if (hasPlain) {
           const lastTok = tokens[tokens.length - 1][1];
-          turningOn = lastTok.type && lastTok.type.split(' ').indexOf(symbolType) >= 0;
+          turningOn = lastTok.state[symbolType];
         }
         else {
           turningOn = false;

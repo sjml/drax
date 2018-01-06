@@ -11,7 +11,7 @@ As with most Node-based projects, things are run through the `npm` command.
 ## Developing
 Much like when [administering a Drax site](./Administration.md), you'll need to make your own GitHub OAuth application and put the keys into `php/auth/secrets.php`. 
 
-From the root directory of Drax, you just need to run `npm install` to get all the dependencies and little goodies. It will also try and install then necessary PHP stuff, so be on the lookout for errors unrelated to Node. 
+From the root directory of Drax, you just need to run `npm install` to get all the dependencies and little goodies. It will also try and install the necessary PHP stuff, so be on the lookout for errors unrelated to Node. 
 
 After that, running `npm run dev` will do two things: 
 * Start the Angular dev server listening on `localhost:4200`
@@ -23,7 +23,7 @@ After the initial authentication with GitHub, Drax saves a bearer token in the b
 
 As you edit files, the server will detect and reload the application in your browser. 
 
-I recommend [Visual Studio Code](https://code.visualstudio.com/) as an editor, with the [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome) addon. If you have another tool you like, hey, you do you. 
+I recommend [Visual Studio Code](https://code.visualstudio.com/) as an editor, with the [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome) addon. If you have another tool you prefer, hey, you do you. 
 
 ### Dev Configuration
 Values in `drax-config.dev.json` will override those in `drax-config.json` while Angular is in development mode. The `dev.json` file is removed from the final distribution. 

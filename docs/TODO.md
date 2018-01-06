@@ -46,12 +46,11 @@
   * `.Rmd`
 
 ## Features
-1. expanded editing GUI
-    - finish button implementations
-2. New document creation system (templates?)
+0. Generic frontmatter detection mode for CM
+1. New document creation system (templates?)
     - new directories? New repositories? 
-3. History/restore? 
-4. Annotation system
+2. History/restore? 
+3. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -60,10 +59,10 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-5. Image uploading
-6. HTML preview + side-by-side
-7. About pages / tutorial?
-8. Single repo mode
-9. Merge changes if we're out of sync with the server
-10. Frontmatter parsing into options? 
-11. Offline mode
+4. Image uploading
+5. HTML preview + side-by-side
+6. About pages / tutorial?
+7. Single repo mode
+8. Merge changes if we're out of sync with the server
+9. Frontmatter parsing into options? 
+10. Offline mode and/or live collaboration
