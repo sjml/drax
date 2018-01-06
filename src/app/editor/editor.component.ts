@@ -14,8 +14,8 @@ import 'codemirror/addon/edit/continuelist';
 
 import 'codemirror/mode/yaml/yaml';
 import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter';
-import 'codemirror/mode/toml/toml';
-import './toml-frontmatter';
+// import 'codemirror/mode/toml/toml';
+// import './toml-frontmatter';
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
@@ -135,10 +135,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     const pieces = this._file.item.fileName.split('.');
     const ext = pieces.pop();
     if (pieces.length > 0 && mdFileTypes.indexOf(ext) >= 0) {
-      if (this._file.contents.startsWith('+++')) {
-        this.markdownConfig.name = 'toml-frontmatter';
-      }
-      else if (this._file.contents.startsWith('---')) {
+      // if (this._file.contents.startsWith('+++')) {
+      //   this.markdownConfig.name = 'toml-frontmatter';
+      // }
+      // else
+      if (this._file.contents.startsWith('---')) {
         this.markdownConfig.name = 'yaml-frontmatter';
       }
       else {
