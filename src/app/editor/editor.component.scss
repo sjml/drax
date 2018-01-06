@@ -73,5 +73,9 @@
       -webkit-box-decoration-break: clone;
       box-decoration-break: clone;
     }
+
+    .cm-m-toml, .cm-m-yaml {
+      color: lighten($textColor, 35%);
+    }
   }
 }
