@@ -9,7 +9,7 @@ Drax is not meant as a realtime collaborative editor; a Git-based backend isn't 
 
 
 ## Usage
-Point your users to the [user guide](./docs/User Guide.md) to ease them into both Git and Markdown. 
+Point your users to the [user guide](./docs/User%20Guide.md) to ease them into both Git and Markdown. 
 
 
 ## Admin
