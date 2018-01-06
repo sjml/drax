@@ -1,0 +1,14 @@
+@import '~sass/variables';
+
+
+.drax-editor {
+  max-width: $editorMaxWidth;
+  margin: auto;
+  margin-top: $editorbarHeight;
+}
+
+::ng-deep {
+  .ProseMirror {
+    border: 1px solid $textColor;
+  }
+}
