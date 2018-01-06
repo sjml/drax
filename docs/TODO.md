@@ -13,6 +13,7 @@
 * set up a lock so onScroll response can't get double-called
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
 * navlist gets screwy on logout
+* single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
 * store docs so undo history is preserved across navigation
@@ -47,8 +48,6 @@
 ## Features
 1. expanded editing GUI
     - finish button implementations
-    * wrapped formatting across multiple paragraphs breaks
-    * some strangeness around formatting toggles at word border
 2. New document creation system (templates?)
     - new directories? New repositories? 
 3. History/restore? 

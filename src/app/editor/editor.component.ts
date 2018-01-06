@@ -389,7 +389,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
     this.instance.operation(() => {
       // clear out any interior markers
-      for (const tok of tokens.reverse()) {
+      for (const tok of tokens.slice().reverse()) {
         if (formatting.indexOf(tok[1].string) >= 0) {
           doc.replaceRange('',
                            CodeMirror.Pos(tok[0], tok[1].start),
@@ -404,9 +404,56 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       if (turningOn) {
         doc.replaceRange(formatting[0], workingRange.to(), workingRange.to(), 'wrappedFormatting');
         doc.replaceRange(formatting[0], workingRange.from(), workingRange.from(), 'wrappedFormatting');
+
+        let currLine = tokens[0][0];
+        const paragraphStarts: [number, CodeMirror.Token][] = [];
+        const paragraphEnds:   [number, CodeMirror.Token][] = [];
+        for (let i = 0; i < tokens.length; i++) {
+          const tok = tokens[i];
+          if (tok[0] === currLine) {
+            continue;
+          }
+          if ((tok[0] - currLine) > 1) {
+            paragraphStarts.push(tok);
+            paragraphEnds.push(tokens[i - 1]); // safe; we know this isn't 0
+          }
+
+          currLine = tok[0];
+        }
+
         const from = workingRange.from();
         from.ch += formatting[0].length;
         const to = workingRange.to();
+
+        const paraStartLines: number[] = [];
+        for (const tok of paragraphStarts) {
+          doc.replaceRange(
+            formatting[0],
+            CodeMirror.Pos(tok[0], tok[1].start),
+            CodeMirror.Pos(tok[0], tok[1].start),
+            'wrappedFormatting'
+          );
+          if (to.line === tok[0]) {
+            to.ch += formatting[0].length;
+          }
+          paraStartLines.push(tok[0]);
+        }
+        for (const tok of paragraphEnds) {
+          let endIndex = tok[1].end;
+          if (tok[0] === from.line || paraStartLines.indexOf(tok[0]) >= 0) {
+            endIndex += formatting[0].length;
+          }
+          doc.replaceRange(
+            formatting[0],
+            CodeMirror.Pos(tok[0], endIndex),
+            CodeMirror.Pos(tok[0], endIndex),
+            'wrappedFormatting'
+          );
+          if (to.line === tok[0]) {
+            to.ch += formatting[0].length;
+          }
+        }
+
         if (workingRange.to().line === workingRange.from().line) {
           to.ch += formatting[0].length;
         }
@@ -419,25 +466,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         if (   (startTok[1].string.trim().length === 0)
             && (  endTok[1].string.trim().length === 0) ) {
               // this is in the middle of a big formatted stretch
-              let reversed = false;
-              if (startTok[0] > endTok[0]) {
-                reversed = true;
-              }
-              else if (startTok[0] === endTok[0]) {
-                if (startTok[1].start > endTok[1].end) {
-                  reversed = true;
-                }
-              }
-              let from: CodeMirror.Position = null;
-              let to: CodeMirror.Position = null;
-              if (reversed) {
-                from = CodeMirror.Pos(endTok[0], endTok[1].start);
-                to = CodeMirror.Pos(startTok[0], startTok[1].end);
-              }
-              else {
-                from = CodeMirror.Pos(startTok[0], startTok[1].start);
-                to = CodeMirror.Pos(endTok[0], endTok[1].end);
-              }
+              const from = CodeMirror.Pos(startTok[0], startTok[1].start);
+              const   to = CodeMirror.Pos(  endTok[0],   endTok[1].end);
 
               doc.replaceRange(formatting[0], to, to, 'wrappedFormatting');
               doc.replaceRange(formatting[0], from, from, 'wrappedFormatting');
