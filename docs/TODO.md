@@ -2,7 +2,6 @@
 
 ## UI
 * tooltips for toolbar buttons and logout
-* be able to sweep sidebar away when working
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
 * fix layout of long directory names (consider tooltip for long names in general?)
@@ -16,37 +15,24 @@
 * single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
+* spinners for saving and loading stuff in the explorer
 * store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
+    - also unify formatting of all the various queries
 * surface an error if authorization status is not 'OK'
 * give back nothing from graphql query if we're not logged in
 * use getenv('variable_name') as option when constructing secrets in PHP
     - conditional include of secrets file, pull from env if not there, show error
 * add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
-* add indicator for when repo has remote configuration ("Drax-enabled!")
 * logo
+* add indicator for when repo has remote configuration ("Drax-enabled!")
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
 * recognize when GitHub is unreachable and just let us access the cache
 * need to store repository info too... 😬
 
-## Configuration
-* only show markdown files?
-  * `.markdown`
-  * `.mdown`
-  * `.mkdn`
-  * `.md`
-  * `.mkd`
-  * `.mdwn`
-  * `.mdtxt`
-  * `.mdtext`
-  * `.text`
-  * `.txt`
-  * `.Rmd`
-
 ## Features
-0. Generic frontmatter detection mode for CM
 1. New document creation system (templates?)
     - new directories? New repositories? 
 2. History/restore? 

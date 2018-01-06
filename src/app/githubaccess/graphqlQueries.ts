@@ -1,7 +1,5 @@
 import { GitHubRepo, GitHubItem } from './githubaccess.component';
 
-// TODO: unify the formatting of all these
-
 export module Queries {
   const userInfoTemplate = {
     'query': `

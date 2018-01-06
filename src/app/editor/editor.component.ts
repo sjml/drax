@@ -12,6 +12,11 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/edit/continuelist';
 
+import 'codemirror/mode/yaml/yaml';
+import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter';
+import 'codemirror/mode/toml/toml';
+import './toml-frontmatter';
+
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
 export enum EditorMode {
@@ -37,6 +42,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   mode: EditorMode;
   checkInterval: number = null;
 
+  markdownConfig = {
+    name: 'yaml-frontmatter',
+    base: 'markdown',
+    strikethrough: true
+  };
+
   _file: GitHubFile = null;
   @Input() set file(v: GitHubFile) {
     if (v !== this._file) {
@@ -46,9 +57,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       this._file = v;
       if (this._file !== null && this.instance !== null) {
-        const newDoc = CodeMirror.Doc(this._file.contents, 'markdown');
-        this.instance.swapDoc(newDoc);
-        this.instance.refresh();
+        this.loadFreshFile();
         // TODO: figure out if we can be more precise and do this
         //       to just a single element instead of the whole window
         window.scrollTo(0, 0);
@@ -71,10 +80,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     const config  = {
-      mode: {
-        name: 'markdown',
-        strikethrough: true
-      },
+      mode: this.markdownConfig,
       theme: 'drax',
       indentUnit: 4,
       smartIndent: false,
@@ -87,12 +93,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
     };
 
-    if (this._file !== null) {
-      this.host.nativeElement.value = this._file.contents;
-    }
-
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.changeGeneration = this.instance.getDoc().changeGeneration();
+    this.loadFreshFile();
 
     this.instance.on('change', () => {
       if (!this._file) {
@@ -120,6 +122,37 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  loadFreshFile() {
+    const mdFileTypes = [
+      'markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn',
+      'mdtxt', 'mdtext', 'text', 'txt', 'Rmd'
+    ];
+
+    const newDoc = CodeMirror.Doc(this._file.contents, this.markdownConfig);
+    this.instance.swapDoc(newDoc);
+    this.changeGeneration = this.instance.getDoc().changeGeneration();
+
+    const pieces = this._file.item.fileName.split('.');
+    const ext = pieces.pop();
+    if (pieces.length > 0 && mdFileTypes.indexOf(ext) >= 0) {
+      if (this._file.contents.startsWith('+++')) {
+        this.markdownConfig.name = 'toml-frontmatter';
+      }
+      else if (this._file.contents.startsWith('---')) {
+        this.markdownConfig.name = 'yaml-frontmatter';
+      }
+      else {
+        this.markdownConfig.name = 'markdown';
+      }
+    }
+    else {
+      this.markdownConfig.name = '';
+    }
+    this.instance.setOption('mode', this.markdownConfig);
+
+    this.instance.refresh();
+  }
+
   takeFocus() {
     this.instance.focus();
   }
@@ -145,7 +178,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   save(commitMessage: string): Promise<boolean> {
-    // TODO: set the toolbar icon spinning or something until this is done
     return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
       if (val['success']) {
         this.changeGeneration = this.instance.getDoc().changeGeneration();
