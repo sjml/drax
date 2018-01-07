@@ -1,4 +1,6 @@
-import { Schema } from 'prosemirror-model';
+/* tslint:disable */
+
+import { Schema, Node } from 'prosemirror-model';
 
 
 export const schema = new Schema({
@@ -47,7 +49,15 @@ export const schema = new Schema({
       code: true,
       defining: true,
       attrs: {params: {default: ""}},
-      parseDOM: [{tag: "pre", preserveWhitespace: true, getAttrs: function (node) { return ({params: node.getAttribute("data-params")}); }}],
+      parseDOM: [{tag: "pre", preserveWhitespace: true, getAttrs: function (node) {
+                                                              if (typeof node === 'string') {
+                                                                return {};
+                                                              }
+                                                              else return {
+                                                                params: node.attributes.getNamedItem("data-params")
+                                                              };
+                                                            }
+                }],
       toDOM: function toDOM(node) { return ["pre", node.attrs.params ? {"data-params": node.attrs.params} : {}, ["code", 0]] }
     },
 
@@ -56,8 +66,13 @@ export const schema = new Schema({
       group: "block",
       attrs: {order: {default: 1}, tight: {default: false}},
       parseDOM: [{tag: "ol", getAttrs: function getAttrs(dom) {
-        return {order: dom.hasAttribute("start") ? +dom.getAttribute("start") : 1,
-                tight: dom.hasAttribute("data-tight")}
+        if (typeof dom === 'string') {
+          return {};
+        }
+        else {
+        return {order: dom.attributes.getNamedItem("start") !== null ? +dom.attributes.getNamedItem("start") : 1,
+                tight: dom.attributes.getNamedItem("data-tight") !== null}
+        }
       }}],
       toDOM: function toDOM(node) {
         return ["ol", {start: node.attrs.order == 1 ? null : node.attrs.order,
@@ -69,7 +84,15 @@ export const schema = new Schema({
       content: "list_item+",
       group: "block",
       attrs: {tight: {default: false}},
-      parseDOM: [{tag: "ul", getAttrs: function (dom) { return ({tight: dom.hasAttribute("data-tight")}); }}],
+      parseDOM: [{tag: "ul", getAttrs: function (dom) {
+                                          if (typeof dom === 'string') {
+                                            return {};
+                                          }
+                                          else {
+                                            return {tight: dom.attributes.getNamedItem("data-tight") !== null};
+                                          }
+                                        }
+                }],
       toDOM: function toDOM(node) { return ["ul", {"data-tight": node.attrs.tight ? "true" : null}, 0] }
     },
 
@@ -94,13 +117,21 @@ export const schema = new Schema({
       },
       group: "inline",
       draggable: true,
-      parseDOM: [{tag: "img[src]", getAttrs: function getAttrs(dom) {
-        return {
-          src: dom.getAttribute("src"),
-          title: dom.getAttribute("title"),
-          alt: dom.getAttribute("alt")
+      parseDOM: [
+        {
+          tag: "img[src]",
+          getAttrs: function getAttrs(dom) {
+                                if (typeof dom === 'string') {
+                                  return {};
+                                }
+                                else return {
+                                    src: dom.attributes.getNamedItem("src"),
+                                    title: dom.attributes.getNamedItem("title"),
+                                    alt: dom.attributes.getNamedItem("alt")
+                                  }
+                                }
         }
-      }}],
+      ],
       toDOM: function toDOM(node) { return ["img", node.attrs] }
     },
 
@@ -122,7 +153,14 @@ export const schema = new Schema({
 
     strong: {
       parseDOM: [{tag: "b"}, {tag: "strong"},
-                 {style: "font-weight", getAttrs: function (value) { return /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null; }}],
+                 {style: "font-weight", getAttrs: function (value) {
+                                          if (typeof value === 'string') {
+                                            return /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null;
+                                          }
+                                          else return {};
+                                        }
+                 }
+                ],
       toDOM: function toDOM() { return ["strong"] }
     },
 
@@ -133,7 +171,13 @@ export const schema = new Schema({
       },
       inclusive: false,
       parseDOM: [{tag: "a[href]", getAttrs: function getAttrs(dom) {
-        return {href: dom.getAttribute("href"), title: dom.getAttribute("title")}
+                                                        if (typeof dom === 'string') {
+                                                          return {};
+                                                        }
+                                                        else return {
+                                                          href: dom.attributes.getNamedItem("href"),
+                                                          title: dom.attributes.getNamedItem("title")
+                                                        }
       }}],
       toDOM: function toDOM(node) { return ["a", node.attrs] }
     },

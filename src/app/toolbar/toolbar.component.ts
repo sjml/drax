@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { EditorComponent, EditorMode } from '../editor/editor.component';
+import { GenericEditor, EditorMode } from '../editor/editor.base';
 
 abstract class ToolbarItem {
   public itemType = 'ITEM';
@@ -46,7 +46,7 @@ export class ToolbarComponent implements OnInit {
 
   items: ToolbarItem[] = [];
 
-  @Input('editor') editor: EditorComponent;
+  @Input('editor') editor: GenericEditor;
 
   commitMessage = '';
 
@@ -112,18 +112,19 @@ export class ToolbarComponent implements OnInit {
 
   // TODO: be smarter about this than directly using array index
   handleEditorChange() {
-    if (this.editor.file.isDirty) {
-      (this.items[0] as Button).state = ButtonState.Inactive;
-    }
-    else {
-      (this.items[0] as Button).state = ButtonState.Disabled;
-    }
+    // TODO: reintegrate this
+    // if (this.editor.file.isDirty) {
+    //   (this.items[0] as Button).state = ButtonState.Inactive;
+    // }
+    // else {
+    //   (this.items[0] as Button).state = ButtonState.Disabled;
+    // }
 
-    if (this.editor.fileOutOfSync) {
-      (this.items[1] as Button).state = ButtonState.Inactive;
-    }
-    else {
-      (this.items[1] as Button).state = ButtonState.Disabled;
-    }
+    // if (this.editor.fileOutOfSync) {
+    //   (this.items[1] as Button).state = ButtonState.Inactive;
+    // }
+    // else {
+    //   (this.items[1] as Button).state = ButtonState.Disabled;
+    // }
   }
 }

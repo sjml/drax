@@ -1,33 +1,43 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 
 import { DOMParser } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
 import { undo, redo, history } from 'prosemirror-history';
-import { baseKeymap } from 'prosemirror-commands';
+import { baseKeymap, toggleMark } from 'prosemirror-commands';
 import { defaultMarkdownSerializer, MarkdownParser } from 'prosemirror-markdown';
 
 import * as markdownit from 'markdown-it';
 
 import { schema } from './schema';
 
+import { GitHubAccessComponent, GitHubFile } from '../githubaccess/githubaccess.component';
+import { GenericEditor } from '../editor/editor.base';
+
 @Component({
   selector: 'app-prose-editor',
   templateUrl: './prose-editor.component.html',
   styleUrls: ['./prose-editor.component.scss']
 })
-export class ProseEditorComponent implements OnInit {
+export class ProseEditorComponent extends GenericEditor implements OnInit {
 
   @ViewChild('proseHost') host: ElementRef;
 
   parser: MarkdownParser = null;
+  @Input() file: GitHubFile = null;
+  @Input() ghAccess: GitHubAccessComponent;
 
-  constructor() { }
+  view: EditorView = null;
+
+  constructor() {
+    super();
+  }
 
   ngOnInit() {
-    const mdit = markdownit('commonmark', {html: true});
+    const mdit = markdownit('commonmark', {html: false});
     mdit.enable(['strikethrough']);
+
     this.parser = new MarkdownParser(schema, mdit, {
       blockquote: {block: 'blockquote'},
       paragraph: {block: 'paragraph'},
@@ -55,8 +65,13 @@ export class ProseEditorComponent implements OnInit {
       s: {mark: 'strikethrough'}
     });
 
+    let initialString = this.host.nativeElement.innerHTML;
+    if (this.file) {
+      initialString = this.file.contents;
+    }
+
     const state = EditorState.create({
-      doc: this.parser.parse(this.host.nativeElement.innerHTML),
+      doc: this.parser.parse(initialString),
       plugins: [
         history(),
         keymap({'Mod-z': undo, 'Mod-y': redo}),
@@ -65,11 +80,45 @@ export class ProseEditorComponent implements OnInit {
     });
     this.host.nativeElement.innerHTML = '';
 
-    const view = new EditorView(this.host.nativeElement, {
-      state
-    });
+    this.view = new EditorView(this.host.nativeElement, {state});
 
-    view.focus();
+    this.takeFocus();
   }
+
+  takeFocus() {
+    this.view.focus();
+  }
+
+  toggleBold(): boolean {
+    const v = this.view;
+    if (this.view.state.selection.empty) {
+      const c = this.view.state.selection.$cursor;
+      console.log(c.nodeAfter, c.nodeBefore);
+      console.log(this.view.endOfTextblock('forward'));
+    }
+    toggleMark(schema.marks.strong)(this.view.state, this.view.dispatch);
+    this.takeFocus();
+    return true;
+  }
+
+  toggleItalics(): boolean {
+    toggleMark(schema.marks.em)(this.view.state, this.view.dispatch);
+    this.takeFocus();
+    return true;
+  }
+
+  toggleCode(): boolean {
+    toggleMark(schema.marks.code)(this.view.state, this.view.dispatch);
+    this.takeFocus();
+    return true;
+  }
+
+  toggleStrikethrough(): boolean {
+    toggleMark(schema.marks.strikethrough)(this.view.state, this.view.dispatch);
+    this.takeFocus();
+    return true;
+  }
+
+
 
 }

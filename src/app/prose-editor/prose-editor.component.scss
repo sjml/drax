@@ -9,6 +9,27 @@
 
 ::ng-deep {
   .ProseMirror {
-    border: 1px solid $textColor;
+    height: auto;
+    padding: 10px;
+
+    background: #fcfcfc;
+    color: $textColor;
+    line-height:1.5;
+    margin-top: 10px;
+    margin-bottom: 50px;
+
+    font-size: 125%;
+    outline: none;
+  }
+
+  // easier than getting the parser to stop wrapping them in <p> tags
+  .ProseMirror li p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  .ProseMirror blockquote {
+    border-left: 5px solid lighten($textColor, 40%);
+    padding-left: 10px;
   }
 }

@@ -18,28 +18,22 @@ import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
-
-export enum EditorMode {
-  Edit = 'edit',
-  Locked = 'locked'
-}
+import { GenericEditor, EditorMode } from './editor.base';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements AfterViewInit, OnDestroy {
+export class EditorComponent extends GenericEditor implements AfterViewInit, OnDestroy {
 
   @ViewChild('host') host: ElementRef;
   instance: CodeMirror.Editor = null;
 
-  @Output() change = new EventEmitter();
   @Output() cursorActivity = new EventEmitter();
 
   @Input() ghAccess: GitHubAccessComponent;
 
-  mode: EditorMode;
   checkInterval: number = null;
 
   markdownConfig = {
@@ -75,6 +69,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
 
   constructor() {
+    super();
     this.mode = EditorMode.Edit;
   }
 
