@@ -19,6 +19,9 @@
     margin-top: 10px;
 
     font-family: $propFont;
+
+    -webkit-user-modify: read-write-plaintext-only;
+    user-modify: read-write-plaintext-only;
   }
 
   .locked .cm-s-drax.CodeMirror {
