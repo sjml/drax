@@ -85,6 +85,12 @@ export class ToolbarComponent implements OnInit {
         continue;
       }
       const button = item as Button;
+
+      if (this.editor.markdownConfig.name.length === 0) {
+        button.state = ButtonState.Disabled;
+        continue;
+      }
+
       const res: ButtonState = button.callback(false);
       if (res === ButtonState.Active) {
         button.state = ButtonState.Inactive;

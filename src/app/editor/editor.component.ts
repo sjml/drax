@@ -158,6 +158,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.instance.setOption('mode', this.markdownConfig);
 
     this.instance.refresh();
+    this.change.emit();
+    this.takeFocus();
   }
 
   takeFocus() {
