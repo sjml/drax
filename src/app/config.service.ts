@@ -18,7 +18,9 @@ export class ConfigService {
       this.config = response;
     });
 
-    if (environment.production) {
+    const e = environment;
+
+    if (!environment.production) {
       await this.http.get('./drax-config.dev.json').toPromise()
         .then(response => {
           this.config = Object.assign(this.config, response);

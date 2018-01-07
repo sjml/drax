@@ -36,6 +36,7 @@
 1. New document creation system (templates?)
     - new directories? New repositories? 
 2. History/restore? 
+3. Keyboard commands
 3. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
@@ -45,11 +46,11 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-4. Image uploading
-5. HTML preview + side-by-side
-6. About pages / tutorial?
-7. Single repo mode
-8. Merge changes if we're out of sync with the server
-9. Frontmatter parsing into options? 
-10. Offline mode and/or live collaboration
+5. Image uploading
+6. HTML preview + side-by-side
+7. About pages / tutorial?
+8. Single repo mode
+9. Merge changes if we're out of sync with the server
+10. Frontmatter parsing into options? 
+11. Offline mode and/or live collaboration
     - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.
