@@ -316,7 +316,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.state.header === 0) {
+      if (! startTok || startTok.state.header === 0) {
         // not a header; make it one
         if (execute) {
           doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
@@ -357,6 +357,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       lineCount++;
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+      if (!startTok) {
+        continue;
+      }
 
       if (startTok.state.quote !== 0) {
         quoteCount++;
@@ -383,7 +386,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.instance.operation(() => {
           for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
             const startTok = this.instance.getLineTokens(lineIndex, true)[0];
-            if (!startTok) {
+            if (!startTok && lineCount > 1) {
               continue;
             }
             doc.replaceRange('> ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bqCycle');
@@ -403,12 +406,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     let bulletedCount = 0;
 
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+      lineCount++;
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
       if (!startTok) {
         continue;
       }
 
-      lineCount++;
       if (startTok.state.list && bullets.indexOf(startTok.string) >= 0) {
         bulletedCount++;
       }

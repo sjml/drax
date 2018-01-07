@@ -33,8 +33,6 @@
 * need to store repository info too... 😬
 
 ## Features
-0. Button enhancements (toggles/icon changes/cursor detection)
-    - "if (!startTok)" -- how about when you wanna start typing as one of these?
 1. New document creation system (templates?)
     - new directories? New repositories? 
 2. History/restore? 
