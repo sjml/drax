@@ -17,7 +17,7 @@ import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter';
 import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
-import { ButtonState } from '../toolbar/toolbar.component';
+import { ButtonState } from '../toolbar/toolbar-items';
 
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 

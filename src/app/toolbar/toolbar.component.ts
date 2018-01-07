@@ -1,43 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { ToolbarItem, Button, ButtonState, Separator } from './toolbar-items';
 import { EditorComponent, EditorMode } from '../editor/editor.component';
-
-abstract class ToolbarItem {
-  public itemType = 'ITEM';
-}
-
-export enum ButtonState {
-  Disabled = 'disabled',
-  Active = 'active',
-  Inactive = 'inactive'
-}
-
-class Button extends ToolbarItem {
-  public itemType = 'BUTTON';
-  public name: string;
-  public toolTip: string;
-  public icon: string;
-  public state: ButtonState = ButtonState.Inactive;
-  public callback: (execute: boolean) => ButtonState = null;
-
-  constructor(name: string,
-              tooltip: string,
-              icon: string,
-              startingState: ButtonState,
-              callback: (execute: boolean) => ButtonState,
-            ) {
-    super();
-    this.name = name;
-    this.toolTip = tooltip;
-    this.icon = icon;
-    this.state = startingState;
-    this.callback = callback;
-  }
-}
-
-class Separator extends ToolbarItem {
-  public itemType = 'SEP';
-}
 
 
 @Component({
