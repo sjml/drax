@@ -5,9 +5,10 @@
   <div class="toolbar">
     <div *ngFor="let item of items">
       <button
-        *ngIf="item.itemType === 'BUTTON'"
+        *ngIf="item && item.itemType === 'BUTTON'"
         class="pure-button"
         [class.pure-button-disabled]="editor.mode !== 'edit' || item.state === 'disabled'"
+        [class.pure-button-active]="editor.mode === 'edit' && item.state === 'active'"
         (click)="handleClick(item)"
         >
           <span class="icon {{ item.icon }}"></span>

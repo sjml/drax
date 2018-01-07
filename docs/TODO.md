@@ -34,6 +34,7 @@
 
 ## Features
 0. Button enhancements (toggles/icon changes/cursor detection)
+    - "if (!startTok)" -- how about when you wanna start typing as one of these?
 1. New document creation system (templates?)
     - new directories? New repositories? 
 2. History/restore? 
@@ -53,3 +54,4 @@
 8. Merge changes if we're out of sync with the server
 9. Frontmatter parsing into options? 
 10. Offline mode and/or live collaboration
+    - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.

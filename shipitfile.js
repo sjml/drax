@@ -27,6 +27,7 @@ module.exports = function(shipit) {
     const commands = [
       'npm install',
       'curl https://patch-diff.githubusercontent.com/raw/codemirror/CodeMirror/pull/5156.diff | patch -d node_modules/codemirror -p1',
+      'curl https://patch-diff.githubusercontent.com/raw/codemirror/CodeMirror/pull/5164.diff | patch -d node_modules/codemirror -p1',
       'npm run build'
     ];
     return shipit.local(

@@ -17,6 +17,8 @@ import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter';
 import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
+import { ButtonState } from '../toolbar/toolbar.component';
+
 import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 
 export enum EditorMode {
@@ -115,6 +117,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       this.change.emit();
     });
+
+    this.instance.on('cursorActivity', () => {
+      this.cursorActivity.emit();
+    });
   }
 
   ngOnDestroy() {
@@ -168,9 +174,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  prepForSave(): boolean {
-    this.setMode(EditorMode.Locked);
-    return true;
+  prepForSave(execute: boolean): ButtonState {
+    if (!this._file.isDirty) {
+      return null;
+    }
+    if (execute) {
+      this.setMode(EditorMode.Locked);
+    }
+    return ButtonState.Disabled;
   }
 
   cancelSave(): boolean {
@@ -193,6 +204,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  // runs periodically
   checkAgainstServer() {
     if (this._file === null) {
       return;
@@ -213,11 +225,16 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  refreshContents(): boolean {
-    this.ghAccess.getFileContents(this._file.item).then(newFile => {
-      this.file = newFile;
-    });
-    return true;
+  refreshContents(execute: boolean): ButtonState {
+    if (!this.fileOutOfSync) {
+      return null;
+    }
+    if (execute) {
+      this.ghAccess.getFileContents(this._file.item).then(newFile => {
+        this.file = newFile;
+      });
+    }
+    return ButtonState.Disabled;
   }
 
   /***** Text Formatting ******/
@@ -234,7 +251,65 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     return workingRange;
   }
 
-  cycleHeaderLevel(): boolean {
+  private getTokensInRange(range: CodeMirror.Range): [number, CodeMirror.Token][] {
+    const tokens: [number, CodeMirror.Token][] = [];
+
+    if (range.from().line === range.to().line) {
+      const lineTokens = this.instance.getLineTokens(range.from().line, true);
+      for (const tok of lineTokens) {
+        let pushMe = false;
+        if (tok.start < range.from().ch) {
+          if (tok.end >= range.from().ch) {
+            pushMe = true;
+          }
+        }
+        else if (tok.end > range.to().ch) {
+          if (tok.start <= range.to().ch) {
+            pushMe = true;
+          }
+        }
+        else {
+          pushMe = true;
+        }
+        if (pushMe) {
+          tokens.push([range.from().line, tok]);
+        }
+      }
+    }
+    else {
+      this.instance.getDoc().eachLine(range.from().line, range.to().line + 1, lineHandle => {
+        const lineNumber = this.instance.getDoc().getLineNumber(lineHandle);
+        const lineTokens = this.instance.getLineTokens(lineNumber, true);
+
+        if (lineNumber === range.from().line) {
+          // first line
+          for (const tok of lineTokens) {
+            if (tok.end >= range.from().ch) {
+              tokens.push([lineNumber, tok]);
+            }
+          }
+        }
+        else if (lineNumber === range.to().line) {
+          // last line
+          for (const tok of lineTokens) {
+            if (tok.start <= range.to().ch) {
+              tokens.push([lineNumber, tok]);
+            }
+          }
+        }
+        else {
+          // full line
+          lineTokens.map(tok => {
+            tokens.push([lineNumber, tok]);
+          });
+        }
+      });
+    }
+
+    return tokens;
+  }
+
+  cycleHeaderLevel(execute: boolean): ButtonState {
     const range = this.getWorkingRange();
     const doc = this.instance.getDoc();
 
@@ -243,47 +318,83 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
       if (startTok.state.header === 0) {
         // not a header; make it one
-        doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
+        if (execute) {
+          doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
+        }
       }
       else if (startTok.string === '# ') {
-        doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        if (execute) {
+          doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        }
       }
       else if (startTok.string === '## ') {
-        doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        if (execute) {
+          doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        }
       }
       else if (startTok.string === '### ') {
-        doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        if (execute) {
+          doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        }
       }
       else if (startTok.string === '#### ') {
         // max header; clear it
-        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        if (execute) {
+          doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
+        }
       }
     }
 
-    return true;
+    return ButtonState.Active;
   }
 
-  toggleBlockQuote(): boolean {
+  toggleBlockQuote(execute: boolean = true): ButtonState {
     const range = this.getWorkingRange();
     const doc = this.instance.getDoc();
 
+    let lineCount = 0;
+    let quoteCount = 0;
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+      lineCount++;
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (startTok.state.quote === 0) {
-        // not a quote; make it one
-        doc.replaceRange('> ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bqCycle');
-      }
-      // only letting one level of quotes, blow away the extras if toggling off
-      else {  // if (startTok.string === '> ') {
-        doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bqCycle');
+      if (startTok.state.quote !== 0) {
+        quoteCount++;
       }
     }
 
-    return true;
+    if (lineCount === quoteCount) {
+      // turning them off
+      if (execute) {
+        this.instance.operation(() => {
+          for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+            const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+            if (!startTok) {
+              continue;
+            }
+            doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bqCycle');
+          }
+        });
+      }
+      return ButtonState.Inactive;
+    }
+    else {
+      if (execute) {
+        this.instance.operation(() => {
+          for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+            const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+            if (!startTok) {
+              continue;
+            }
+            doc.replaceRange('> ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bqCycle');
+          }
+        });
+      }
+      return ButtonState.Active;
+    }
   }
 
-  toggleBulletList(): boolean {
+  toggleBulletList(execute: boolean = true): ButtonState {
     const bullets: string[] = ['* ', '+ ', '- '];
     const range = this.getWorkingRange();
     const doc = this.instance.getDoc();
@@ -303,72 +414,92 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    this.instance.operation(() => {
-      for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
-        const startTok = this.instance.getLineTokens(lineIndex, true)[0];
-        if (!startTok) { // ignore blank lines
-          continue;
-        }
-        if (lineCount === bulletedCount) {
-          // remove all list starters
-          if (startTok.state.list) {
-            doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bulletToggle');
+    if (lineCount === bulletedCount) {
+      if (execute) {
+        this.instance.operation(() => {
+          for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+            const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+            if (!startTok) {
+              continue;
+            }
+            if (startTok.state.list) {
+              doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bulletToggle');
+            }
           }
-        }
-        else {
-          // bullet everything
-          if (!startTok.state.list) {
-            doc.replaceRange('* ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bulletToggle');
-          }
-        }
+        });
       }
-    });
-
-    return true;
+      return ButtonState.Inactive;
+    }
+    else {
+      if (execute) {
+        this.instance.operation(() => {
+          for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
+            const startTok = this.instance.getLineTokens(lineIndex, true)[0];
+            if (!startTok) {
+              continue;
+            }
+            if (!startTok.state.list) {
+              doc.replaceRange('* ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bulletToggle');
+            }
+          }
+        });
+      }
+      return ButtonState.Active;
+    }
   }
 
-  createLink(): boolean {
+  createLink(execute: boolean = true): ButtonState {
     const selection = this.getWorkingRange();
-    const doc = this.instance.getDoc();
+    const toks = this.getTokensInRange(selection);
 
-    const closing = '](http://)';
+    let hasLink = false;
+    for (const tok of toks) {
+      if (tok[1].state.linkText || tok[1].state.linkTitle || tok[1].state.linkHref) {
+        hasLink = true;
+      }
+    }
+    if (hasLink) {
+      if (execute) {
+        console.log('kill it');
+      }
+      return null;
+    }
 
-    this.instance.operation(() => {
-      doc.replaceRange(closing, selection.to(), selection.to(), 'linkCreation');
-      doc.replaceRange('[', selection.from(), selection.from(), 'linkCreation');
+    if (execute) {
+      this.instance.operation(() => {
+        const closing = '](http://)';
+        const doc = this.instance.getDoc();
+        doc.replaceRange(closing, selection.to(), selection.to(), 'linkCreation');
+        doc.replaceRange('[', selection.from(), selection.from(), 'linkCreation');
 
-      // leaving subtraction by zero to remind myself that
-      //   the offset from the back is intentional, to put the
-      //   cursor right before the closing parenthesis
-      selection.to().ch += closing.length - 0;
-      doc.setCursor(selection.to());
-    });
-
-    return true;
+        // leaving subtraction by zero to remind myself that
+        //   the offset from the back is intentional, to put the
+        //   cursor right before the closing parenthesis
+        selection.to().ch += closing.length - 0;
+        doc.setCursor(selection.to());
+      });
+    }
+    return ButtonState.Active;
   }
 
-  toggleBold(): boolean {
-    this.toggleWrappedFormatting(['**'], 'strong');
-    return true;
+  toggleBold(execute: boolean = true): ButtonState {
+    return this.toggleWrappedFormatting(['**'], 'strong', execute);
   }
 
-  toggleItalics(): boolean {
-    this.toggleWrappedFormatting(['_', '*'], 'em');
-    return true;
+  toggleItalics(execute: boolean = true): ButtonState {
+    return this.toggleWrappedFormatting(['_', '*'], 'em', execute);
   }
 
-  toggleCode(): boolean {
-    this.toggleWrappedFormatting(['`'], 'code');
-    return true;
+  toggleCode(execute: boolean = true): ButtonState {
+    return this.toggleWrappedFormatting(['`'], 'code', execute);
   }
 
-  toggleStrikethrough(): boolean {
-    this.toggleWrappedFormatting(['~~'], 'strikethrough');
-    return true;
+  toggleStrikethrough(execute: boolean = true): ButtonState {
+    return this.toggleWrappedFormatting(['~~'], 'strikethrough', execute);
   }
 
   // there is almost certainly a more efficient way to do this
-  toggleWrappedFormatting(formatting: string[], symbolType: string) {
+  toggleWrappedFormatting(formatting: string[], symbolType: string, execute: boolean): ButtonState {
     if (formatting.length === 0 || symbolType.length === 0) {
       console.error('Tried to wrap formatting with no strings or symbol.');
       return;
@@ -377,91 +508,42 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     const doc = this.instance.getDoc();
 
     let workingRange = this.getWorkingRange();
-
-    const tokens: [number, CodeMirror.Token][] = [];
-
-    if (workingRange.from().line === workingRange.to().line) {
-      const lineTokens = this.instance.getLineTokens(workingRange.from().line, true);
-      for (const tok of lineTokens) {
-        let pushMe = false;
-        if (tok.start < workingRange.from().ch) {
-          if (tok.end >= workingRange.from().ch) {
-            pushMe = true;
-          }
-        }
-        else if (tok.end > workingRange.to().ch) {
-          if (tok.start <= workingRange.to().ch) {
-            pushMe = true;
-          }
-        }
-        else {
-          pushMe = true;
-        }
-        if (pushMe) {
-          tokens.push([workingRange.from().line, tok]);
-        }
-      }
-    }
-    else {
-      doc.eachLine(workingRange.from().line, workingRange.to().line + 1, lineHandle => {
-        const lineNumber = doc.getLineNumber(lineHandle);
-        const lineTokens = this.instance.getLineTokens(lineNumber, true);
-
-        if (lineNumber === workingRange.from().line) {
-          // first line
-          for (const tok of lineTokens) {
-            if (tok.end >= workingRange.from().ch) {
-              tokens.push([lineNumber, tok]);
-            }
-          }
-        }
-        else if (lineNumber === workingRange.to().line) {
-          // last line
-          for (const tok of lineTokens) {
-            if (tok.start <= workingRange.to().ch) {
-              tokens.push([lineNumber, tok]);
-            }
-          }
-        }
-        else {
-          // full line
-          lineTokens.map(tok => {
-            tokens.push([lineNumber, tok]);
-          });
-        }
-      });
-    }
+    const tokens = this.getTokensInRange(workingRange);
 
     if (tokens.length === 0) {
-      this.instance.operation(() => {
-        doc.replaceRange(
-            `${formatting[0]}${formatting[0]}`,
-            workingRange.from(),
-            workingRange.to(),
-            'wrappedFormatting'
-        );
-        workingRange.anchor.ch += formatting[0].length;
-        workingRange.head.ch += formatting[0].length;
-        doc.setSelection(
-          workingRange.anchor,
-          workingRange.head,
-          {origin: 'wrappedFormatting'}
-        );
-      });
-      return;
+      if (execute) {
+        this.instance.operation(() => {
+          doc.replaceRange(
+              `${formatting[0]}${formatting[0]}`,
+              workingRange.from(),
+              workingRange.to(),
+              'wrappedFormatting'
+          );
+          workingRange.anchor.ch += formatting[0].length;
+          workingRange.head.ch += formatting[0].length;
+          doc.setSelection(
+            workingRange.anchor,
+            workingRange.head,
+            {origin: 'wrappedFormatting'}
+          );
+        });
+      }
+      return ButtonState.Active;
     }
 
     let turningOn = true;
     if (tokens.length === 1) {
       if (tokens[0][1].string === `${formatting[0]}${formatting[0]}`) {
-        const line = workingRange.from().line;
-        doc.replaceRange(
-            '',
-            CodeMirror.Pos(tokens[0][0], tokens[0][1].start),
-            CodeMirror.Pos(tokens[0][0], tokens[0][1].end),
-            'wrappedFormatting'
-        );
-        return;
+        if (execute) {
+          const line = workingRange.from().line;
+          doc.replaceRange(
+              '',
+              CodeMirror.Pos(tokens[0][0], tokens[0][1].start),
+              CodeMirror.Pos(tokens[0][0], tokens[0][1].end),
+              'wrappedFormatting'
+          );
+        }
+        return ButtonState.Inactive;
       }
 
       if (tokens[0][1].state[symbolType]) {
@@ -501,92 +583,95 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    this.instance.operation(() => {
-      // clear out any interior markers
-      for (const tok of tokens.slice().reverse()) {
-        if (formatting.indexOf(tok[1].string) >= 0) {
-          doc.replaceRange('',
-                           CodeMirror.Pos(tok[0], tok[1].start),
-                           CodeMirror.Pos(tok[0], tok[1].end),
-                           'wrappedFormatting'
-                          );
-        }
-      }
-
-      workingRange = this.getWorkingRange();
-      doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
-      if (turningOn) {
-        doc.replaceRange(formatting[0], workingRange.to(), workingRange.to(), 'wrappedFormatting');
-        doc.replaceRange(formatting[0], workingRange.from(), workingRange.from(), 'wrappedFormatting');
-
-        let currLine = tokens[0][0];
-        const paragraphStarts: [number, CodeMirror.Token][] = [];
-        const paragraphEnds:   [number, CodeMirror.Token][] = [];
-        for (let i = 0; i < tokens.length; i++) {
-          const tok = tokens[i];
-          if (tok[0] === currLine) {
-            continue;
-          }
-          if ((tok[0] - currLine) > 1) {
-            paragraphStarts.push(tok);
-            paragraphEnds.push(tokens[i - 1]); // safe; we know this isn't 0
-          }
-
-          currLine = tok[0];
-        }
-
-        const from = workingRange.from();
-        from.ch += formatting[0].length;
-        const to = workingRange.to();
-
-        const paraStartLines: number[] = [];
-        for (const tok of paragraphStarts) {
-          doc.replaceRange(
-            formatting[0],
-            CodeMirror.Pos(tok[0], tok[1].start),
-            CodeMirror.Pos(tok[0], tok[1].start),
-            'wrappedFormatting'
-          );
-          if (to.line === tok[0]) {
-            to.ch += formatting[0].length;
-          }
-          paraStartLines.push(tok[0]);
-        }
-        for (const tok of paragraphEnds) {
-          let endIndex = tok[1].end;
-          if (tok[0] === from.line || paraStartLines.indexOf(tok[0]) >= 0) {
-            endIndex += formatting[0].length;
-          }
-          doc.replaceRange(
-            formatting[0],
-            CodeMirror.Pos(tok[0], endIndex),
-            CodeMirror.Pos(tok[0], endIndex),
-            'wrappedFormatting'
-          );
-          if (to.line === tok[0]) {
-            to.ch += formatting[0].length;
+    if (execute) {
+      this.instance.operation(() => {
+        // clear out any interior markers
+        for (const tok of tokens.slice().reverse()) {
+          if (formatting.indexOf(tok[1].string) >= 0) {
+            doc.replaceRange('',
+                            CodeMirror.Pos(tok[0], tok[1].start),
+                            CodeMirror.Pos(tok[0], tok[1].end),
+                            'wrappedFormatting'
+                            );
           }
         }
 
-        if (workingRange.to().line === workingRange.from().line) {
-          to.ch += formatting[0].length;
-        }
+        workingRange = this.getWorkingRange();
         doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
-      }
-      else {
-        const startTok = tokens[0];
-        const endTok = tokens[tokens.length - 1];
+        if (turningOn) {
+          doc.replaceRange(formatting[0], workingRange.to(), workingRange.to(), 'wrappedFormatting');
+          doc.replaceRange(formatting[0], workingRange.from(), workingRange.from(), 'wrappedFormatting');
 
-        if (   (startTok[1].string.trim().length === 0)
-            && (  endTok[1].string.trim().length === 0) ) {
-              // this is in the middle of a big formatted stretch
-              const from = CodeMirror.Pos(startTok[0], startTok[1].start);
-              const   to = CodeMirror.Pos(  endTok[0],   endTok[1].end);
+          let currLine = tokens[0][0];
+          const paragraphStarts: [number, CodeMirror.Token][] = [];
+          const paragraphEnds:   [number, CodeMirror.Token][] = [];
+          for (let i = 0; i < tokens.length; i++) {
+            const tok = tokens[i];
+            if (tok[0] === currLine) {
+              continue;
+            }
+            if ((tok[0] - currLine) > 1) {
+              paragraphStarts.push(tok);
+              paragraphEnds.push(tokens[i - 1]); // safe; we know this isn't 0
+            }
 
-              doc.replaceRange(formatting[0], to, to, 'wrappedFormatting');
-              doc.replaceRange(formatting[0], from, from, 'wrappedFormatting');
+            currLine = tok[0];
+          }
+
+          const from = workingRange.from();
+          from.ch += formatting[0].length;
+          const to = workingRange.to();
+
+          const paraStartLines: number[] = [];
+          for (const tok of paragraphStarts) {
+            doc.replaceRange(
+              formatting[0],
+              CodeMirror.Pos(tok[0], tok[1].start),
+              CodeMirror.Pos(tok[0], tok[1].start),
+              'wrappedFormatting'
+            );
+            if (to.line === tok[0]) {
+              to.ch += formatting[0].length;
+            }
+            paraStartLines.push(tok[0]);
+          }
+          for (const tok of paragraphEnds) {
+            let endIndex = tok[1].end;
+            if (tok[0] === from.line || paraStartLines.indexOf(tok[0]) >= 0) {
+              endIndex += formatting[0].length;
+            }
+            doc.replaceRange(
+              formatting[0],
+              CodeMirror.Pos(tok[0], endIndex),
+              CodeMirror.Pos(tok[0], endIndex),
+              'wrappedFormatting'
+            );
+            if (to.line === tok[0]) {
+              to.ch += formatting[0].length;
+            }
+          }
+
+          if (workingRange.to().line === workingRange.from().line) {
+            to.ch += formatting[0].length;
+          }
+          doc.setSelection(workingRange.from(), workingRange.to(), { origin: 'wrappedFormatting' });
         }
-      }
-    });
+        else {
+          const startTok = tokens[0];
+          const endTok = tokens[tokens.length - 1];
+
+          if (   (startTok[1].string.trim().length === 0)
+              && (  endTok[1].string.trim().length === 0) ) {
+                // this is in the middle of a big formatted stretch
+                const from = CodeMirror.Pos(startTok[0], startTok[1].start);
+                const   to = CodeMirror.Pos(  endTok[0],   endTok[1].end);
+
+                doc.replaceRange(formatting[0], to, to, 'wrappedFormatting');
+                doc.replaceRange(formatting[0], from, from, 'wrappedFormatting');
+          }
+        }
+      });
+    }
+    return turningOn ? ButtonState.Active : ButtonState.Inactive;
   }
 }

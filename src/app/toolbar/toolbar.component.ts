@@ -6,7 +6,7 @@ abstract class ToolbarItem {
   public itemType = 'ITEM';
 }
 
-enum ButtonState {
+export enum ButtonState {
   Disabled = 'disabled',
   Active = 'active',
   Inactive = 'inactive'
@@ -17,18 +17,21 @@ class Button extends ToolbarItem {
   public name: string;
   public toolTip: string;
   public icon: string;
-  public isToggle = true;
   public state: ButtonState = ButtonState.Inactive;
-  public callback: () => boolean = null;
+  public callback: (execute: boolean) => ButtonState = null;
 
-  constructor(name: string, tooltip: string, icon: string, isToggle: boolean, startingState: ButtonState, fn: () => boolean) {
+  constructor(name: string,
+              tooltip: string,
+              icon: string,
+              startingState: ButtonState,
+              callback: (execute: boolean) => ButtonState,
+            ) {
     super();
     this.name = name;
     this.toolTip = tooltip;
     this.icon = icon;
-    this.isToggle = isToggle;
     this.state = startingState;
-    this.callback = fn;
+    this.callback = callback;
   }
 }
 
@@ -54,37 +57,39 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit() {
     this.editor.change.subscribe(() => this.handleEditorChange());
+    this.editor.cursorActivity.subscribe(() => this.handleEditorChange());
+
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
-                  false, ButtonState.Disabled, () => this.editor.prepForSave()),
+                  ButtonState.Disabled, (execute) => this.editor.prepForSave(execute)),
       new Button('Refresh', 'Refresh file from GitHub', 'icon-arrows-cw',
-                  false, ButtonState.Disabled, () => this.editor.refreshContents()),
-      new Button('History', 'View history of file changes', 'icon-history',
-                  false, ButtonState.Disabled, () => true),
+                  ButtonState.Disabled, (execute) => this.editor.refreshContents(execute)),
+      // new Button('History', 'View history of file changes', 'icon-history',
+      //             ButtonState.Disabled, () => true),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'icon-bold',
-                  true, ButtonState.Inactive, () => this.editor.toggleBold()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleBold(execute)),
       new Button('Italics', 'Change text to italics', 'icon-italic',
-                  true, ButtonState.Inactive, () => this.editor.toggleItalics()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleItalics(execute)),
       new Button('Header', 'Cycle through header levels', 'icon-header',
-                  true, ButtonState.Inactive, () => this.editor.cycleHeaderLevel()),
+                  ButtonState.Inactive, (execute) => this.editor.cycleHeaderLevel(execute)),
       new Separator(),
       new Button('Link', 'Add website link', 'icon-link',
-                  false, ButtonState.Inactive, () => this.editor.createLink()),
+                  ButtonState.Inactive, (execute) => this.editor.createLink(execute)),
       new Button('Bulleted List', 'Create a bulleted list', 'icon-list-bullet',
-                  false, ButtonState.Inactive, () => this.editor.toggleBulletList()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleBulletList(execute)),
       // new Button('Numbered List', 'Create a numbered list', 'icon-list-numbered',
-      //             false, ButtonState.Disabled, () => true),
+      //             ButtonState.Disabled, () => true),
       new Separator(),
       new Button('Code', 'Change text to monospaced', 'icon-code',
-                  false, ButtonState.Inactive, () => this.editor.toggleCode()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleCode(execute)),
       new Button('Strikethrough', 'Cross out text', 'icon-strike',
-                  false, ButtonState.Inactive, () => this.editor.toggleStrikethrough()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleStrikethrough(execute)),
       new Button('Blockquote', 'Create a blockquote', 'icon-quote-left',
-                  false, ButtonState.Inactive, () => this.editor.toggleBlockQuote()),
+                  ButtonState.Inactive, (execute) => this.editor.toggleBlockQuote(execute)),
       new Separator(),
       new Button('Preview', 'View the rendered page alongside your Markdown', 'icon-columns',
-                  false, ButtonState.Disabled, () => true),
+                  ButtonState.Disabled, (execute) => null),
     );
   }
 
@@ -106,24 +111,26 @@ export class ToolbarComponent implements OnInit {
     if (button.state === ButtonState.Disabled) {
       return;
     }
-    button.callback();
+    button.state = button.callback(true);
     this.editor.takeFocus();
   }
 
-  // TODO: be smarter about this than directly using array index
   handleEditorChange() {
-    if (this.editor.file.isDirty) {
-      (this.items[0] as Button).state = ButtonState.Inactive;
-    }
-    else {
-      (this.items[0] as Button).state = ButtonState.Disabled;
-    }
-
-    if (this.editor.fileOutOfSync) {
-      (this.items[1] as Button).state = ButtonState.Inactive;
-    }
-    else {
-      (this.items[1] as Button).state = ButtonState.Disabled;
+    for (const item of this.items) {
+      if (!(item instanceof Button)) {
+        continue;
+      }
+      const button = item as Button;
+      const res: ButtonState = button.callback(false);
+      if (res === ButtonState.Active) {
+        button.state = ButtonState.Inactive;
+      }
+      else if (res === ButtonState.Inactive) {
+        button.state = ButtonState.Active;
+      }
+      else if (res === null) {
+        button.state = ButtonState.Disabled;
+      }
     }
   }
 }
