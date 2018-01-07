@@ -18,8 +18,6 @@ export class ConfigService {
       this.config = response;
     });
 
-    const e = environment;
-
     if (!environment.production) {
       await this.http.get('./drax-config.dev.json').toPromise()
         .then(response => {
