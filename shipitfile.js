@@ -42,16 +42,18 @@ module.exports = function(shipit) {
 
   shipit.blTask('stamp', function() {
     shipit.log(chalk.green('Adding git-rev and timestamp'));
-    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'});
-    const time = execSync('date +"%r %Z, %d %B %Y"', {encoding: 'utf-8'});
+    const time = execSync('date +"%r %Z, %d %B %Y"', {encoding: 'utf-8'})
+                    .toString().trim();
+    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'})
+                    .toString().trim();
 
-    const aboutFile = './src/assets/pages/about.md';
+    const aboutFile = `${shipit.config.workspace}/src/assets/pages/about.md`;
     const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
     const stamped = aboutContents
                       .replace('%%DEPLOY_TIME%%', time)
                       .replace('%%GIT_REV%%', rev);
     fs.writeFileSync(aboutFile, stamped);
-    return shipit.local('').then(function () {
+    return shipit.local('pwd').then(function () {
       shipit.emit('stamped');
     });
   });
@@ -76,11 +78,11 @@ module.exports = function(shipit) {
     return shipit.remote('pwd');
   });
 
-  shipit.on('built', function () {
+  shipit.on('fetch', function () {
     return shipit.start('stamp');
   });
 
-  shipit.on('fetched', function () {
+  shipit.on('stamped', function () {
     return shipit.start('build');
   });
 
