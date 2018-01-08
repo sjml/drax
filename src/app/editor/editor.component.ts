@@ -88,7 +88,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       lineWrapping: true,
       autofocus: true,
       addModeClass: true,
-      inputStyle: 'contenteditable',
       extraKeys: {
         Enter: 'newlineAndIndentContinueMarkdownList'
       }
