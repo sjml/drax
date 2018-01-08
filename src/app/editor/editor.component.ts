@@ -178,13 +178,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
+    console.log('save prep', this._file.isDirty);
     if (!this._file.isDirty) {
       return null;
     }
     if (execute) {
       this.setMode(EditorMode.Locked);
     }
-    return ButtonState.Disabled;
+    return ButtonState.Active;
   }
 
   cancelSave(): boolean {
@@ -237,7 +238,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.file = newFile;
       });
     }
-    return ButtonState.Disabled;
+    return ButtonState.Active;
   }
 
   /***** Text Formatting ******/
