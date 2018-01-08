@@ -42,7 +42,7 @@ module.exports = function(shipit) {
 
   shipit.blTask('stamp', function() {
     shipit.log(chalk.green('Adding git-rev and timestamp'));
-    const time = execSync('date +"%r %Z, %d %B %Y"', {encoding: 'utf-8'})
+    const time = execSync('date +"%l:%M %p %Z, %d %B %Y"', {encoding: 'utf-8'})
                     .toString().trim();
     const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'})
                     .toString().trim();
@@ -78,7 +78,7 @@ module.exports = function(shipit) {
     return shipit.remote('pwd');
   });
 
-  shipit.on('fetch', function () {
+  shipit.on('fetched', function () {
     return shipit.start('stamp');
   });
 
