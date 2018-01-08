@@ -49,10 +49,10 @@
 </div>
 
 <div id="main">
-  <div *ngIf="workingFile">
+  <div *ngIf="workingFile !== null">
     <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
   </div>
-  <div *ngIf="!workingFile && displayPage">
+  <div *ngIf="displayPage !== null && workingFile === null">
     <app-pages [pageName]="displayPage"></app-pages>
   </div>
 </div>
