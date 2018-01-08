@@ -28,7 +28,5 @@ Things not to expect:
 
 
 <div class="deployInfo">
-  Deployed at 11:13:12 PM EST, 07 January 2018
-, Revision 02239e0
-
+  Deployed at %%DEPLOY_TIME%%, Revision %%GIT_REV%%
 </div>
