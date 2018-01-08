@@ -40,7 +40,6 @@ export class PagesComponent implements OnInit {
             typographer: true
           });
           const html = md.render(response);
-          console.log(html);
           this.host.nativeElement.innerHTML = html;
           // TODO: figure out if we can be more precise and do this
           //       to just a single element instead of the whole window

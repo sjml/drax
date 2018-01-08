@@ -120,6 +120,9 @@ export class GitHubAccessComponent implements OnInit {
     if (this.bearerToken !== null) {
       this.loggedIn();
     }
+    this.route.params.subscribe(_ => {
+      this.loadFromLocation();
+    });
   }
 
   toggleOpen() {
@@ -128,9 +131,7 @@ export class GitHubAccessComponent implements OnInit {
 
   loggedIn() {
     this.loadUser();
-    this.route.params.subscribe(_ => {
-      this.loadFromLocation();
-    });
+    this.loadFromLocation();
   }
 
   logout() {
@@ -191,6 +192,10 @@ export class GitHubAccessComponent implements OnInit {
     this.repo = new GitHubRepo();
     this.repo.owner = this.route.snapshot.paramMap.get('owner');
     this.repo.name = this.route.snapshot.paramMap.get('name');
+
+    if (!this.bearerToken) {
+      return;
+    }
 
     if (this.repo.owner === null || this.repo.name === null) {
       this.loadRepositoryList().then(cont => {
