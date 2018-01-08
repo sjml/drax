@@ -45,6 +45,11 @@ export function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '/pages/about'
+  },
+  {
     matcher: repoBranchMatcher,
     component: GitHubAccessComponent
   }
