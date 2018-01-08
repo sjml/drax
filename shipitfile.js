@@ -60,10 +60,10 @@ module.exports = function(shipit) {
 
   shipit.blTask('prep', function () {
     shipit.log(chalk.green('Prepping distribution'));
-    const confFile = `${shipit.releasePath}/auth/secrets.php`;
     const commands = [
       'cp ../../config/secrets.php ./auth/',
-      'cp ../../config/drax-config.json ./'
+      'cp ../../config/drax-config.json ./',
+      'cp ../../config/htaccess ./.htaccess'
     ];
     return shipit.remote(
             commands.join('; '),
