@@ -4,9 +4,9 @@
   max-width: $editorMaxWidth;
   margin: auto;
   margin-top: $editorbarHeight;
+  margin-bottom: $editorbarHeight * 2;
 
   font-size: 120%;
-
 }
 
 ::ng-deep {

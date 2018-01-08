@@ -35,8 +35,12 @@ export class PagesComponent implements OnInit {
     if (this._pageName !== null) {
       this.http.get(`./assets/pages/${this._pageName}.md`, {responseType: 'text'}).toPromise()
         .then((response) => {
-          const md = MD('commonmark', {html: true});
+          const md = MD('default', {
+            html: true,
+            typographer: true
+          });
           const html = md.render(response);
+          console.log(html);
           this.host.nativeElement.innerHTML = html;
           // TODO: figure out if we can be more precise and do this
           //       to just a single element instead of the whole window
@@ -44,6 +48,7 @@ export class PagesComponent implements OnInit {
         })
         .catch((err) => {
           // redirect to base
+          console.error(err);
           this.router.navigateByUrl('/');
         })
       ;
