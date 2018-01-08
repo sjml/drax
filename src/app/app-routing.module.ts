@@ -4,7 +4,16 @@ import { RouterModule, Routes, UrlSegment, UrlMatchResult } from '@angular/route
 import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
 import { PagesComponent } from './pages/pages.component';
 
+import * as cmBrowser from 'codemirror/src/util/browser';
+
 export function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
+  if (cmBrowser.mobile) {
+    // use CM's detection for this since it's the part causing problems
+    const p = new UrlSegment('pages', {});
+    const s = new UrlSegment('sadness', {});
+    return {consumed: [p, s], posParams: {pageName: s}};
+  }
+
   if (urlSegs.length < 2) {
     return {consumed: urlSegs, posParams: {}};
   }
