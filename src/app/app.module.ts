@@ -9,13 +9,15 @@ import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
 import { EditorComponent } from './editor/editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AppRoutingModule } from './/app-routing.module';
+import { PagesComponent } from './pages/pages.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GitHubAccessComponent,
     EditorComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    PagesComponent
   ],
   imports: [
     BrowserModule,

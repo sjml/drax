@@ -52,5 +52,8 @@
   <div *ngIf="workingFile">
     <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
   </div>
+  <div *ngIf="!workingFile && displayPage">
+    <app-pages [pageName]="displayPage"></app-pages>
+  </div>
 </div>
 

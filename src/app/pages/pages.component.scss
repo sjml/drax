@@ -1,0 +1,35 @@
+@import '~sass/variables';
+
+.drax-page {
+  max-width: $editorMaxWidth;
+  margin: auto;
+  margin-top: $editorbarHeight;
+
+  font-size: 120%;
+
+}
+
+::ng-deep {
+  a {
+    text-decoration: none;
+    color: rgb(50, 132, 255);
+  }
+
+  h2 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+  }
+
+  h3 {
+    margin-top: 1.5em;
+    margin-bottom: -0.5em;
+  }
+
+  .deployInfo {
+    margin-top: 10em;
+    font-size: smaller;
+    text-align: right;
+  }
+}
+
+

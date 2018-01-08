@@ -60,9 +60,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this._file = v;
       if (this._file !== null && this.instance !== null) {
         this.loadFreshFile();
-        // TODO: figure out if we can be more precise and do this
-        //       to just a single element instead of the whole window
-        window.scrollTo(0, 0);
       }
 
       if (this._file !== null) {
@@ -91,6 +88,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       lineWrapping: true,
       autofocus: true,
       addModeClass: true,
+      inputStyle: 'contenteditable',
       extraKeys: {
         Enter: 'newlineAndIndentContinueMarkdownList'
       }
@@ -160,6 +158,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.instance.refresh();
     this.change.emit();
     this.takeFocus();
+
+    // TODO: figure out if we can be more precise and do this
+    //       to just a single element instead of the whole window
+    window.scrollTo(0, 0);
   }
 
   takeFocus() {

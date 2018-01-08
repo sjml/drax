@@ -6,8 +6,7 @@ Drax was made with you in mind. Don't be scared.
 
 
 ## GitHub
-When you create or edit a file in Drax, it uses software called [Git](http://git-scm.com/) to store it in the cloud at a site called [GitHub](https://github.com). 
-So to use Drax, you'll first need to [create a GitHub account](https://github.com/join). 
+When you create or edit a file in Drax, it stores it in the cloud at a site called [GitHub](https://github.com). So to use Drax, you'll first need to [create a GitHub account](https://github.com/join).
 
 Git was originally made for programmers working with computer language files, but it works great with normal text as well. The important thing to remember is that Git saves every version of a document that you've made, so you can always go back and see how it's changed over time. You don't need to worry about losing your work or forgetting that thing you deleted. Every time you press the Save button in Drax, it creates a new version of the document that you can return to any time. (That's why it asks you to write a little note describing your changes: so you can have a record of what you did over time.)
 
@@ -23,10 +22,12 @@ Markdown takes these conventions and formalizes them a little bit. This means th
 
 In Markdown you don't have control over things like font size or color; those are for the designer to figure out. You indicate what parts of the text are supposed to mean, and focus on your words. As a writer, it's very freeing to not have to fiddle with getting it to look good. 
 
+For details about Markdown, see [this guide](/#/pages/markdown).
+
 
 ## Annotations
 (coming soon)
 
 
 ## Advanced Usage
-If you're interested in administering a repository for use with Drax, or installing your own version of it, please see the [administration documentation](./Administration.md). If you want to modify Drax or fix a bug that you found, see [development documentation](./Developing.md). 
+If you're interested in administering a repository for use with Drax, or installing your own version of it, please see the [administration documentation](https://github.com/sjml/drax/blob/master/devdocs/Administration.md). If you want to modify Drax or fix a bug that you found, see [development documentation](https://github.com/sjml/drax/blob/master/devdocs/Developing.md). 

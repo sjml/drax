@@ -1,5 +1,6 @@
 const fs = require('fs');
 const chalk = require('chalk');
+const execSync = require('child_process').execSync
 
 const keys = require('./deploy-keys');
 
@@ -39,6 +40,22 @@ module.exports = function(shipit) {
           });
   });
 
+  shipit.blTask('stamp', function() {
+    shipit.log(chalk.green('Adding git-rev and timestamp'));
+    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'});
+    const time = execSync('date +"%r %Z, %d %B %Y"', {encoding: 'utf-8'});
+
+    const aboutFile = './src/assets/pages/about.md';
+    const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
+    const stamped = aboutContents
+                      .replace('%%DEPLOY_TIME%%', time)
+                      .replace('%%GIT_REV%%', rev);
+    fs.writeFileSync(aboutFile, stamped);
+    return shipit.local('').then(function () {
+      shipit.emit('stamped');
+    });
+  });
+
   shipit.blTask('prep', function () {
     shipit.log(chalk.green('Prepping distribution'));
     const confFile = `${shipit.releasePath}/auth/secrets.php`;
@@ -57,6 +74,10 @@ module.exports = function(shipit) {
 
   shipit.task('pwd', function () {
     return shipit.remote('pwd');
+  });
+
+  shipit.on('built', function () {
+    return shipit.start('stamp');
   });
 
   shipit.on('fetched', function () {

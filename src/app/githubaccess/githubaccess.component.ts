@@ -99,6 +99,7 @@ export class GitHubAccessComponent implements OnInit {
   item: GitHubItem = null;
 
   workingFile: GitHubFile = null;
+  displayPage: string = null;
 
   upwardsLink: string = null;
   upwardsLinkLabel: string = null;
@@ -181,6 +182,12 @@ export class GitHubAccessComponent implements OnInit {
 
   // TODO: have this take params from the subscription
   loadFromLocation() {
+    const newPage = this.route.snapshot.paramMap.get('pageName');
+    if (newPage !== null) {
+      this.displayPage = newPage;
+      this.workingFile = null;
+    }
+
     this.repo = new GitHubRepo();
     this.repo.owner = this.route.snapshot.paramMap.get('owner');
     this.repo.name = this.route.snapshot.paramMap.get('name');
