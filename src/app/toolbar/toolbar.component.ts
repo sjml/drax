@@ -24,41 +24,42 @@ export class ToolbarComponent implements OnInit {
     this.editor.cursorActivity.subscribe(() => this.handleEditorChange());
 
     this.items.push(
-      new Button('Save', 'Sync your changes back to GitHub', 'icon-floppy',
+      new Button('Save', 'Sync your changes back to GitHub', 'floppy-o',
                   ButtonState.Disabled, (execute) => this.editor.prepForSave(execute)),
-      new Button('Refresh', 'Refresh file from GitHub', 'icon-arrows-cw',
+      new Button('Refresh', 'Refresh file from GitHub', 'refresh',
                   ButtonState.Disabled, (execute) => this.editor.refreshContents(execute)),
-      // new Button('History', 'View history of file changes', 'icon-history',
+      // new Button('History', 'View history of file changes', 'history',
       //             ButtonState.Disabled, () => true),
       new Separator(),
-      new Button('Bold', 'Change text to bold', 'icon-bold',
+      new Button('Bold', 'Change text to bold', 'bold',
                   ButtonState.Inactive, (execute) => this.editor.toggleBold(execute)),
-      new Button('Italics', 'Change text to italics', 'icon-italic',
+      new Button('Italics', 'Change text to italics', 'italic',
                   ButtonState.Inactive, (execute) => this.editor.toggleItalics(execute)),
-      new Button('Header', 'Cycle through header levels', 'icon-header',
+      new Button('Header', 'Cycle through header levels', 'header',
                   ButtonState.Inactive, (execute) => this.editor.cycleHeaderLevel(execute)),
       new Separator(),
-      new Button('Link', 'Add website link', 'icon-link',
+      new Button('Link', 'Add website link', 'link',
                   ButtonState.Inactive, (execute) => this.editor.createLink(execute)),
-      new Button('Bulleted List', 'Create a bulleted list', 'icon-list-bullet',
+      new Button('Bulleted List', 'Create a bulleted list', 'list-ul',
                   ButtonState.Inactive, (execute) => this.editor.toggleBulletList(execute)),
-      // new Button('Numbered List', 'Create a numbered list', 'icon-list-numbered',
+      // new Button('Numbered List', 'Create a numbered list', 'list-ol',
       //             ButtonState.Disabled, () => true),
       new Separator(),
-      new Button('Code', 'Change text to monospaced', 'icon-code',
+      new Button('Code', 'Change text to monospaced', 'code',
                   ButtonState.Inactive, (execute) => this.editor.toggleCode(execute)),
-      new Button('Strikethrough', 'Cross out text', 'icon-strike',
+      new Button('Strikethrough', 'Cross out text', 'strikethrough',
                   ButtonState.Inactive, (execute) => this.editor.toggleStrikethrough(execute)),
-      new Button('Blockquote', 'Create a blockquote', 'icon-quote-left',
+      new Button('Blockquote', 'Create a blockquote', 'quote-left',
                   ButtonState.Inactive, (execute) => this.editor.toggleBlockQuote(execute)),
       new Separator(),
-      new Button('Preview', 'View the rendered page alongside your Markdown', 'icon-columns',
+      new Button('Preview', 'View the rendered page alongside your Markdown', 'columns',
                   ButtonState.Disabled, (execute) => null),
     );
   }
 
   cancelSave() {
     this.editor.cancelSave();
+    this.handleEditorChange();
     this.editor.takeFocus();
   }
 

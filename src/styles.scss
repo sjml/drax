@@ -1,11 +1,18 @@
 @import '~sass/variables';
 
-@import '~assets/fontello/css/fontello.css';
-
 @import url('https://fonts.googleapis.com/css?family=Cabin:400,400i,700,700i');
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
 
 
 body {
   font-family: $propFont;
+}
+
+.icon {
+  width: 1em;
+  line-height: 1em;
+  margin-right: .2em;
+  margin-left: .2em;
+  text-align: center;
+  display: inline-block;
 }

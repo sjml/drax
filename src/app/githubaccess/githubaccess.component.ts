@@ -136,6 +136,7 @@ export class GitHubAccessComponent implements OnInit {
 
   logout() {
     localStorage.removeItem('gitHubBearerToken');
+    this.bearerToken = null;
     this.user = null;
     this.workingFile = null;
     this.repo = null;
@@ -498,25 +499,37 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   // this annoyingly has to be done with the old API. :'(
-  pushFile(file: GitHubFile, message: string): Promise<object> {
+  pushFile(file: GitHubFile, message: string, newFile: boolean = false): Promise<object> {
     return this.getPathInfo(file.item).then<object>(info => {
-      // TODO: grace
-      if (!info || !info['object'] || !info['object']['oid']) {
-        return {success: false, message: 'Non-existent object.'};
+      if (!newFile) {
+        // TODO: grace
+        if (!info || !info['object'] || !info['object']['oid']) {
+          return {success: false, message: 'Non-existent object.'};
+        }
+        if (info['object']['oid'] !== file.item.lastGet) {
+          return {success: false, message: 'ID mismatch!'};
+        }
       }
-      if (info['object']['oid'] !== file.item.lastGet) {
-        return {success: false, message: 'ID mismatch!'};
+      else {
+        if (info) {
+          return {success: false, message: 'File already exists.'};
+        }
+      }
+
+      const args = {
+        message: message,
+        content: btoa(file.contents),
+        branch: file.item.branch
+      };
+
+      if (!newFile) {
+        args['sha'] = file.item.lastGet;
       }
 
       return this.http.put(
         'https://api.github.com/repos/' +
         `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath()}`,
-        {
-          message: message,
-          content: btoa(file.contents),
-          sha: file.item.lastGet,
-          branch: file.item.branch
-        },
+        args,
         {
           headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
           responseType: 'json'

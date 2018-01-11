@@ -7,6 +7,7 @@
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
+* figure out how to deal with binary files...
 
 ## Bugs
 * set up a lock so onScroll response can't get double-called
@@ -48,7 +49,7 @@
          2. if there have been additions or deletions before it, modify as needed
 5. Image uploading
 6. HTML preview + side-by-side
-7. About pages / tutorial?
+7. Fix mobile version? 
 8. Single repo mode
 9. Merge changes if we're out of sync with the server
 10. Frontmatter parsing into options? 

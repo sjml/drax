@@ -11,7 +11,7 @@
         [class.pure-button-active]="editor.mode === 'edit' && item.state === 'active'"
         (click)="handleClick(item)"
         >
-          <span class="icon {{ item.icon }}"></span>
+          <span class="icon fa fa-{{ item.icon }}"></span>
       </button>
       <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
     </div>
@@ -21,8 +21,8 @@
     <div class="memoPanel">
       <textarea placeholder="Describe your changes here." [(ngModel)]="commitMessage"></textarea>
       <div class="buttonBar">
-        <span class="panelButton icon-cancel" (click)="cancelSave()"></span>
-        <span class="panelButton icon-ok" [class.disabled]="commitMessage.length === 0" (click)="doSave()"></span>
+        <span class="panelButton fa fa-times icon icon-cancel" (click)="cancelSave()"></span>
+        <span class="panelButton fa fa-check icon icon-ok" [class.disabled]="commitMessage.length === 0" (click)="doSave()"></span>
       </div>
     </div>
   </div>
