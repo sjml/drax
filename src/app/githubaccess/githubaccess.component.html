@@ -5,11 +5,11 @@
 
   <div id="sidebar" (scroll)="onScroll($event)">
     <div class="gitHubWidget">
-      <div *ngIf="!user && bearerToken" class="gitHubConnectPrompt">
+      <div *ngIf="!user && bearerToken !== null" class="gitHubConnectPrompt">
         <div class="fa fa-circle-o-notch icon fa-spin"></div>
         <div class="loginPrompt">Signing in...</div>
       </div>
-      <div *ngIf="!user && !bearerToken" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
+      <div *ngIf="!user && bearerToken === null" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
         <div class="fa fa-github icon"></div>
         <div class="loginPrompt">Click to sign in with GitHub</div>
       </div>
