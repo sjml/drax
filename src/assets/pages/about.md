@@ -13,7 +13,6 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it could have died off by the time you read this.) The point is, there are features incoming. 
 
 Things to expect:
-* Ability to create new documents and repositories. 
 * Exploring the history and restoring old versions of files. 
 * Better keyboard shortcuts. 
 * An annotation system for collaboration. 
