@@ -76,18 +76,18 @@ $panelColor: rgb(211, 211, 211);
   }
 
   .panelButton.icon-cancel {
-    color: darkred;
+    color: $cancelColor;
   }
   .panelButton.icon-cancel:hover {
-    color: rgb(100, 1, 1);
+    color: $cancelHover;
   }
   .panelButton.icon-ok {
-    color: darkgreen;
+    color: $okColor;
   }
   .panelButton.icon-ok:not(.disabled):hover {
-    color: rgb(0, 58, 0);
+    color: $okHover;
   }
   .panelButton.icon-ok.disabled {
-    color: #d3e9d3;
+    color: $okDisabled;
   }
 }

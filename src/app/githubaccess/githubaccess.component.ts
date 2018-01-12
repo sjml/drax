@@ -7,6 +7,8 @@ import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
 import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
+import { ModalService } from '../drax-modal/modal.service';
+import { ModalField } from '../drax-modal/drax-modal.component';
 
 class GitHubUser {
   public fullName: string;
@@ -109,6 +111,7 @@ export class GitHubAccessComponent implements OnInit {
 
   constructor(
     private config: ConfigService,
+    private modalService: ModalService,
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
@@ -446,6 +449,48 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
+  createNewRepoButtonResponse() {
+    /*
+    this.title = 'Create Repository';
+    this.description = 'Create a new repository on GitHub.';
+    this.fields = [
+    ];
+    */
+    const fields: ModalField[] = [
+      {name: 'repoName', value: '', required: true, placeholder: 'Repository Name'},
+      {name: 'repoDesc', value: '', required: false, placeholder: 'Description of Repository', showAsTextArea: true}
+    ];
+    this.modalService.display({
+                                title: 'Create Repository',
+                                description: 'Create a new collection of files on GitHub.',
+                                fields: fields
+                              },
+      (pressedOK, values) => {
+        if (pressedOK) {
+          this.createRepo(values['repoName'], values['repoDesc'])
+            .then(response => {
+              if (!response['success']) {
+                // TODO: grace
+              }
+              else {
+                const repo = new GitHubRepo();
+                repo.owner = this.user.login;
+                repo.name = response['name'];
+                this.loadRepo(repo).then((success) => {
+                  if (!success) {
+                    // TODO: grace
+                  }
+                  else {
+                    this.router.navigateByUrl(repo.getRouterPath());
+                  }
+                });
+              }
+            });
+        }
+      }
+    );
+  }
+
   /******** Remote Data Access *******/
 
   private graphQlQuery(query: object, queryLog: string): Observable<object> {
@@ -546,6 +591,29 @@ export class GitHubAccessComponent implements OnInit {
           return {success: false, message: 'PUT failed!', error: error};
         })
       ;
+    });
+  }
+
+  createRepo(name: string, description: string): Promise<object> {
+    return this.http.post(
+      'https://api.github.com/user/repos',
+      {
+        name: name,
+        description: description,
+        auto_init: true
+      },
+      {
+        headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
+        responseType: 'json'
+      }
+
+    ).toPromise().then(response => {
+      console.log(response);
+      return {success: true, name: response['name']};
+    })
+    .catch(error => {
+      console.error(error);
+      return {success: false};
     });
   }
 

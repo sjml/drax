@@ -8,6 +8,7 @@
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
 * figure out how to deal with binary files...
+* ugh, the icon layering is a pain; maybe upgrade to FA5 to use the SVG stuff
 
 ## Bugs
 * set up a lock so onScroll response can't get double-called
@@ -35,7 +36,8 @@
 
 ## Features
 1. New document creation system (templates?)
-    - new directories? New repositories? 
+    - new directories?
+    - add check for making private repos?
 2. History/restore? 
 3. Keyboard commands
 3. Annotation system

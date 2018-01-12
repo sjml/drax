@@ -24,7 +24,9 @@
       <ul class="gitHubNavList pure-menu-list">
         <li *ngIf="user" class="pure-menu-item">
           <div class="creationBar">
-            <a *ngIf="!upwardsLink" class="fa-stack repo">
+            <a *ngIf="!upwardsLink" class="fa-stack repo"
+              (click)="createNewRepoButtonResponse()"
+              >
               <span class="fa fa-database fa-stack-2x"></span>
               <span class="fa fa-plus fa-stack overlay"></span>
             </a>

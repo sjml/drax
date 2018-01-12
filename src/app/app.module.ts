@@ -5,11 +5,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { ConfigService } from './config.service';
+import { ModalService } from './drax-modal/modal.service';
 import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
 import { EditorComponent } from './editor/editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { PagesComponent } from './pages/pages.component';
+import { DraxModalComponent } from './drax-modal/drax-modal.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,8 @@ import { PagesComponent } from './pages/pages.component';
     GitHubAccessComponent,
     EditorComponent,
     ToolbarComponent,
-    PagesComponent
+    PagesComponent,
+    DraxModalComponent
   ],
   imports: [
     BrowserModule,
@@ -27,6 +30,7 @@ import { PagesComponent } from './pages/pages.component';
   ],
   providers: [
     ConfigService,
+    ModalService,
     {
       provide: APP_INITIALIZER,
       useFactory: (config: ConfigService) => () => config.load(),
