@@ -36,8 +36,7 @@
 
 ## Features
 1. History/restore? 
-2. Keyboard commands
-3. Annotation system
+2. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -46,6 +45,10 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
+3. Keyboard commands
+  - for toolbar buttons as makes sense
+  - escape to dismiss modals and save popup
+  - cmd-s to save, cmd-r to refresh
 5. Image uploading
 6. HTML preview + side-by-side
 7. Fix mobile version? 
