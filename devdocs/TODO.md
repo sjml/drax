@@ -35,11 +35,8 @@
 * need to store repository info too... 😬
 
 ## Features
-1. New document creation system (templates?)
-    - new directories?
-    - add check for making private repos?
-2. History/restore? 
-3. Keyboard commands
+1. History/restore? 
+2. Keyboard commands
 3. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
@@ -53,6 +50,8 @@
 6. HTML preview + side-by-side
 7. Fix mobile version? 
 8. Single repo mode
+  - templates for new files
+  - setting to prevent creation of new files, new directories
 9. Merge changes if we're out of sync with the server
 10. Frontmatter parsing into options? 
 11. Offline mode and/or live collaboration

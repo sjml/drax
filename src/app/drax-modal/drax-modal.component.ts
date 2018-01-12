@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component,
+         OnInit,
+         AfterViewInit,
+         ViewChildren,
+         QueryList,
+         ElementRef
+        } from '@angular/core';
 
 import { ModalService } from './modal.service';
 
@@ -25,7 +31,9 @@ export interface ModalDisplay {
   templateUrl: './drax-modal.component.html',
   styleUrls: ['./drax-modal.component.scss']
 })
-export class DraxModalComponent implements OnInit, ModalDisplay {
+export class DraxModalComponent implements OnInit, AfterViewInit, ModalDisplay {
+
+  @ViewChildren('modalField') displayFields: QueryList<ElementRef>;
 
   title = '';
   description = '';
@@ -38,6 +46,14 @@ export class DraxModalComponent implements OnInit, ModalDisplay {
 
   ngOnInit() {
     this.modalService.registerComponent(this);
+  }
+
+  ngAfterViewInit() {
+    this.displayFields.changes.subscribe(_ => {
+      if (this.displayFields.length > 0) {
+        this.displayFields.first.nativeElement.focus();
+      }
+    });
   }
 
   display(data: {
@@ -58,13 +74,16 @@ export class DraxModalComponent implements OnInit, ModalDisplay {
     this.fields = data.fields;
     this.callback = callback;
 
+    if (this.fields.length > 0) {
+      this.fields[0]['focused'] = true;
+    }
+
     this.isVisible = true;
 
     return;
   }
 
   pressedOK() {
-    this.isVisible = false;
     if (this.callback) {
       const values = {};
       for (const f of this.fields) {
@@ -72,15 +91,14 @@ export class DraxModalComponent implements OnInit, ModalDisplay {
       }
       this.callback(true, values);
     }
+    this.isVisible = false;
   }
 
   pressedCancel() {
-
-    this.isVisible = false;
-
     if (this.callback) {
       this.callback(false, []);
     }
+    this.isVisible = false;
   }
 
 }

@@ -178,7 +178,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
-    console.log('save prep', this._file.isDirty);
     if (!this._file.isDirty) {
       return null;
     }

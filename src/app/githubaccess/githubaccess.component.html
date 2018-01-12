@@ -30,11 +30,15 @@
               <span class="fa fa-database fa-stack-2x"></span>
               <span class="fa fa-plus fa-stack overlay"></span>
             </a>
-            <a *ngIf="upwardsLink" class="fa-stack folder">
+            <a *ngIf="upwardsLink" class="fa-stack folder"
+              (click)="createNewFileButtonResponse(true)"
+              >
               <span class="fa fa-folder fa-stack-2x"></span>
               <span class="fa fa-plus fa-stack overlay"></span>
             </a>
-            <a *ngIf="upwardsLink" class="fa-stack document">
+            <a *ngIf="upwardsLink" class="fa-stack document"
+              (click)="createNewFileButtonResponse()"
+              >
               <span class="fa fa-file fa-stack-2x"></span>
               <span class="fa fa-plus fa-stack overlay"></span>
             </a>

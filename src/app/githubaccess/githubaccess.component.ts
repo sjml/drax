@@ -9,6 +9,7 @@ import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
 import { ModalService } from '../drax-modal/modal.service';
 import { ModalField } from '../drax-modal/drax-modal.component';
+import { isDate } from 'util';
 
 class GitHubUser {
   public fullName: string;
@@ -64,10 +65,10 @@ export class GitHubItem extends GitHubNavNode {
 
   public getRouterPath(dirOnly: boolean = false): string {
     if (dirOnly) {
-      return `/${this.repo.owner}/${this.repo.name}:${this.repo.defaultBranch}/${this.dirPath}`;
+      return `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.dirPath}`;
     }
     else {
-      return `/${this.repo.owner}/${this.repo.name}:${this.repo.defaultBranch}/${this.fullPath()}`;
+      return `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.fullPath()}`;
     }
   }
 }
@@ -197,14 +198,13 @@ export class GitHubAccessComponent implements OnInit {
     this.repo.owner = this.route.snapshot.paramMap.get('owner');
     this.repo.name = this.route.snapshot.paramMap.get('name');
 
-    if (!this.bearerToken) {
-      return;
-    }
-
-    if (this.repo.owner === null || this.repo.name === null) {
-      this.loadRepositoryList().then(cont => {
-        this.repositoryListCursor = cont;
-      });
+    if (!this.bearerToken || this.repo.owner === null || this.repo.name === null) {
+      this.router.navigateByUrl('/');
+      if (this.bearerToken) {
+        this.loadRepositoryList().then(cont => {
+          this.repositoryListCursor = cont;
+        });
+      }
       return;
     }
 
@@ -450,12 +450,6 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   createNewRepoButtonResponse() {
-    /*
-    this.title = 'Create Repository';
-    this.description = 'Create a new repository on GitHub.';
-    this.fields = [
-    ];
-    */
     const fields: ModalField[] = [
       {name: 'repoName', value: '', required: true, placeholder: 'Repository Name'},
       {name: 'repoDesc', value: '', required: false, placeholder: 'Description of Repository', showAsTextArea: true}
@@ -486,6 +480,68 @@ export class GitHubAccessComponent implements OnInit {
                 });
               }
             });
+        }
+      }
+    );
+  }
+
+  createNewFileButtonResponse(isDirectory: boolean = false) {
+    let pathType = 'File';
+    if (isDirectory) { pathType = 'Folder'; }
+    const fields: ModalField[] = [
+      {
+        name: 'pathName',
+        value: '',
+        required: true,
+        placeholder: `The name of the new ${pathType.toLowerCase()}.`
+      },
+      {
+        name: 'commitMessage',
+        value: '',
+        required: true,
+        showAsTextArea: true,
+        placeholder: `A brief note about why you're creating this ${pathType.toLowerCase()}.`
+      }
+    ];
+    this.modalService.display({
+                                title: `Create New ${pathType}`,
+                                description: `Create a new ${pathType.toLowerCase()} in the current folder.`,
+                                fields: fields
+                              },
+      (pressedOK, values) => {
+        if (pressedOK) {
+          const i = new GitHubItem();
+          i.repo = this.repo;
+          i.isDirectory = false;
+          i.isBinary = false;
+          i.branch = this.item.branch;
+          if (this.item.isDirectory) {
+            i.dirPath = this.item.fullPath();
+          }
+          else {
+            i.dirPath = this.item.dirPath;
+          }
+          if (isDirectory) { // creating new directory
+            i.dirPath += `${values['pathName']}`;
+            i.fileName = '.gitkeep';
+          }
+          else {
+            i.fileName = values['pathName'];
+          }
+          const f = new GitHubFile('');
+          f.item = i;
+
+          this.pushFile(f, values['commitMessage'], true)
+                .then((response) => {
+                  if (!response['success']) {
+                    // TODO: grace
+                    console.error(response['error']);
+                  }
+                  else {
+                    const path = f.item.getRouterPath(isDirectory);
+                    this.router.navigateByUrl(path);
+                  }
+                });
         }
       }
     );
@@ -556,7 +612,7 @@ export class GitHubAccessComponent implements OnInit {
         }
       }
       else {
-        if (info) {
+        if (!info || info['object'] !== null) {
           return {success: false, message: 'File already exists.'};
         }
       }
@@ -612,6 +668,7 @@ export class GitHubAccessComponent implements OnInit {
       return {success: true, name: response['name']};
     })
     .catch(error => {
+      // TODO: grace
       console.error(error);
       return {success: false};
     });
