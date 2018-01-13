@@ -1,29 +1,24 @@
 import { Injectable } from '@angular/core';
 
-import { ModalDisplay, ModalField } from './drax-modal.component';
+import { DraxModalComponent, DraxModalType } from './drax-modal.component';
 
 @Injectable()
 export class ModalService {
 
-  private modalDisplay: ModalDisplay = null;
+  private comp: DraxModalComponent = null;
 
   constructor() { }
 
-  registerComponent(comp: ModalDisplay) {
-    this.modalDisplay = comp;
+  registerComponent(comp: DraxModalComponent) {
+    this.comp = comp;
   }
 
-  display(data: {
-                  title: string,
-                  description: string,
-                  fields: ModalField[]
-                },
-          callback: (pressedOK: boolean, values: {}) => void
-        ) {
-
-    if (this.modalDisplay) {
-      this.modalDisplay.display(data, callback);
+  generate(data: object) {
+    if (this.comp === null) {
+      console.error('No component for hosting.');
+      return;
     }
+    this.comp.generate(data);
   }
 
 }

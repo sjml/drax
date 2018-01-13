@@ -12,6 +12,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './drax-modal/drax-modal.component';
+import { DataRequestModalComponent } from './drax-modal/data-request-modal.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { DraxModalComponent } from './drax-modal/drax-modal.component';
     EditorComponent,
     ToolbarComponent,
     PagesComponent,
-    DraxModalComponent
+    DraxModalComponent,
+    DataRequestModalComponent
   ],
   imports: [
     BrowserModule,

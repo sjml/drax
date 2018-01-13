@@ -15,16 +15,6 @@ export interface ModalField {
   value?: string;
 }
 
-export interface ModalDisplay {
-  display(data: {
-                  title: string,
-                  description: string,
-                  fields: ModalField[]
-                },
-              callback: (pressedOK: boolean, values: {}) => void
-              ): void;
-}
-
 @Component({
   selector: 'app-data-request-modal',
   templateUrl: './data-request-modal.component.html',

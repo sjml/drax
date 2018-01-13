@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
 import { ModalService } from '../drax-modal/modal.service';
-import { ModalField } from '../drax-modal/drax-modal.component';
+import { ModalField } from '../drax-modal/data-request-modal.component';
 import { isDate } from 'util';
 
 class GitHubUser {
@@ -454,12 +454,13 @@ export class GitHubAccessComponent implements OnInit {
       {name: 'repoName', value: '', required: true, placeholder: 'Repository Name'},
       {name: 'repoDesc', value: '', required: false, placeholder: 'Description of Repository', showAsTextArea: true}
     ];
-    this.modalService.display({
-                                title: 'Create Repository',
-                                description: 'Create a new collection of files on GitHub.',
-                                fields: fields
-                              },
-      (pressedOK, values) => {
+    this.modalService.generate({
+                                  display: {
+                                    title: 'Create Repository',
+                                    description: 'Create a new collection of files on GitHub.',
+                                    fields: fields
+                                  },
+      callback: (pressedOK, values) => {
         if (pressedOK) {
           this.createRepo(values['repoName'], values['repoDesc'])
             .then(response => {
@@ -482,7 +483,7 @@ export class GitHubAccessComponent implements OnInit {
             });
         }
       }
-    );
+    });
   }
 
   createNewFileButtonResponse(isDirectory: boolean = false) {
@@ -503,12 +504,13 @@ export class GitHubAccessComponent implements OnInit {
         placeholder: `A brief note about why you're creating this ${pathType.toLowerCase()}.`
       }
     ];
-    this.modalService.display({
-                                title: `Create New ${pathType}`,
-                                description: `Create a new ${pathType.toLowerCase()} in the current folder.`,
-                                fields: fields
-                              },
-      (pressedOK, values) => {
+    this.modalService.generate({
+                                  display: {
+                                    title: `Create New ${pathType}`,
+                                    description: `Create a new ${pathType.toLowerCase()} in the current folder.`,
+                                    fields: fields
+                                  },
+      callback: (pressedOK, values) => {
         if (pressedOK) {
           const i = new GitHubItem();
           i.repo = this.repo;
@@ -544,7 +546,7 @@ export class GitHubAccessComponent implements OnInit {
                 });
         }
       }
-    );
+    });
   }
 
   /******** Remote Data Access *******/
