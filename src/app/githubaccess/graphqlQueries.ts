@@ -149,4 +149,46 @@ export module Queries {
                       .replace('%%EXPRESSION%%', `${branch}:${item.fullPath()}`);
     return {query: qString};
   }
+
+  const fileHistoryTemplate = `
+    {
+      repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        ref(qualifiedName: "%%BRANCH%%") {
+          target {
+            ... on Commit {
+              history(first:20, path: "%%PATH%%") {
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
+                nodes {
+                  oid
+                  author {
+                    user {
+                      login
+                      avatarUrl
+                    }
+                  }
+                  message
+                  committedDate
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  export function getFileHistory(item: GitHubItem): object {
+    let branch = item.branch;
+    if (branch === null || branch.length === 0) {
+      branch = item.repo.defaultBranch;
+    }
+    const qString = fileHistoryTemplate
+                      .replace('%%OWNER%%', item.repo.owner)
+                      .replace('%%NAME%%', item.repo.name)
+                      .replace('%%BRANCH%%', branch)
+                      .replace('%%PATH%%', item.fullPath());
+    return {query: qString};
+  }
 }

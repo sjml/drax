@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
 
 import { ToolbarItem, Button, ButtonState, Separator } from './toolbar-items';
 import { EditorComponent, EditorMode } from '../editor/editor.component';
@@ -9,7 +9,7 @@ import { EditorComponent, EditorMode } from '../editor/editor.component';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, AfterViewInit {
 
   items: ToolbarItem[] = [];
 
@@ -20,16 +20,13 @@ export class ToolbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.editor.change.subscribe(() => this.handleEditorChange());
-    this.editor.cursorActivity.subscribe(() => this.handleEditorChange());
-
     this.items.push(
       new Button('Save', 'Sync your changes back to GitHub', 'floppy-o',
                   ButtonState.Disabled, (execute) => this.editor.prepForSave(execute)),
       new Button('Refresh', 'Refresh file from GitHub', 'refresh',
                   ButtonState.Disabled, (execute) => this.editor.refreshContents(execute)),
-      // new Button('History', 'View history of file changes', 'history',
-      //             ButtonState.Disabled, () => true),
+      new Button('History', 'View history of file changes', 'history',
+                  ButtonState.Disabled, (execute) => this.editor.showHistory(execute)),
       new Separator(),
       new Button('Bold', 'Change text to bold', 'bold',
                   ButtonState.Inactive, (execute) => this.editor.toggleBold(execute)),
@@ -55,6 +52,11 @@ export class ToolbarComponent implements OnInit {
       new Button('Preview', 'View the rendered page alongside your Markdown', 'columns',
                   ButtonState.Disabled, (execute) => null),
     );
+  }
+
+  ngAfterViewInit() {
+    this.editor.change.subscribe(() => this.handleEditorChange());
+    // this.editor.cursorActivity.subscribe(() => this.handleEditorChange());
   }
 
   cancelSave() {
@@ -88,6 +90,11 @@ export class ToolbarComponent implements OnInit {
       const button = item as Button;
 
       if (this.editor.markdownConfig.name.length === 0) {
+        button.state = ButtonState.Disabled;
+        continue;
+      }
+
+      if (this.editor.mode === EditorMode.Locked) {
         button.state = ButtonState.Disabled;
         continue;
       }

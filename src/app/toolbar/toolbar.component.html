@@ -7,8 +7,8 @@
       <button
         *ngIf="item && item.itemType === 'BUTTON'"
         class="pure-button"
-        [class.pure-button-disabled]="editor.mode !== 'edit' || item.state === 'disabled'"
-        [class.pure-button-active]="editor.mode === 'edit' && item.state === 'active'"
+        [class.pure-button-disabled]="item.state === 'disabled'"
+        [class.pure-button-active]="item.state === 'active'"
         (click)="handleClick(item)"
         >
           <span class="icon fa fa-{{ item.icon }}"></span>

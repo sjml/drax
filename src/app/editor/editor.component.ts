@@ -94,7 +94,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     };
 
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.loadFreshFile();
+    // this.loadFreshFile();
 
     this.instance.on('change', () => {
       if (!this._file) {
@@ -236,6 +236,20 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.ghAccess.getFileContents(this._file.item).then(newFile => {
         this.file = newFile;
       });
+    }
+    return ButtonState.Active;
+  }
+
+  showHistory(execute: boolean): ButtonState {
+    if (this._file.item.lastGet === null) {
+      return null;
+    }
+    if (execute) {
+      // show history
+      this.ghAccess.getFileHistory(this._file.item).then(response => {
+        console.log(response);
+      });
+      return ButtonState.Inactive;
     }
     return ButtonState.Active;
   }
