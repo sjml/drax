@@ -9,7 +9,7 @@ import { ConfigService } from '../config.service';
 import { Queries } from './graphqlQueries';
 import { ModalService } from '../drax-modal/modal.service';
 import { ModalField } from '../drax-modal/data-request-modal.component';
-import { isDate } from 'util';
+import { DataRequestModalComponent } from '../drax-modal/data-request-modal.component';
 
 class GitHubUser {
   public fullName: string;
@@ -454,7 +454,7 @@ export class GitHubAccessComponent implements OnInit {
       {name: 'repoName', value: '', required: true, placeholder: 'Repository Name'},
       {name: 'repoDesc', value: '', required: false, placeholder: 'Description of Repository', showAsTextArea: true}
     ];
-    this.modalService.generate({
+    this.modalService.generate(DataRequestModalComponent, {
                                   display: {
                                     title: 'Create Repository',
                                     description: 'Create a new collection of files on GitHub.',
@@ -504,7 +504,7 @@ export class GitHubAccessComponent implements OnInit {
         placeholder: `A brief note about why you're creating this ${pathType.toLowerCase()}.`
       }
     ];
-    this.modalService.generate({
+    this.modalService.generate(DataRequestModalComponent, {
                                   display: {
                                     title: `Create New ${pathType}`,
                                     description: `Create a new ${pathType.toLowerCase()} in the current folder.`,

@@ -4,7 +4,8 @@ import { Component,
          ViewContainerRef,
          ViewChild,
          ReflectiveInjector,
-         ComponentFactoryResolver
+         ComponentFactoryResolver,
+         Type
        } from '@angular/core';
 
 import { DataRequestModalComponent } from './data-request-modal.component';
@@ -39,7 +40,7 @@ export class DraxModalComponent implements OnInit {
     this.modalService.registerComponent(this);
   }
 
-  generate(data: object) {
+  generate(compType: Type<DraxModalType>, data: object) {
     // make the childview
     if (!data) { data = {}; }
 
@@ -48,7 +49,7 @@ export class DraxModalComponent implements OnInit {
 
     const injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, this.childContainer.parentInjector);
 
-    const factory = this.resolver.resolveComponentFactory(DataRequestModalComponent);
+    const factory = this.resolver.resolveComponentFactory(compType);
     const comp = factory.create(injector);
     this.childContainer.insert(comp.hostView);
 

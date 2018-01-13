@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 
 import { DraxModalComponent, DraxModalType } from './drax-modal.component';
 
@@ -13,12 +13,12 @@ export class ModalService {
     this.comp = comp;
   }
 
-  generate(data: object) {
+  generate(compType: Type<DraxModalType>, data: object) {
     if (this.comp === null) {
       console.error('No component for hosting.');
       return;
     }
-    this.comp.generate(data);
+    this.comp.generate(compType, data);
   }
 
 }
