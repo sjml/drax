@@ -674,7 +674,7 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
-  getFileHistory(item: GitHubItem): Promise<object> {
+  getFileHistory(item: GitHubItem, cursor: string = null): Promise<object> {
     return this.graphQlQuery(Queries.getFileHistory(item), 'fileHistory').toPromise().then(response => {
       const history = [];
       const historyNode = response['data']['repository']['ref']['target']['history'];

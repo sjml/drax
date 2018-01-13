@@ -1,0 +1,12 @@
+<h1>{{title}}</h1>
+<p>{{description}}</p>
+<form #modalForm="ngForm">
+  <div *ngFor="let field of fields" class="modalField">
+    <textarea *ngIf="field.showAsTextArea" #modalField [name]="field.name" [required]="field.required" [placeholder]="field.placeholder" [(ngModel)]="field.value"></textarea>
+    <input *ngIf="!field.showAsTextArea" #modalField [name]="field.name" [required]="field.required" [placeholder]="field.placeholder" [(ngModel)]="field.value">
+  </div>
+  <div class="buttonBar">
+    <button type="submit" [disabled]="!modalForm.form.valid" class="pure-button ok" (click)="pressedOK()"><span class="fa fa-check icon icon-ok"></span>OK</button>
+    <button class="pure-button cancel" (click)="pressedCancel()"><span class="fa fa-times icon icon-cancel"></span>Cancel</button>
+  </div>
+</form>
