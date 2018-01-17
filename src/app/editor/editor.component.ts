@@ -94,7 +94,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     };
 
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    // this.loadFreshFile();
+    this.loadFreshFile(true);
 
     this.instance.on('change', () => {
       if (!this._file) {
@@ -126,7 +126,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  loadFreshFile() {
+  loadFreshFile(initialLoad: boolean = false) {
     const mdFileTypes = [
       'markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn',
       'mdtxt', 'mdtext', 'text', 'txt', 'Rmd'
@@ -155,7 +155,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.instance.setOption('mode', this.markdownConfig);
 
     this.instance.refresh();
-    this.change.emit();
+    if (!initialLoad) {
+      this.change.emit();
+    }
     this.takeFocus();
 
     // TODO: figure out if we can be more precise and do this
