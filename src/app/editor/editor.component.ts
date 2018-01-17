@@ -1,5 +1,5 @@
 import { Component,
-         AfterViewInit,
+         OnInit,
          OnDestroy,
          Input,
          Output,
@@ -31,7 +31,7 @@ export enum EditorMode {
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements AfterViewInit, OnDestroy {
+export class EditorComponent implements OnInit, OnDestroy {
 
   @ViewChild('host') host: ElementRef;
   instance: CodeMirror.Editor = null;
@@ -77,7 +77,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.mode = EditorMode.Edit;
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     const config  = {
       mode: this.markdownConfig,
       theme: 'drax',
@@ -93,8 +93,12 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       }
     };
 
+    // host isn't guaranteed to be non-null because this is in
+    //  ngOnInit; however, doing it with ngAfterViewInit leads
+    //  to values changing in bad times in the view
+    //  This shouldn't work, but does, which makes me nervous...
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.loadFreshFile(true);
+    this.loadFreshFile();
 
     this.instance.on('change', () => {
       if (!this._file) {
@@ -126,7 +130,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  loadFreshFile(initialLoad: boolean = false) {
+  loadFreshFile() {
     const mdFileTypes = [
       'markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn',
       'mdtxt', 'mdtext', 'text', 'txt', 'Rmd'
@@ -155,9 +159,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.instance.setOption('mode', this.markdownConfig);
 
     this.instance.refresh();
-    if (!initialLoad) {
-      this.change.emit();
-    }
+    this.change.emit();
     this.takeFocus();
 
     // TODO: figure out if we can be more precise and do this
@@ -219,11 +221,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         console.error('File no longer exists.');
         return;
       }
-      if (this._file.item.lastGet === response['object']['oid']) {
-        // console.log('All good!');
-      }
-      else {
-        // console.log('File has changed...');
+      if (this._file.item.lastGet !== response['object']['oid']) {
         this.fileOutOfSync = true;
         this.change.emit();
       }

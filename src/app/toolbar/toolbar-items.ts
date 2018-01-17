@@ -19,14 +19,12 @@ export class Button extends ToolbarItem {
   constructor(name: string,
               tooltip: string,
               icon: string,
-              startingState: ButtonState,
               callback: (execute: boolean) => ButtonState,
             ) {
     super();
     this.name = name;
     this.toolTip = tooltip;
     this.icon = icon;
-    this.state = startingState;
     this.callback = callback;
   }
 }
