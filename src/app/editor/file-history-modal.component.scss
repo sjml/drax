@@ -1,0 +1,29 @@
+@import '~sass/variables';
+
+
+.historyDisplay {
+  width: 100%;
+}
+
+.historyItem {
+  padding: 10px;
+
+  display: flex;
+}
+
+.historyItem:hover {
+  background-color: lightgrey;
+  cursor: pointer;
+}
+
+.userData, .date {
+  text-align: right;
+  padding-left: 10px;
+}
+
+.message {
+  flex-grow: 1;
+}
+
+
+

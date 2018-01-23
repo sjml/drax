@@ -110,7 +110,7 @@ export module Queries {
   const fileContentsTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
-        object(expression: "%%EXPRESSION%%") {
+        object(%%EXPRESSION%%) {
           ... on Blob {
             %%TEXT%%
             oid
@@ -123,7 +123,16 @@ export module Queries {
     const qString = fileContentsTemplate
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
-                      .replace('%%EXPRESSION%%', `${item.branch}:${item.fullPath()}`)
+                      .replace('%%EXPRESSION%%', `expression: "${item.branch}:${item.fullPath()}"`)
+                      .replace('%%TEXT%%', 'text');
+    return {query: qString};
+  }
+
+  export function getFileContentsByOid(repo: GitHubRepo, oid: string): object {
+    const qString = fileContentsTemplate
+                      .replace('%%OWNER%%', repo.owner)
+                      .replace('%%NAME%%', repo.name)
+                      .replace('%%EXPRESSION%%', `oid: "${oid}"`)
                       .replace('%%TEXT%%', 'text');
     return {query: qString};
   }
@@ -170,6 +179,7 @@ export module Queries {
                     }
                   }
                   message
+                  messageHeadline
                   committedDate
                 }
               }

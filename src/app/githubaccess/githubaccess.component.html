@@ -14,7 +14,7 @@
         <div class="loginPrompt">Click to sign in with GitHub</div>
       </div>
       <div *ngIf="user" class="gitHubUserInfo">
-        <img class="avatar" src="{{ user.avatarUrl }}&s=96" alt="{{ user.login }} avatar" />
+        <img class="avatar" src="{{ user.avatarUrl }}&s=96" alt="{{ user.login }} avatar">
         <div class="username">{{ user.login }}</div>
         <span class="fa fa-sign-out" (click)="logout()"></span>
       </div>

@@ -18,8 +18,9 @@ import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
 import { ButtonState } from '../toolbar/toolbar-items';
-
-import { GitHubFile, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
+import { GitHubFile, GitHubItem, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
+import { ModalService } from '../drax-modal/modal.service';
+import { FileHistoryModalComponent } from './file-history-modal.component';
 
 export enum EditorMode {
   Edit = 'edit',
@@ -73,7 +74,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   changeGeneration = 0;
 
 
-  constructor() {
+  constructor(private modalService: ModalService) {
     this.mode = EditorMode.Edit;
   }
 
@@ -162,6 +163,8 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.change.emit();
     this.takeFocus();
 
+    // this.showHistory(true);
+
     // TODO: figure out if we can be more precise and do this
     //       to just a single element instead of the whole window
     window.scrollTo(0, 0);
@@ -233,7 +236,7 @@ export class EditorComponent implements OnInit, OnDestroy {
       return null;
     }
     if (execute) {
-      this.ghAccess.getFileContents(this._file.item).then(newFile => {
+      this.ghAccess.getFile(this._file.item).then(newFile => {
         this.file = newFile;
       });
     }
@@ -247,11 +250,27 @@ export class EditorComponent implements OnInit, OnDestroy {
     if (execute) {
       // show history
       this.ghAccess.getFileHistory(this._file.item).then(response => {
-        console.log(response);
+        this.modalService.generate(
+          FileHistoryModalComponent,
+          {
+            historyData: response,
+            callback: (oid: string) => {
+              this.loadOldVersion(oid);
+            }
+          }
+        );
       });
       return ButtonState.Inactive;
     }
     return ButtonState.Active;
+  }
+
+  loadOldVersion(oid: string) {
+    this.ghAccess.getFileContentsByOid(this._file.item.repo, oid).then((contents) => {
+      if (contents !== null) {
+        this._file.contents = contents;
+      }
+    });
   }
 
   /***** Text Formatting ******/

@@ -9,18 +9,21 @@ import { Component,
        } from '@angular/core';
 
 import { DataRequestModalComponent } from './data-request-modal.component';
+import { FileHistoryModalComponent } from '../editor/file-history-modal.component';
 
 import { ModalService } from './modal.service';
 
 export interface DraxModalType {
   host: DraxModalComponent;
-  caller: any;
   display: (data: object) => void;
 }
 
 @Component({
   selector: 'app-drax-modal',
-  entryComponents: [DataRequestModalComponent],
+  entryComponents: [
+    DataRequestModalComponent,
+    FileHistoryModalComponent
+  ],
   templateUrl: './drax-modal.component.html',
   styleUrls: ['./drax-modal.component.scss']
 })

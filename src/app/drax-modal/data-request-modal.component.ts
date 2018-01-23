@@ -23,7 +23,6 @@ export interface ModalField {
 export class DataRequestModalComponent implements AfterViewInit, DraxModalType {
 
   host: DraxModalComponent = null;
-  caller: any = null;
 
   @ViewChildren('modalField') displayFields: QueryList<ElementRef>;
 

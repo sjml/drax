@@ -122,7 +122,7 @@ export class GitHubAccessComponent implements OnInit {
   ngOnInit() {
     this.bearerToken = localStorage.getItem('gitHubBearerToken');
     if (this.bearerToken !== null) {
-      this.loggedIn();
+      this.loadUser();
     }
     this.route.params.subscribe(_ => {
       this.loadFromLocation();
@@ -131,11 +131,6 @@ export class GitHubAccessComponent implements OnInit {
 
   toggleOpen() {
     this.isOpen = !this.isOpen;
-  }
-
-  loggedIn() {
-    this.loadUser();
-    this.loadFromLocation();
   }
 
   logout() {
@@ -175,7 +170,8 @@ export class GitHubAccessComponent implements OnInit {
       if (event.data.status === 'OK') {
         this.bearerToken = event.data.code;
         localStorage.setItem('gitHubBearerToken', event.data.code);
-        this.loggedIn();
+        this.loadUser();
+        this.loadFromLocation();
       }
     }, false);
 
@@ -286,7 +282,7 @@ export class GitHubAccessComponent implements OnInit {
       parent.dirPath = pathSegs.join('/');
 
       this.loadDirectoryListing(parent);
-      this.getFileContents(this.item).then(respFile => {
+      this.getFile(this.item).then(respFile => {
         this.workingFile = respFile;
       });
     }
@@ -325,7 +321,7 @@ export class GitHubAccessComponent implements OnInit {
       item.branch = repo.defaultBranch;
       item.dirPath = '.drax';
       item.fileName = 'config.json';
-      return this.getFileContents(item).then(fileResponse => {
+      return this.getFile(item).then(fileResponse => {
         if (fileResponse !== null) {
           const remoteConfig = JSON.parse(fileResponse.contents);
           repo.config = Object.assign(repo.config, remoteConfig);
@@ -587,8 +583,7 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
-  getFileContents(item: GitHubItem): Promise<GitHubFile> {
-    const q = Queries.getFileContents(item);
+  getFile(item: GitHubItem): Promise<GitHubFile> {
     return this.graphQlQuery(Queries.getFileContents(item), 'fileContents').toPromise().then(response => {
       const obj = response['data']['repository']['object'];
       if (obj === null) {
@@ -598,6 +593,16 @@ export class GitHubAccessComponent implements OnInit {
       file.item = this.item;
       file.item.lastGet = obj['oid'];
       return file;
+    });
+  }
+
+  getFileContentsByOid(repo: GitHubRepo, oid: string): Promise<string> {
+    return this.graphQlQuery(Queries.getFileContentsByOid(repo, oid), 'fileContentsOid').toPromise().then(response => {
+      const obj = response['data']['repository']['object'];
+      if (obj === null) {
+        return null;
+      }
+      return obj['text'];
     });
   }
 
@@ -688,6 +693,7 @@ export class GitHubAccessComponent implements OnInit {
           userAvatar: entry['author']['user']['avatarUrl'],
           commitDate: entry['committedDate'],
           message: entry['message'],
+          messageHeadline: entry['messageHeadline'],
           oid: entry['oid']
         });
       }

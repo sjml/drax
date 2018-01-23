@@ -13,6 +13,7 @@ import { AppRoutingModule } from './/app-routing.module';
 import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './drax-modal/drax-modal.component';
 import { DataRequestModalComponent } from './drax-modal/data-request-modal.component';
+import { FileHistoryModalComponent } from './editor/file-history-modal.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { DataRequestModalComponent } from './drax-modal/data-request-modal.compo
     ToolbarComponent,
     PagesComponent,
     DraxModalComponent,
-    DataRequestModalComponent
+    DataRequestModalComponent,
+    FileHistoryModalComponent
   ],
   imports: [
     BrowserModule,
