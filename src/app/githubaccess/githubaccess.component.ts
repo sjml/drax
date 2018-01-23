@@ -596,17 +596,21 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
-  getFileContentsByOid(repo: GitHubRepo, oid: string): Promise<string> {
-    return this.graphQlQuery(Queries.getFileContentsByOid(repo, oid), 'fileContentsOid').toPromise().then(response => {
-      const obj = response['data']['repository']['object'];
-      if (obj === null) {
-        return null;
+  // this stuff annoyingly has to be done with the old API. :'(
+  getFileContentsByOid(item: GitHubItem, oid: string): Promise<string> {
+    // TODO: grace
+    const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.fullPath()}?ref=${oid}`;
+    return this.http.get(
+      url,
+      {
+        headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken)
       }
-      return obj['text'];
-    });
+    ).toPromise()
+      .then(response => {
+        return atob(response['content']);
+      });
   }
 
-  // this annoyingly has to be done with the old API. :'(
   pushFile(file: GitHubFile, message: string, newFile: boolean = false): Promise<object> {
     return this.getPathInfo(file.item).then<object>(info => {
       if (!newFile) {

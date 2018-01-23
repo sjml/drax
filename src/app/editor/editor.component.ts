@@ -266,9 +266,10 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   loadOldVersion(oid: string) {
-    this.ghAccess.getFileContentsByOid(this._file.item.repo, oid).then((contents) => {
+    this.ghAccess.getFileContentsByOid(this._file.item, oid).then((contents) => {
       if (contents !== null) {
-        this._file.contents = contents;
+        this.instance.setValue(contents);
+        this.instance.refresh();
       }
     });
   }

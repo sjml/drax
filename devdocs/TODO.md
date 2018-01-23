@@ -35,8 +35,7 @@
 * need to store repository info too... 😬
 
 ## Features
-1. History/restore? 
-2. Annotation system
+1. Annotation system
     1. separate file storage?
     2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
     3. rendering of annotations
@@ -45,17 +44,17 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
-3. Keyboard commands
+2. Keyboard commands
   - for toolbar buttons as makes sense
   - escape to dismiss modals and save popup
   - cmd-s to save, cmd-r to refresh
-5. Image uploading
-6. HTML preview + side-by-side
-7. Fix mobile version? 
-8. Single repo mode
+3. Image uploading
+4. HTML preview + side-by-side
+5. Fix mobile version? 
+6. Single repo mode
   - templates for new files
   - setting to prevent creation of new files, new directories
-9. Merge changes if we're out of sync with the server
-10. Frontmatter parsing into options? 
-11. Offline mode and/or live collaboration
+7. Merge changes if we're out of sync with the server
+8. Frontmatter parsing into options? 
+9. Offline mode and/or live collaboration
     - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.

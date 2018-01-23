@@ -128,15 +128,6 @@ export module Queries {
     return {query: qString};
   }
 
-  export function getFileContentsByOid(repo: GitHubRepo, oid: string): object {
-    const qString = fileContentsTemplate
-                      .replace('%%OWNER%%', repo.owner)
-                      .replace('%%NAME%%', repo.name)
-                      .replace('%%EXPRESSION%%', `oid: "${oid}"`)
-                      .replace('%%TEXT%%', 'text');
-    return {query: qString};
-  }
-
   const pathInfoTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
