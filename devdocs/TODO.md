@@ -36,11 +36,9 @@
 
 ## Features
 1. Annotation system
-    1. separate file storage?
-    2. annotation is a range of text, an author, a timestamp, and an MD-formatted string
-    3. rendering of annotations
-    4. creation/deletion of annotations, push with rest of file
-    5. annotation file has git hash of parent file, knows if it's out of sync
+    1. rendering of annotations
+    2. creation/deletion of annotations, push with rest of file
+    3. annotation file has git hash of parent file, knows if it's out of sync
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed

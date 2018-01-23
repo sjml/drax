@@ -30,6 +30,7 @@ export class GitHubRepo extends GitHubNavNode {
   public description: string;
   public defaultBranch: string;
   public config: object = {
+    hasConfig: false,
     ignoreHiddenFiles: true,
     contentRoot: '',
     showOnlyMarkdown: false
@@ -325,6 +326,7 @@ export class GitHubAccessComponent implements OnInit {
         if (fileResponse !== null) {
           const remoteConfig = JSON.parse(fileResponse.contents);
           repo.config = Object.assign(repo.config, remoteConfig);
+          repo.config['hasConfig'] = true;
         }
         return true;
       });
@@ -590,7 +592,7 @@ export class GitHubAccessComponent implements OnInit {
         return null;
       }
       const file = new GitHubFile(obj['text']);
-      file.item = this.item;
+      file.item = item;
       file.item.lastGet = obj['oid'];
       return file;
     });

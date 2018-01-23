@@ -27,6 +27,17 @@ export enum EditorMode {
   Locked = 'locked'
 }
 
+class Annotation {
+  from: CodeMirror.Position;
+  to: CodeMirror.Position;
+  author: string;
+  timestamp: number;
+  text: string;
+
+  marker: CodeMirror.TextMarker = null;
+  removed = false;
+}
+
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -35,15 +46,17 @@ export enum EditorMode {
 export class EditorComponent implements OnInit, OnDestroy {
 
   @ViewChild('host') host: ElementRef;
-  instance: CodeMirror.Editor = null;
-
   @Output() change = new EventEmitter();
   @Output() cursorActivity = new EventEmitter();
-
   @Input() ghAccess: GitHubAccessComponent;
 
+
+  instance: CodeMirror.Editor = null;
   mode: EditorMode;
   checkInterval: number = null;
+  changeGeneration = 0;
+
+  annotations: Annotation[] = [];
 
   markdownConfig = {
     name: 'toml-frontmatter',
@@ -71,7 +84,6 @@ export class EditorComponent implements OnInit, OnDestroy {
   get file(): GitHubFile { return this._file; }
   fileOutOfSync: boolean;
 
-  changeGeneration = 0;
 
 
   constructor(private modalService: ModalService) {
@@ -117,6 +129,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this._file.isDirty = false;
       }
 
+      this.updateAnnotations();
       this.change.emit();
     });
 
@@ -163,7 +176,32 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.change.emit();
     this.takeFocus();
 
-    // this.showHistory(true);
+    this.annotations = [];
+    if (this._file.item.repo.config['hasConfig']) {
+      // check for accompanying annotation file
+      const item = new GitHubItem();
+      item.repo = this._file.item.repo;
+      item.branch = this._file.item.repo.defaultBranch;
+      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+      item.fileName = `${this._file.item.fileName}.json`;
+      this.ghAccess.getFile(item).then(fileResponse => {
+        if (fileResponse !== null) {
+          const annData = JSON.parse(fileResponse.contents);
+          if (annData.annotations) {
+            for (const ann of annData.annotations) {
+              const newAnn = new Annotation();
+              newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
+              newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
+              newAnn.author = ann.author;
+              newAnn.timestamp = ann.timestamp;
+              newAnn.text = ann.text;
+              this.annotations.push(newAnn);
+            }
+          }
+        }
+        this.updateAnnotations();
+      });
+    }
 
     // TODO: figure out if we can be more precise and do this
     //       to just a single element instead of the whole window
@@ -208,7 +246,6 @@ export class EditorComponent implements OnInit, OnDestroy {
       }
       else {
         console.error(val['message']);
-        console.error(val['error']);
         return false;
       }
     });
@@ -272,6 +309,35 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.instance.refresh();
       }
     });
+  }
+
+  updateAnnotations() {
+    const doc = this.instance.getDoc();
+    for (const ann of this.annotations) {
+      if (ann.marker === null) {
+        // creating the CM markers initially
+        console.log('creating annotation');
+        ann.marker = doc.markText(ann.from, ann.to, {
+          className: 'annotation',
+          startStyle: 'annotationStart',
+          endStyle: 'annotationEnd',
+          inclusiveLeft: true,
+          inclusiveRight: true
+        });
+        console.log(this.instance.cursorCoords(ann.from));
+      }
+      else {
+        // updating our annotations as the CM markers move around
+        const currentRange = ann.marker.find() as any;
+        if (currentRange === undefined) {
+          ann.removed = true;
+        }
+        else {
+          ann.from = currentRange.from;
+          ann.to = currentRange.to;
+        }
+      }
+    }
   }
 
   /***** Text Formatting ******/

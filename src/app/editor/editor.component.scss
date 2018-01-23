@@ -1,10 +1,41 @@
 @import '~sass/variables';
 
+.editorContainer {
+  display: flex;
+}
 
 .drax-editor {
   max-width: $editorMaxWidth;
   margin: auto;
   margin-top: $editorbarHeight;
+}
+
+.annotationDisplay {
+  // display: none;
+  width: $sidebarWidth;
+  margin-top: $editorbarHeight;
+
+  .fullAnnotation {
+    border: 1px solid black;
+    border-radius: 5px;
+
+    position: absolute;
+    width: $sidebarWidth - 20px;
+    top: 205px;
+    right: 10px;
+
+    .commentary {
+      margin-left: 10px;
+    }
+
+    .attribution {
+      // width: 100%;
+      border-radius: 5px 5px 0 0;
+      background-color: aqua;
+      padding-left: 10px;
+      padding-bottom: 5px;
+    }
+  }
 }
 
 // Actual code styling below here
@@ -28,7 +59,7 @@
     background-color: rgb(235, 235, 235);
   }
 
-  .cm-s-drax{
+  .cm-s-drax {
     .cm-comment {
       font-family: $monoFont;
     }
@@ -74,5 +105,22 @@
     .cm-m-toml, .cm-m-yaml {
       color: lighten($textColor, 35%);
     }
+
+    .annotation {
+      background-color: aqua;
+    }
+
+    .annotationStart.annotationEnd {
+      border-radius: 5px;
+    }
+
+    .annotationStart {
+      border-radius: 5px 0 0 5px;
+    }
+
+    .annotationEnd {
+      border-radius: 0 5px 5px 0;
+    }
   }
+
 }
