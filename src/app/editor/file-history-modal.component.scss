@@ -1,5 +1,11 @@
 @import '~sass/variables';
 
+.closeButton {
+  position: relative;
+  float: right;
+  font-size: 25px;
+  cursor: pointer;
+}
 
 .historyDisplay {
   width: 100%;

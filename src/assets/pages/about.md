@@ -10,10 +10,10 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 
 
 ## Work in Progress
-Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it could have died off by the time you read this.) The point is, there are features incoming. 
+Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page.) The point is, there are features incoming. 
 
 Things to expect:
-* Better keyboard shortcuts. 
+* Better keyboard shortcuts and overall UI polish. 
 * An annotation system for collaboration. 
 * Image uploading. 
 * Live HTML rendered preview.

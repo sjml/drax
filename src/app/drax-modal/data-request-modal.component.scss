@@ -1,5 +1,11 @@
 @import '~sass/variables';
 
+.closeButton {
+  position: relative;
+  float: right;
+  font-size: 25px;
+  cursor: pointer;
+}
 
 .modalField {
   margin-top: 8px;

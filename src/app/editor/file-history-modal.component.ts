@@ -51,10 +51,7 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
     this.host.close();
   }
 
-  // pressedCancel() {
-  //   if (this.callback) {
-  //     this.callback(false, []);
-  //   }
-  //   this.host.close();
-  // }
+  close() {
+    this.host.close();
+  }
 }
