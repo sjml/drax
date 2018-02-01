@@ -1,6 +1,5 @@
 import { Component,
          OnInit,
-         AfterViewInit,
          Input,
          ViewChild,
          ElementRef
@@ -13,16 +12,18 @@ import { Annotation } from '../editor/editor.component';
   templateUrl: './annotation.component.html',
   styleUrls: ['./annotation.component.scss']
 })
-export class AnnotationComponent implements AfterViewInit {
+export class AnnotationComponent implements OnInit {
 
   @ViewChild('annotation') annChild: ElementRef;
 
   @Input() ann: Annotation;
-  @Input() topPos: number;
+
+  topPos: number;
 
   constructor() { }
 
-  ngAfterViewInit() {
+  ngOnInit() {
+    this.topPos = this.ann.extents.top;
   }
 
   public getDisplayHeight(): number {

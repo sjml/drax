@@ -1,5 +1,7 @@
 @import '~sass/variables';
 
+$annotationBorderWidth: 2px;
+
 .editorContainer {
   display: flex;
 }
@@ -79,19 +81,25 @@
     }
 
     .annotation {
-      background-color: aqua;
+      background-color: rgba(0, 255, 255, .5);
+      border-style: solid;
+      border-color: #006565;
+      border-width: 0px;
     }
 
     .annotationStart.annotationEnd {
       border-radius: 5px;
+      border-width: 0 $annotationBorderWidth 0 $annotationBorderWidth;
     }
 
     .annotationStart {
       border-radius: 5px 0 0 5px;
+      border-width: 0 0 0 $annotationBorderWidth;
     }
 
     .annotationEnd {
       border-radius: 0 5px 5px 0;
+      border-width: 0 $annotationBorderWidth 0 0;
     }
   }
 

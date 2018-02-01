@@ -28,61 +28,67 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.annChildren.changes.subscribe(
-      () => this.calculatePositions()
+      () => setTimeout(() => this.calculatePositions())
     );
   }
 
   calculatePositions() {
-    interface PosData {
-      ann: AnnotationComponent;
-      height: number;
-      top: number;
-    }
-
-    function intersects(self: AnnotationContainerComponent, a: PosData, b: PosData): boolean {
-      if (a.top + a.height >= b.top && b.top + b.height >= a.top) {
+    function intersects(self: AnnotationContainerComponent, a: AnnotationComponent, b: AnnotationComponent): boolean {
+      if (a.ann.extents.top + a.getDisplayHeight() >= b.ann.extents.top && b.ann.extents.top + b.getDisplayHeight() >= a.ann.extents.top) {
         return true;
-        // if (self.annSort(a.ann.ann, b.ann.ann) < 0) {
-        //   return {a: a, b: b};
-        // }
-        // else {
-        //   return {a: b, b: a};
-        // }
       }
       return false;
     }
 
-    const datums: PosData[] = [];
-    for (const annChild of this.annChildren.toArray()) {
-      datums.push({ann: annChild, height: annChild.getDisplayHeight(), top: annChild.ann.extents.top});
-    }
-    const overlaps: {a: PosData, b: PosData}[] = [];
+    const datums: AnnotationComponent[] = this.annChildren.toArray();
+    const overlapGroups: Set<AnnotationComponent>[] = [];
     for (const i of datums) {
       for (const j of datums) {
         if (i === j) {
           continue;
         }
         if (intersects(this, i, j)) {
-          let found = false;
-          for (const q of overlaps) {
-            if (q.a.ann === j.ann && q.b.ann === i.ann) {
-              found = true;
+          let inserted = false;
+          for (const group of overlapGroups) {
+            if (group.has(i) || group.has(j)) {
+              group.add(i);
+              group.add(j);
+              inserted = true;
               break;
             }
           }
-          if (!found) {
-            overlaps.push({a: i, b: j});
+          if (!inserted) {
+            overlapGroups.push(new Set<AnnotationComponent>([i, j]));
           }
         }
       }
     }
 
-    for (const o of overlaps) {
-      console.log('A:', o.a.ann.ann.text, 'B:', o.b.ann.ann.text);
+    const margin = 2;
+    for (const group of overlapGroups) {
+      if (group.size === 0) {
+        continue; // shouldn't happen, but being safe
+      }
+      let totalHeight = 0;
+      const orderedSet = Array.from(group).sort(this.annSort);
+      for (const a of orderedSet) {
+        totalHeight += a.getDisplayHeight() + margin;
+      }
+      let currY = orderedSet[0].ann.extents.top - (totalHeight * 0.3);
+      for (const a of orderedSet) {
+        a.topPos = currY;
+        currY += a.getDisplayHeight() + margin;
+      }
     }
   }
 
-  private annSort(a: Annotation, b: Annotation): number {
+  private annSort(a: Annotation | AnnotationComponent, b: Annotation | AnnotationComponent): number {
+    if (a instanceof AnnotationComponent ) {
+      a = a.ann;
+    }
+    if (b instanceof AnnotationComponent) {
+      b = b.ann;
+    }
     if (a.extents.top < b.extents.top) {
       return -1;
     }
