@@ -33,8 +33,52 @@ export class AnnotationContainerComponent implements AfterViewInit {
   }
 
   calculatePositions() {
+    interface PosData {
+      ann: AnnotationComponent;
+      height: number;
+      top: number;
+    }
+
+    function intersects(self: AnnotationContainerComponent, a: PosData, b: PosData): boolean {
+      if (a.top + a.height >= b.top && b.top + b.height >= a.top) {
+        return true;
+        // if (self.annSort(a.ann.ann, b.ann.ann) < 0) {
+        //   return {a: a, b: b};
+        // }
+        // else {
+        //   return {a: b, b: a};
+        // }
+      }
+      return false;
+    }
+
+    const datums: PosData[] = [];
     for (const annChild of this.annChildren.toArray()) {
-      console.log(annChild.getDisplayHeight(), annChild.ann.extents.top);
+      datums.push({ann: annChild, height: annChild.getDisplayHeight(), top: annChild.ann.extents.top});
+    }
+    const overlaps: {a: PosData, b: PosData}[] = [];
+    for (const i of datums) {
+      for (const j of datums) {
+        if (i === j) {
+          continue;
+        }
+        if (intersects(this, i, j)) {
+          let found = false;
+          for (const q of overlaps) {
+            if (q.a.ann === j.ann && q.b.ann === i.ann) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            overlaps.push({a: i, b: j});
+          }
+        }
+      }
+    }
+
+    for (const o of overlaps) {
+      console.log('A:', o.a.ann.ann.text, 'B:', o.b.ann.ann.text);
     }
   }
 
