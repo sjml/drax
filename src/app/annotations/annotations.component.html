@@ -1,0 +1,11 @@
+<div class="annotationDisplay">
+  <div *ngFor="let ann of annotations" class="fullAnnotation" [style.top.px]="ann.extents.top">
+    <div class="attribution">
+      <span class="name">{{ann.author}}</span>
+      <span class="date">{{ann.timestamp}}</span>
+    </div>
+    <div class="commentary">
+      {{ann.text}}
+    </div>
+  </div>
+</div>

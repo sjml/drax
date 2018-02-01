@@ -5,20 +5,5 @@
     <textarea #host>
     </textarea>
   </div>
-  <div class="annotationDisplay">
-    <div class="fullAnnotation">
-      <div class="attribution">
-        <span class="name">sjml</span>
-        <span class="date">Yesterday</span>
-      </div>
-      <div class="commentary">
-        <p>
-          Here is one such annotation.
-        </p>
-        <p>
-          With a few <strong>other</strong> notes.
-        </p>
-      </div>
-    </div>
-  </div>
+  <app-annotations [annotations]="annotations"></app-annotations>
 </div>

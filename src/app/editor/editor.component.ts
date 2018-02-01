@@ -27,7 +27,7 @@ export enum EditorMode {
   Locked = 'locked'
 }
 
-class Annotation {
+export class Annotation {
   from: CodeMirror.Position;
   to: CodeMirror.Position;
   author: string;
@@ -35,6 +35,7 @@ class Annotation {
   text: string;
 
   marker: CodeMirror.TextMarker = null;
+  extents: { left: number, top: number, bottom: number } = null;
   removed = false;
 }
 
@@ -316,7 +317,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     for (const ann of this.annotations) {
       if (ann.marker === null) {
         // creating the CM markers initially
-        console.log('creating annotation');
         ann.marker = doc.markText(ann.from, ann.to, {
           className: 'annotation',
           startStyle: 'annotationStart',
@@ -324,7 +324,6 @@ export class EditorComponent implements OnInit, OnDestroy {
           inclusiveLeft: true,
           inclusiveRight: true
         });
-        console.log(this.instance.cursorCoords(ann.from));
       }
       else {
         // updating our annotations as the CM markers move around
@@ -337,6 +336,7 @@ export class EditorComponent implements OnInit, OnDestroy {
           ann.to = currentRange.to;
         }
       }
+      ann.extents = this.instance.cursorCoords(ann.from);
     }
   }
 

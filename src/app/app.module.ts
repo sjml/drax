@@ -14,6 +14,7 @@ import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './drax-modal/drax-modal.component';
 import { DataRequestModalComponent } from './drax-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './editor/file-history-modal.component';
+import { AnnotationsComponent } from './annotations/annotations.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { FileHistoryModalComponent } from './editor/file-history-modal.component
     PagesComponent,
     DraxModalComponent,
     DataRequestModalComponent,
-    FileHistoryModalComponent
+    FileHistoryModalComponent,
+    AnnotationsComponent
   ],
   imports: [
     BrowserModule,
