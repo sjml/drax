@@ -70,11 +70,14 @@ export class AnnotationContainerComponent implements AfterViewInit {
         continue; // shouldn't happen, but being safe
       }
       let totalHeight = 0;
+      let start = 0;
       const orderedSet = Array.from(group).sort(this.annSort);
       for (const a of orderedSet) {
         totalHeight += a.getDisplayHeight() + margin;
+        start += a.ann.extents.top;
       }
-      let currY = orderedSet[0].ann.extents.top - (totalHeight * 0.3);
+      start /= orderedSet.length;
+      let currY = start - (totalHeight * 0.3);
       for (const a of orderedSet) {
         a.topPos = currY;
         currY += a.getDisplayHeight() + margin;
