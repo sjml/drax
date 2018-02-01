@@ -1,6 +1,13 @@
-import { Component, AfterViewInit, ViewChildren, Input, QueryList } from '@angular/core';
+import { Component,
+         AfterViewInit,
+         ViewChild,
+         ViewChildren,
+         Input,
+         QueryList,
+         ElementRef
+       } from '@angular/core';
 
-import { Annotation } from '../editor/editor.component';
+import { Annotation } from '../annotation/annotation';
 import { AnnotationComponent } from '../annotation/annotation.component';
 
 @Component({
@@ -10,12 +17,18 @@ import { AnnotationComponent } from '../annotation/annotation.component';
 })
 export class AnnotationContainerComponent implements AfterViewInit {
 
-  @ViewChildren(AnnotationComponent) annChildren: QueryList<AnnotationComponent>;
+  @ViewChildren(AnnotationComponent)
+  annChildren: QueryList<AnnotationComponent> = null;
+  changeSubscription = null;
 
   private _annotations: Annotation[];
   get annotations(): Annotation[] {
     return this._annotations;
   }
+
+  @ViewChild('svgAnnotationLines')
+  private _svgAnnLines: ElementRef;
+  lines: string[] = [];
 
   @Input()
   set annotations(annotations: Annotation[]) {
@@ -27,7 +40,10 @@ export class AnnotationContainerComponent implements AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
-    this.annChildren.changes.subscribe(
+    this._svgAnnLines.nativeElement.setAttribute('width', document.body.clientWidth);
+    this._svgAnnLines.nativeElement.setAttribute('height', document.body.clientHeight);
+
+    this.changeSubscription = this.annChildren.changes.subscribe(
       () => setTimeout(() => this.calculatePositions())
     );
   }
@@ -41,6 +57,13 @@ export class AnnotationContainerComponent implements AfterViewInit {
     }
 
     const datums: AnnotationComponent[] = this.annChildren.toArray();
+    if (datums.length === 0) {
+      return;
+    }
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
+      this.changeSubscription = null;
+    }
     const overlapGroups: Set<AnnotationComponent>[] = [];
     for (const i of datums) {
       for (const j of datums) {
@@ -83,6 +106,11 @@ export class AnnotationContainerComponent implements AfterViewInit {
         currY += a.getDisplayHeight() + margin;
       }
     }
+
+    this.lines = [];
+    this.annChildren.forEach((a) => {
+      this.lines.push(a.getPointString());
+    });
   }
 
   private annSort(a: Annotation | AnnotationComponent, b: Annotation | AnnotationComponent): number {

@@ -21,24 +21,14 @@ import { ButtonState } from '../toolbar/toolbar-items';
 import { GitHubFile, GitHubItem, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 import { ModalService } from '../drax-modal/modal.service';
 import { FileHistoryModalComponent } from './file-history-modal.component';
+import { Annotation } from '../annotation/annotation';
+import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
 
 export enum EditorMode {
   Edit = 'edit',
   Locked = 'locked'
 }
 
-export class Annotation {
-  from: CodeMirror.Position;
-  to: CodeMirror.Position;
-  author: string;
-  timestamp: number;
-  text: string;
-
-  marker: CodeMirror.TextMarker = null;
-  extents: { left: number, top: number, bottom: number } = null;
-  displayHeight: number;
-  removed = false;
-}
 
 @Component({
   selector: 'app-editor',
@@ -52,6 +42,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   @Output() cursorActivity = new EventEmitter();
   @Input() ghAccess: GitHubAccessComponent;
 
+  @ViewChild(AnnotationContainerComponent) annContComp: AnnotationContainerComponent;
 
   instance: CodeMirror.Editor = null;
   mode: EditorMode;
@@ -338,6 +329,10 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
       }
       ann.extents = this.instance.cursorCoords(ann.from);
+    }
+
+    if (this.annContComp !== null) {
+      this.annContComp.calculatePositions();
     }
   }
 

@@ -1,5 +1,12 @@
 @import '~sass/variables';
 
+#svgAnnotationLines {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 50;
+  pointer-events: none;
+}
 
 .annotationDisplay {
   // display: none;

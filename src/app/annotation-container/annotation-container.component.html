@@ -1,4 +1,12 @@
 <div class="annotationDisplay">
+  <svg id="svgAnnotationLines" #svgAnnotationLines>
+    <g transform="translate(0.5, 0.5)">
+      <polyline *ngFor="let pointString of lines"
+        [attr.points]="pointString"
+        fill="none" stroke="#456" stroke-width="1"
+      />
+    </g>
+  </svg>
   <div *ngFor="let ann of annotations">
     <app-annotation [ann]="ann"></app-annotation>
   </div>
