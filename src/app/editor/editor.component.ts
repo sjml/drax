@@ -36,6 +36,7 @@ export class Annotation {
 
   marker: CodeMirror.TextMarker = null;
   extents: { left: number, top: number, bottom: number } = null;
+  displayHeight: number;
   removed = false;
 }
 

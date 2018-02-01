@@ -1,8 +1,5 @@
 import { Component,
-         AfterViewInit,
-         ViewChildren,
-         QueryList,
-         ElementRef
+         AfterViewInit
        } from '@angular/core';
 
 import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
