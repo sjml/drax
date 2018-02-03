@@ -6,6 +6,7 @@ import { Component,
          ViewChild,
          ElementRef,
          EventEmitter,
+         HostListener
        } from '@angular/core';
 
 import * as CodeMirror from 'codemirror';
@@ -77,7 +78,9 @@ export class EditorComponent implements OnInit, OnDestroy {
   get file(): GitHubFile { return this._file; }
   fileOutOfSync: boolean;
 
-
+  @HostListener('window:resize') onResize() {
+    this.updateAnnotations();
+  }
 
   constructor(private modalService: ModalService) {
     this.mode = EditorMode.Edit;
@@ -106,7 +109,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
     this.loadFreshFile();
 
-    this.instance.on('change', () => {
+    this.instance.on('changes', () => {
       if (!this._file) {
         return; // TODO: no file set; make this smarter
       }

@@ -11,6 +11,7 @@
 * ugh, the icon layering is a pain; maybe upgrade to FA5 to use the SVG stuff
 
 ## Bugs
+* annotation lines get screwy when view gets widened and sidebar locks in
 * set up a lock so onScroll response can't get double-called
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
 * navlist gets screwy on logout

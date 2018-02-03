@@ -36,7 +36,6 @@ export class AnnotationContainerComponent implements AfterViewInit {
     this._annotations.sort(this.annSort);
   }
 
-
   constructor() { }
 
   ngAfterViewInit() {
@@ -107,6 +106,10 @@ export class AnnotationContainerComponent implements AfterViewInit {
       }
     }
 
+    this.drawLines();
+  }
+
+  private drawLines() {
     this.lines = [];
     this.annChildren.forEach((a) => {
       this.lines.push(a.getPointString());

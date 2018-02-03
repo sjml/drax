@@ -20,7 +20,6 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   @Input() ann: Annotation;
 
   topPos: number;
-  leftPos: number;
 
   constructor() { }
 
@@ -29,7 +28,6 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.leftPos = this.annChild.nativeElement.offsetLeft;
   }
 
   public getDisplayHeight(): number {
@@ -37,7 +35,8 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   }
 
   public getPointString(): string {
-    return (this.leftPos + 5) + ',' + this.topPos
+    const leftPos = this.annChild.nativeElement.offsetLeft;
+    return (leftPos + 5) + ',' + this.topPos
            + ' ' + this.ann.extents.left + ',' + this.ann.extents.top;
   }
 
