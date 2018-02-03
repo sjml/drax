@@ -4,7 +4,8 @@ import { Component,
          ViewChildren,
          Input,
          QueryList,
-         ElementRef
+         ElementRef,
+         HostListener
        } from '@angular/core';
 
 import { Annotation } from '../annotation/annotation';
@@ -36,15 +37,23 @@ export class AnnotationContainerComponent implements AfterViewInit {
     this._annotations.sort(this.annSort);
   }
 
+  @HostListener('window:resize') onResize() {
+    this.updateSize();
+  }
+
   constructor() { }
 
   ngAfterViewInit() {
-    this._svgAnnLines.nativeElement.setAttribute('width', document.body.clientWidth);
-    this._svgAnnLines.nativeElement.setAttribute('height', document.body.clientHeight);
+    this.updateSize();
 
     this.changeSubscription = this.annChildren.changes.subscribe(
       () => setTimeout(() => this.calculatePositions())
     );
+  }
+
+  private updateSize() {
+    this._svgAnnLines.nativeElement.setAttribute('width', document.body.clientWidth);
+    this._svgAnnLines.nativeElement.setAttribute('height', document.body.clientHeight);
   }
 
   calculatePositions() {
