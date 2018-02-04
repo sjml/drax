@@ -33,7 +33,7 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
 
     this.title = 'File History';
     this.description  = 'Select a version of this file to restore locally. ';
-    this.description += 'The current version on the server will be safe unless you save over it. ';
+    this.description += 'The current version on the server will not change unless you save over it. ';
     this.description += 'Past versions are always kept.';
     this.historyData = data.historyData;
     this.callback = data.callback;

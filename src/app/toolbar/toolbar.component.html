@@ -4,15 +4,17 @@
   </div>
   <div class="toolbar">
     <div *ngFor="let item of items">
-      <button
-        *ngIf="item && item.itemType === 'BUTTON'"
-        class="pure-button"
-        [class.pure-button-disabled]="item.state === 'disabled'"
-        [class.pure-button-active]="item.state === 'active'"
-        (click)="handleClick(item)"
-        >
-          <span class="icon fa fa-{{ item.icon }}"></span>
-      </button>
+      <div class="buttonItem" *ngIf="item && item.itemType === 'BUTTON'">
+        <button
+          class="pure-button"
+          [class.pure-button-disabled]="item.state === 'disabled'"
+          [class.pure-button-active]="item.state === 'active'"
+          (click)="handleClick(item)"
+          >
+            <span class="icon fa fa-{{ item.icon }}"></span>
+        </button>
+        <div class="tooltip">{{item.name}}</div>
+      </div>
       <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
     </div>
   </div>
