@@ -26,7 +26,7 @@
     "@angular/platform-browser-dynamic": "^5.0.0",
     "@angular/router": "^5.0.0",
     "cassowary": "0.0.2",
-    "codemirror": "^5.33.0",
+    "codemirror": "^5.34.0",
     "core-js": "^2.4.1",
     "diff-match-patch": "^1.0.0",
     "markdown-it": "^8.4.0",
