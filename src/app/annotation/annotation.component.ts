@@ -7,6 +7,7 @@ import { Component,
         } from '@angular/core';
 
 import { Annotation } from './annotation';
+import * as c from 'cassowary';
 
 @Component({
   selector: 'app-annotation',
@@ -20,6 +21,9 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   @Input() ann: Annotation;
 
   topPos: number;
+
+  topVar: c.Variable;
+  heightVar: c.Variable;
 
   constructor() { }
 

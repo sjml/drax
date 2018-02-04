@@ -11,6 +11,8 @@ import { Component,
 import { Annotation } from '../annotation/annotation';
 import { AnnotationComponent } from '../annotation/annotation.component';
 
+import * as c from 'cassowary';
+
 @Component({
   selector: 'app-annotation-container',
   templateUrl: './annotation-container.component.html',
@@ -57,63 +59,113 @@ export class AnnotationContainerComponent implements AfterViewInit {
   }
 
   calculatePositions() {
-    function intersects(self: AnnotationContainerComponent, a: AnnotationComponent, b: AnnotationComponent): boolean {
-      if (a.ann.extents.top + a.getDisplayHeight() >= b.ann.extents.top && b.ann.extents.top + b.getDisplayHeight() >= a.ann.extents.top) {
-        return true;
-      }
-      return false;
-    }
-
-    const datums: AnnotationComponent[] = this.annChildren.toArray();
-    if (datums.length === 0) {
+    if (this.annChildren.length === 0) {
       return;
     }
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
       this.changeSubscription = null;
     }
-    const overlapGroups: Set<AnnotationComponent>[] = [];
-    for (const i of datums) {
-      for (const j of datums) {
-        if (i === j) {
-          continue;
-        }
-        if (intersects(this, i, j)) {
-          let inserted = false;
-          for (const group of overlapGroups) {
-            if (group.has(i) || group.has(j)) {
-              group.add(i);
-              group.add(j);
-              inserted = true;
-              break;
-            }
-          }
-          if (!inserted) {
-            overlapGroups.push(new Set<AnnotationComponent>([i, j]));
-          }
-        }
+
+    const margin = 2;
+    const start = 90;
+    const datums: AnnotationComponent[] = this.annChildren.toArray();
+
+    const solver = new c.SimplexSolver();
+    solver.autoSolve = false;
+
+    const tops: c.Variable[] = [];
+
+    for (let i = 0; i < datums.length; i++) {
+      const annComp = datums[i];
+      const top = new c.Variable({
+        value: annComp.ann.extents.top,
+      });
+      annComp.topVar = top;
+      solver.addStay(top, c.Strength.weak);
+      tops.push(top);
+
+      const height = new c.Variable({
+        value: annComp.getDisplayHeight(),
+      });
+      annComp.heightVar = height;
+      solver.addStay(height);
+
+      if (i === 0) {
+        solver.addConstraint(new c.Inequality(top, c.GEQ, start + margin), c.Strength.required);
+      }
+      else {
+        const last = datums[i - 1];
+        solver.addConstraint(new c.Inequality(top, c.GEQ, c.plus(c.plus(last.topVar, last.heightVar), margin)), c.Strength.required);
       }
     }
 
-    const margin = 2;
-    for (const group of overlapGroups) {
-      if (group.size === 0) {
-        continue; // shouldn't happen, but being safe
-      }
-      let totalHeight = 0;
-      let start = 0;
-      const orderedSet = Array.from(group).sort(this.annSort);
-      for (const a of orderedSet) {
-        totalHeight += a.getDisplayHeight() + margin;
-        start += a.ann.extents.top;
-      }
-      start /= orderedSet.length;
-      let currY = start - (totalHeight * 0.3);
-      for (const a of orderedSet) {
-        a.topPos = currY;
-        currY += a.getDisplayHeight() + margin;
-      }
+    solver.resolve();
+
+    for (const annComp of datums) {
+      annComp.topPos = annComp.topVar.value;
     }
+
+    // ------------------------
+
+    // function intersects(self: AnnotationContainerComponent, a: AnnotationComponent, b: AnnotationComponent): boolean {
+    // tslint:disable-next-line:max-line-length
+    //   if (a.ann.extents.top + a.getDisplayHeight() >= b.ann.extents.top && b.ann.extents.top + b.getDisplayHeight() >= a.ann.extents.top) {
+    //     return true;
+    //   }
+    //   return false;
+    // }
+
+    // const datums: AnnotationComponent[] = this.annChildren.toArray();
+    // if (datums.length === 0) {
+    //   return;
+    // }
+    // if (this.changeSubscription) {
+    //   this.changeSubscription.unsubscribe();
+    //   this.changeSubscription = null;
+    // }
+    // const overlapGroups: Set<AnnotationComponent>[] = [];
+    // for (const i of datums) {
+    //   for (const j of datums) {
+    //     if (i === j) {
+    //       continue;
+    //     }
+    //     if (intersects(this, i, j)) {
+    //       let inserted = false;
+    //       for (const group of overlapGroups) {
+    //         if (group.has(i) || group.has(j)) {
+    //           group.add(i);
+    //           group.add(j);
+    //           inserted = true;
+    //           break;
+    //         }
+    //       }
+    //       if (!inserted) {
+    //         overlapGroups.push(new Set<AnnotationComponent>([i, j]));
+    //       }
+    //     }
+    //   }
+    // }
+
+    // const margin = 2;
+    // for (const group of overlapGroups) {
+    //   if (group.size === 0) {
+    //     continue; // shouldn't happen, but being safe
+    //   }
+    //   let totalHeight = 0;
+    //   let start = 0;
+    //   const orderedSet = Array.from(group).sort(this.annSort);
+    //   for (const a of orderedSet) {
+    //     totalHeight += a.getDisplayHeight() + margin;
+    //     start += a.ann.extents.top;
+    //   }
+    //   start /= orderedSet.length;
+    //   let currY = start - (totalHeight * 0.3);
+    //   for (const a of orderedSet) {
+    //     a.topPos = currY;
+    //     currY += a.getDisplayHeight() + margin;
+    //   }
+    // }
 
     this.drawLines();
   }
