@@ -5,7 +5,7 @@
   >
   <div class="attribution">
     <span class="name">{{ann.author}}</span>
-    <span class="date">{{ann.timestamp}}</span>
+    <span class="date" title="{{getFullDateString()}}">{{getShortDateString()}} ago</span>
   </div>
   <div class="commentary" *ngIf="!editing">
     {{ann.text}}

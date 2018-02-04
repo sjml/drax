@@ -9,6 +9,7 @@ import { Component,
 
 import { Annotation } from './annotation';
 import * as c from 'cassowary';
+import * as fns from 'date-fns';
 
 @Component({
   selector: 'app-annotation',
@@ -48,6 +49,14 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
     const leftPos = this.annChild.nativeElement.offsetLeft;
     return (leftPos + 5) + ',' + this.topVar.value
            + ' ' + this.ann.extents.left + ',' + this.ann.extents.top;
+  }
+
+  getShortDateString(): string {
+    return fns.distanceInWordsToNow(this.ann.timestamp);
+  }
+
+  getFullDateString(): string {
+    return fns.format(this.ann.timestamp, 'MMM D, YYYY, h:mm a');
   }
 
   tryEdit() {

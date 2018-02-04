@@ -82,7 +82,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
     const start = 90;
     const datums: AnnotationComponent[] = this.annChildren.toArray();
 
-    console.log('calculating positions');
+    // console.log('calculating positions');
     this._solver = new c.SimplexSolver();
     this._solver.autoSolve = false;
 
