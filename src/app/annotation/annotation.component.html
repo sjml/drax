@@ -1,9 +1,18 @@
-<div #annotation class="fullAnnotation" [style.top.px]="topPos">
+<div #annotation class="fullAnnotation"
+  [style.top.px]="topPos"
+  [class.editing]="editing"
+  (dblclick)="tryEdit()"
+  >
   <div class="attribution">
     <span class="name">{{ann.author}}</span>
     <span class="date">{{ann.timestamp}}</span>
   </div>
-  <div class="commentary">
+  <div class="commentary" *ngIf="!editing">
     {{ann.text}}
   </div>
+  <textarea #textArea class="commentary"
+    *ngIf="editing"
+    [(ngModel)]="ann.text"
+    (blur)="stopEdit()"
+    ></textarea>
 </div>

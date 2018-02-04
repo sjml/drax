@@ -43,6 +43,8 @@
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
          2. if there have been additions or deletions before it, modify as needed
+    3. cleanup
+       - can we consolidate topVar/topPos?
 2. Keyboard commands
   - for toolbar buttons as makes sense
   - escape to dismiss modals and save popup

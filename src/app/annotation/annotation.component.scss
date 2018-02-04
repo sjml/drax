@@ -1,8 +1,13 @@
 @import '~sass/variables';
 
+.fullAnnotation.editing {
+  z-index: 16;
+}
+
 .fullAnnotation {
   border: 1px solid black;
   border-radius: 5px;
+  background-color: white;
 
   position: absolute;
   width: $sidebarWidth - 20px;
@@ -10,6 +15,10 @@
 
   .commentary {
     margin-left: 10px;
+  }
+
+  textarea.commentary {
+    margin-top: 5px;
   }
 
   .attribution {

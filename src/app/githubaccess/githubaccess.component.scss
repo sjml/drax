@@ -12,7 +12,6 @@
   background: #000;
   background: rgba(0,0,0,0.7);
   font-size: 25px;
-  // z-index: 10;
   padding: 10px;
   color: #fff;
   cursor: pointer;
@@ -67,7 +66,7 @@
   top: 0;
   left: -$sidebarWidth;
   bottom: 0;
-  z-index: 20;
+  z-index: 30;
   background: #191818;
   overflow-y: scroll;
   overflow-x: hidden;
