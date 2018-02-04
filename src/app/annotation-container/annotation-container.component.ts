@@ -60,6 +60,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
   calculatePositions() {
     if (this.annChildren.length === 0) {
+      this.clearLines();
       return;
     }
     if (this.changeSubscription) {
@@ -128,68 +129,11 @@ export class AnnotationContainerComponent implements AfterViewInit {
       annComp.topPos = annComp.topVar.value;
     }
 
-    // ------------------------
-
-    // function intersects(self: AnnotationContainerComponent, a: AnnotationComponent, b: AnnotationComponent): boolean {
-    // tslint:disable-next-line:max-line-length
-    //   if (a.ann.extents.top + a.getDisplayHeight() >= b.ann.extents.top && b.ann.extents.top + b.getDisplayHeight() >= a.ann.extents.top) {
-    //     return true;
-    //   }
-    //   return false;
-    // }
-
-    // const datums: AnnotationComponent[] = this.annChildren.toArray();
-    // if (datums.length === 0) {
-    //   return;
-    // }
-    // if (this.changeSubscription) {
-    //   this.changeSubscription.unsubscribe();
-    //   this.changeSubscription = null;
-    // }
-    // const overlapGroups: Set<AnnotationComponent>[] = [];
-    // for (const i of datums) {
-    //   for (const j of datums) {
-    //     if (i === j) {
-    //       continue;
-    //     }
-    //     if (intersects(this, i, j)) {
-    //       let inserted = false;
-    //       for (const group of overlapGroups) {
-    //         if (group.has(i) || group.has(j)) {
-    //           group.add(i);
-    //           group.add(j);
-    //           inserted = true;
-    //           break;
-    //         }
-    //       }
-    //       if (!inserted) {
-    //         overlapGroups.push(new Set<AnnotationComponent>([i, j]));
-    //       }
-    //     }
-    //   }
-    // }
-
-    // const margin = 2;
-    // for (const group of overlapGroups) {
-    //   if (group.size === 0) {
-    //     continue; // shouldn't happen, but being safe
-    //   }
-    //   let totalHeight = 0;
-    //   let start = 0;
-    //   const orderedSet = Array.from(group).sort(this.annSort);
-    //   for (const a of orderedSet) {
-    //     totalHeight += a.getDisplayHeight() + margin;
-    //     start += a.ann.extents.top;
-    //   }
-    //   start /= orderedSet.length;
-    //   let currY = start - (totalHeight * 0.3);
-    //   for (const a of orderedSet) {
-    //     a.topPos = currY;
-    //     currY += a.getDisplayHeight() + margin;
-    //   }
-    // }
-
     this.drawLines();
+  }
+
+  clearLines() {
+    this.lines = [];
   }
 
   private drawLines() {

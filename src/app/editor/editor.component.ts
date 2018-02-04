@@ -173,6 +173,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.takeFocus();
 
     this.annotations = [];
+    this.annContComp.clearLines();
     if (this._file.item.repo.config['hasConfig']) {
       // check for accompanying annotation file
       const item = new GitHubItem();
@@ -197,6 +198,9 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
         this.updateAnnotations();
       });
+    }
+    else {
+      this.updateAnnotations();
     }
 
     // TODO: figure out if we can be more precise and do this
@@ -335,7 +339,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     if (this.annContComp !== null) {
-      this.annContComp.calculatePositions();
+      setTimeout(() => {
+        this.annContComp.calculatePositions();
+      });
     }
   }
 
