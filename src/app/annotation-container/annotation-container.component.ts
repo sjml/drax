@@ -88,16 +88,38 @@ export class AnnotationContainerComponent implements AfterViewInit {
       const height = new c.Variable({
         value: annComp.getDisplayHeight(),
       });
-      annComp.heightVar = height;
-      solver.addStay(height);
 
       if (i === 0) {
-        solver.addConstraint(new c.Inequality(top, c.GEQ, start + margin), c.Strength.required);
+        solver.addConstraint(new c.Inequality(
+                                    top,
+                                    c.GEQ,
+                                    start + margin),
+                                    c.Strength.required
+                            );
       }
       else {
         const last = datums[i - 1];
-        solver.addConstraint(new c.Inequality(top, c.GEQ, c.plus(c.plus(last.topVar, last.heightVar), margin)), c.Strength.required);
+        solver.addConstraint(new c.Inequality(
+                                    top,
+                                    c.GEQ,
+                                    c.plus(
+                                      c.plus(
+                                        last.topVar,
+                                        last.getDisplayHeight()
+                                      ),
+                                      margin)
+                                  ),
+                                  c.Strength.required
+                            );
       }
+
+      // solver.addConstraint(new c.Inequality(
+      //                             top,
+      //                             c.GEQ,
+      //                             annComp.ann.extents.top
+      //                           ),
+      //                           c.Strength.weak
+      //                     );
     }
 
     solver.resolve();

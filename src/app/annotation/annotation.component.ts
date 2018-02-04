@@ -23,7 +23,6 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   topPos: number;
 
   topVar: c.Variable;
-  heightVar: c.Variable;
 
   constructor() { }
 
