@@ -23,11 +23,11 @@ export class AnnotationContainerComponent implements AfterViewInit {
   private _visible = true;
   set visible(vis: boolean) {
     this._visible = vis;
-    setTimeout(() => {
-      if (this.visible) {
-        this.calculatePositions();
-      }
-    });
+    // setTimeout(() => {
+    //   if (this.visible) {
+    //     this.calculatePositions();
+    //   }
+    // });
   }
   get visible(): boolean {
     return this._visible;
@@ -75,6 +75,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
       return;
     }
 
+    // console.log('calculating positions');
     const margin = 2;
     const start = 90;
     const datums: AnnotationComponent[] = this.annChildren.toArray();

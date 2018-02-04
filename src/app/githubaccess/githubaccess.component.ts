@@ -586,7 +586,7 @@ export class GitHubAccessComponent implements OnInit {
   }
 
   getFile(item: GitHubItem): Promise<GitHubFile> {
-    return this.graphQlQuery(Queries.getFileContents(item), 'fileContents').toPromise().then(response => {
+    return this.graphQlQuery(Queries.getFileContents(item), `fileContents ${item.fileName}`).toPromise().then(response => {
       const obj = response['data']['repository']['object'];
       if (obj === null) {
         return null;

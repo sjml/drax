@@ -169,7 +169,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.instance.setOption('mode', this.markdownConfig);
 
     this.instance.refresh();
-    this.change.emit();
     this.takeFocus();
 
     this.annotations = [];
@@ -197,10 +196,12 @@ export class EditorComponent implements OnInit, OnDestroy {
           }
         }
         this.updateAnnotations();
+        this.change.emit();
       });
     }
     else {
       this.updateAnnotations();
+      this.change.emit();
     }
 
     // TODO: figure out if we can be more precise and do this
@@ -318,13 +319,15 @@ export class EditorComponent implements OnInit, OnDestroy {
     if (this.annContComp.visible) {
       if (execute) {
         this.annContComp.visible = false;
-        // this.annContComp.calculatePositions();
       }
       return ButtonState.Inactive;
     }
     else {
       if (execute) {
         this.annContComp.visible = true;
+        setTimeout(() => {
+          this.updateAnnotations();
+        });
       }
       return ButtonState.Active;
     }
@@ -360,7 +363,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     if (this.annContComp !== null) {
       setTimeout(() => {
         this.annContComp.calculatePositions();
-        this.change.emit();
       });
     }
   }
