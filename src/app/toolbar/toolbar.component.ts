@@ -49,8 +49,8 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       new Button('Blockquote', 'Create a blockquote', 'quote-left',
                   (execute) => this.editor.toggleBlockQuote(execute)),
       new Separator(),
-      new Button('Preview', 'View the rendered page alongside your Markdown', 'columns',
-                  (execute) => null),
+      new Button('Comments', 'Show comments that have been made on this file', 'comments',
+                  (execute) => this.editor.toggleCommentGutter(execute)),
     );
 
     // set the button states the first time

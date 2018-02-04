@@ -20,24 +20,36 @@ import * as c from 'cassowary';
 })
 export class AnnotationContainerComponent implements AfterViewInit {
 
+  private _visible = true;
+  set visible(vis: boolean) {
+    this._visible = vis;
+    setTimeout(() => {
+      if (this.visible) {
+        this.calculatePositions();
+      }
+    });
+  }
+  get visible(): boolean {
+    return this._visible;
+  }
+
   @ViewChildren(AnnotationComponent)
   annChildren: QueryList<AnnotationComponent> = null;
-  changeSubscription = null;
 
   private _annotations: Annotation[];
   get annotations(): Annotation[] {
     return this._annotations;
   }
 
-  @ViewChild('svgAnnotationLines')
-  private _svgAnnLines: ElementRef;
-  lines: string[] = [];
-
   @Input()
   set annotations(annotations: Annotation[]) {
     this._annotations = annotations;
     this._annotations.sort(this.annSort);
   }
+
+  @ViewChild('svgAnnotationLines')
+  private _svgAnnLines: ElementRef;
+  lines: string[] = [];
 
   @HostListener('window:resize') onResize() {
     this.updateSize();
@@ -47,10 +59,6 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.updateSize();
-
-    this.changeSubscription = this.annChildren.changes.subscribe(
-      () => setTimeout(() => this.calculatePositions())
-    );
   }
 
   private updateSize() {
@@ -59,13 +67,12 @@ export class AnnotationContainerComponent implements AfterViewInit {
   }
 
   calculatePositions() {
+    if (!this._visible) {
+      return;
+    }
     if (this.annChildren.length === 0) {
       this.clearLines();
       return;
-    }
-    if (this.changeSubscription) {
-      this.changeSubscription.unsubscribe();
-      this.changeSubscription = null;
     }
 
     const margin = 2;

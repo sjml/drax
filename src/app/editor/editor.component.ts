@@ -311,6 +311,25 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleCommentGutter(execute: boolean): ButtonState {
+    if (this.annotations.length === 0) {
+      return null;
+    }
+    if (this.annContComp.visible) {
+      if (execute) {
+        this.annContComp.visible = false;
+        // this.annContComp.calculatePositions();
+      }
+      return ButtonState.Inactive;
+    }
+    else {
+      if (execute) {
+        this.annContComp.visible = true;
+      }
+      return ButtonState.Active;
+    }
+  }
+
   updateAnnotations() {
     const doc = this.instance.getDoc();
     for (const ann of this.annotations) {
@@ -341,6 +360,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     if (this.annContComp !== null) {
       setTimeout(() => {
         this.annContComp.calculatePositions();
+        this.change.emit();
       });
     }
   }

@@ -1,4 +1,4 @@
-<div class="annotationDisplay">
+<div class="annotationDisplay" [hidden]="!visible">
   <svg id="svgAnnotationLines" #svgAnnotationLines>
     <g transform="translate(0.5, 0.5)">
       <polyline *ngFor="let pointString of lines"
