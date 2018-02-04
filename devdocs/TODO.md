@@ -18,6 +18,7 @@
 * single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
+* figure out min-width for editable area when screen is wide
 * spinners for saving and loading stuff in the explorer
 * store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
@@ -37,7 +38,7 @@
 
 ## Features
 1. Annotation system
-    1. rendering of annotations
+    1. Create sidebar toggle for comments, hide and show them. 
     2. creation/deletion of annotations, push with rest of file
     3. annotation file has git hash of parent file, knows if it's out of sync
        - tries to correct if it can, based on range of annotation: 
