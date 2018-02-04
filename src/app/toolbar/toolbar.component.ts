@@ -49,6 +49,8 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       new Button('Blockquote', 'Create a blockquote', 'quote-left',
                   (execute) => this.editor.toggleBlockQuote(execute)),
       new Separator(),
+      new Button('Add Comment', 'Add a comment at the selected point in the file', 'comment',
+                  (execute) => null),
       new Button('Comments', 'Show comments that have been made on this file', 'comments',
                   (execute) => this.editor.toggleCommentGutter(execute)),
     );
