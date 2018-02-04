@@ -18,11 +18,12 @@
   }
 
   textarea.commentary {
+    width: $sidebarWidth - 35px;
+    margin-left: 5px;
     margin-top: 5px;
   }
 
   .attribution {
-    // width: 100%;
     border-radius: 5px 5px 0 0;
     background-color: aqua;
     padding-left: 10px;

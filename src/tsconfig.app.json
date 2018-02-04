@@ -6,6 +6,10 @@
     "module": "es2015",
     "types": []
   },
+  "include": [
+    "../node_modules/ngx-textarea-autosize/index.ts",
+    "**/*.ts"
+  ],
   "exclude": [
     "test.ts",
     "**/*.spec.ts"

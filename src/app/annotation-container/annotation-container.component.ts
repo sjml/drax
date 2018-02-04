@@ -5,7 +5,7 @@ import { Component,
          Input,
          QueryList,
          ElementRef,
-         HostListener
+         HostListener,
        } from '@angular/core';
 
 import { Annotation } from '../annotation/annotation';
@@ -20,19 +20,11 @@ import * as c from 'cassowary';
 })
 export class AnnotationContainerComponent implements AfterViewInit {
 
-  private _visible = true;
-  set visible(vis: boolean) {
-    this._visible = vis;
-    // setTimeout(() => {
-    //   if (this.visible) {
-    //     this.calculatePositions();
-    //   }
-    // });
-  }
-  get visible(): boolean {
-    return this._visible;
-  }
+  private _solver: c.SimplexSolver = null;
 
+  visible = true;
+
+  private _childChanges = [];
   @ViewChildren(AnnotationComponent)
   annChildren: QueryList<AnnotationComponent> = null;
 
@@ -59,6 +51,17 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.updateSize();
+
+    this.annChildren.changes.subscribe(() => {
+      this._childChanges.map((changes) => changes.unsubscribe());
+      this._childChanges = [];
+
+      this.annChildren.forEach((annComp) => {
+        this._childChanges.push(annComp.change.subscribe(() => {
+          this.calculatePositions();
+        }));
+      });
+    });
   }
 
   private updateSize() {
@@ -67,7 +70,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
   }
 
   calculatePositions() {
-    if (!this._visible) {
+    if (!this.visible) {
       return;
     }
     if (this.annChildren.length === 0) {
@@ -75,32 +78,23 @@ export class AnnotationContainerComponent implements AfterViewInit {
       return;
     }
 
-    // console.log('calculating positions');
     const margin = 2;
     const start = 90;
     const datums: AnnotationComponent[] = this.annChildren.toArray();
 
-    const solver = new c.SimplexSolver();
-    solver.autoSolve = false;
-
-    const tops: c.Variable[] = [];
+    console.log('calculating positions');
+    this._solver = new c.SimplexSolver();
+    this._solver.autoSolve = false;
 
     for (let i = 0; i < datums.length; i++) {
       const annComp = datums[i];
-      const top = new c.Variable({
-        value: annComp.ann.extents.top,
-      });
-      annComp.topVar = top;
-      solver.addStay(top, c.Strength.weak);
-      tops.push(top);
-
-      const height = new c.Variable({
-        value: annComp.getDisplayHeight(),
-      });
+      annComp.resetVars();
+      this._solver.addStay(annComp.topVar, c.Strength.weak);
+      this._solver.addStay(annComp.heightVar, c.Strength.required);
 
       if (i === 0) {
-        solver.addConstraint(new c.Inequality(
-                                    top,
+        this._solver.addConstraint(new c.Inequality(
+                                    annComp.topVar,
                                     c.GEQ,
                                     start + margin),
                                     c.Strength.required
@@ -108,34 +102,22 @@ export class AnnotationContainerComponent implements AfterViewInit {
       }
       else {
         const last = datums[i - 1];
-        solver.addConstraint(new c.Inequality(
-                                    top,
+        this._solver.addConstraint(new c.Inequality(
+                                    annComp.topVar,
                                     c.GEQ,
                                     c.plus(
                                       c.plus(
                                         last.topVar,
-                                        last.getDisplayHeight()
+                                        last.heightVar
                                       ),
                                       margin)
                                   ),
                                   c.Strength.required
                             );
       }
-
-      // solver.addConstraint(new c.Inequality(
-      //                             top,
-      //                             c.GEQ,
-      //                             annComp.ann.extents.top
-      //                           ),
-      //                           c.Strength.weak
-      //                     );
     }
 
-    solver.resolve();
-
-    for (const annComp of datums) {
-      annComp.topPos = annComp.topVar.value;
-    }
+    this._solver.resolve();
 
     this.drawLines();
   }

@@ -1,5 +1,5 @@
 <div #annotation class="fullAnnotation"
-  [style.top.px]="topPos"
+  [style.top.px]="topVar.value"
   [class.editing]="editing"
   (dblclick)="tryEdit()"
   >
@@ -10,7 +10,7 @@
   <div class="commentary" *ngIf="!editing">
     {{ann.text}}
   </div>
-  <textarea #textArea class="commentary"
+  <textarea #textArea autosize class="commentary"
     *ngIf="editing"
     [(ngModel)]="ann.text"
     (blur)="stopEdit()"

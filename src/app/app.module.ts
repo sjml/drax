@@ -3,6 +3,8 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
+
 import { AppComponent } from './app.component';
 import { ConfigService } from './config.service';
 import { ModalService } from './drax-modal/modal.service';
@@ -34,7 +36,8 @@ import { AnnotationComponent } from './annotation/annotation.component';
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    TextareaAutosizeModule
   ],
   providers: [
     ConfigService,

@@ -1,8 +1,10 @@
 import { Component,
+         AfterViewInit,
          OnInit,
          Input,
          ViewChild,
-         ElementRef
+         ElementRef,
+         EventEmitter
         } from '@angular/core';
 
 import { Annotation } from './annotation';
@@ -13,31 +15,38 @@ import * as c from 'cassowary';
   templateUrl: './annotation.component.html',
   styleUrls: ['./annotation.component.scss']
 })
-export class AnnotationComponent implements OnInit {
+export class AnnotationComponent implements OnInit, AfterViewInit {
 
   @ViewChild('annotation') annChild: ElementRef;
   @ViewChild('textArea') textArea: ElementRef;
 
   @Input() ann: Annotation;
 
-  topPos: number;
+  change = new EventEmitter();
   topVar: c.Variable;
+  heightVar: c.Variable;
 
   editing = false;
 
   constructor() { }
 
   ngOnInit() {
-    this.topPos = this.ann.extents.top;
+    this.topVar = new c.Variable({value: this.ann.extents.top});
+    this.heightVar = new c.Variable();
   }
 
-  public getDisplayHeight(): number {
-    return this.annChild.nativeElement.offsetHeight;
+  ngAfterViewInit() {
+    this.heightVar.value = this.annChild.nativeElement.offsetHeight;
+  }
+
+  resetVars() {
+    this.topVar.value = this.ann.extents.top;
+    this.heightVar.value = this.annChild.nativeElement.offsetHeight;
   }
 
   public getPointString(): string {
     const leftPos = this.annChild.nativeElement.offsetLeft;
-    return (leftPos + 5) + ',' + this.topPos
+    return (leftPos + 5) + ',' + this.topVar.value
            + ' ' + this.ann.extents.left + ',' + this.ann.extents.top;
   }
 
@@ -53,6 +62,9 @@ export class AnnotationComponent implements OnInit {
   stopEdit() {
     if (this.editing) {
       this.editing = false;
+      setTimeout(() => {
+        this.change.emit();
+      });
     }
   }
 }
