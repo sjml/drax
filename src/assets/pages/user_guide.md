@@ -26,7 +26,11 @@ For details about Markdown, see [this guide](/#/pages/markdown).
 
 
 ## Annotations
-(coming soon)
+You can add comments to files that will be visible to anyone else who edits that file. Select a span of text and click the "Add Comment" button on the right side of the toolbar. 
+
+Annotation support is still preliminary, so there are a few limitations.
+* The data for annotations is stored separate from the file itself, so they don't track through history. 
+* Anyone can edit anyone else's comment, so don't treat their attributions as authoritative. (This is actually the same way the comments work on Microsoft Word files, surprisingly!)
 
 
 ## Advanced Usage
