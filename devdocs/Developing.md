@@ -23,7 +23,7 @@ After the initial authentication with GitHub, Drax saves a bearer token in the b
 
 As you edit files, the server will detect and reload the application in your browser. 
 
-I recommend [Visual Studio Code](https://code.visualstudio.com/) as an editor, with the [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome) addon. If you have another tool you prefer, hey, you do you. 
+I recommend [Visual Studio Code](https://code.visualstudio.com/) as an editor, with either the [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome) or [Debugger for Firefox](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-firefox-debug) addon. If you have another tool you prefer, hey, you do you. 
 
 ### Dev Configuration
 Values in `drax-config.dev.json` will override those in `drax-config.json` while Angular is in development mode. The `dev.json` file is removed from the final distribution. 
