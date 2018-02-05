@@ -196,7 +196,9 @@ export class GitHubAccessComponent implements OnInit {
     this.repo.name = this.route.snapshot.paramMap.get('name');
 
     if (!this.bearerToken || this.repo.owner === null || this.repo.name === null) {
-      this.router.navigateByUrl('/');
+      if (this.displayPage === null) {
+        this.router.navigateByUrl('/');
+      }
       if (this.bearerToken) {
         this.loadRepositoryList().then(cont => {
           this.repositoryListCursor = cont;
