@@ -29,5 +29,5 @@ Things not to expect:
 
 
 <div class="deployInfo">
-  Deployed at %%DEPLOY_TIME%%, Revision %%GIT_REV%%
+  revision %%GIT_REV%% deployed at %%DEPLOY_TIME%%
 </div>
