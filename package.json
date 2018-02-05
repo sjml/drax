@@ -7,7 +7,7 @@
     "dev": "./php_wrap.sh",
     "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
     "build": "ng build --prod",
-    "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json; rm -rf dist/assets/fontello",
+    "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
     "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy",
     "test": "ng test",
