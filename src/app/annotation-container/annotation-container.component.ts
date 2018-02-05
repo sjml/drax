@@ -22,7 +22,20 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
   private _solver: c.SimplexSolver = null;
 
-  visible = true;
+  private _visible = true;
+  get visible(): boolean {
+    return this._visible;
+  }
+  set visible(v: boolean) {
+    this._visible = v;
+    if (!v) {
+      this.annChildren.forEach((annComp) => {
+        if (annComp.editing) {
+          annComp.stopEdit();
+        }
+      });
+    }
+  }
 
   private _childChanges = [];
   @ViewChildren(AnnotationComponent)

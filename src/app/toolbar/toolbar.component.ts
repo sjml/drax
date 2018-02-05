@@ -50,7 +50,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
                   (execute) => this.editor.toggleBlockQuote(execute)),
       new Separator(),
       new Button('Add Comment', 'Add a comment at the selected point in the file', 'comment',
-                  (execute) => this.editor.createNewAnnotation(execute)),
+                  (execute) => this.editor.createNewAnnotationCommand(execute)),
       new Button('Toggle Comments', 'Show comments that have been made on this file', 'comments',
                   (execute) => this.editor.toggleAnnotationGutter(execute)),
     );

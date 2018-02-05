@@ -333,30 +333,44 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  createNewAnnotation(execute: boolean): ButtonState {
+  createNewAnnotation() {
+    const a = new Annotation();
+    a.author = this.ghAccess.user.login;
+    a.text = '';
+    a.timestamp = 0;
+
+    const selectedRange = this.getWorkingRange();
+    a.from = selectedRange.from();
+    a.to = selectedRange.to();
+
+    const doc = this.instance.getDoc();
+    a.marker = doc.markText(a.from, a.to, {
+      className: 'annotation',
+      startStyle: 'annotationStart',
+      endStyle: 'annotationEnd',
+      inclusiveLeft: true,
+      inclusiveRight: true
+    });
+    a.extents = this.instance.cursorCoords(a.from);
+
+    this.annotations.push(a);
+    this.annotations.sort(AnnotationSort);
+    this.updateAnnotations();
+  }
+
+  createNewAnnotationCommand(execute: boolean): ButtonState {
     if (execute) {
-      const a = new Annotation();
-      a.author = this.ghAccess.user.login;
-      a.text = '';
-      a.timestamp = 0;
+      if (!this.annContComp.visible) {
+        this.annContComp.visible = true;
+        setTimeout(() => {
+          this.updateAnnotations();
+          this.createNewAnnotation();
+        });
+      }
+      else {
+        this.createNewAnnotation();
+      }
 
-      const selectedRange = this.getWorkingRange();
-      a.from = selectedRange.from();
-      a.to = selectedRange.to();
-
-      const doc = this.instance.getDoc();
-      a.marker = doc.markText(a.from, a.to, {
-        className: 'annotation',
-        startStyle: 'annotationStart',
-        endStyle: 'annotationEnd',
-        inclusiveLeft: true,
-        inclusiveRight: true
-      });
-      a.extents = this.instance.cursorCoords(a.from);
-
-      this.annotations.push(a);
-      this.annotations.sort(AnnotationSort);
-      this.updateAnnotations();
       return ButtonState.Inactive;
     }
     return ButtonState.Active;
