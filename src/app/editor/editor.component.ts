@@ -193,7 +193,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       // check for accompanying annotation file
       const item = new GitHubItem();
       item.repo = this._file.item.repo;
-      item.branch = this._file.item.repo.defaultBranch;
+      item.branch = this._file.item.branch;
       item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
       item.fileName = `${this._file.item.fileName}.json`;
       this.ghAccess.getFile(item).then(fileResponse => {
@@ -338,7 +338,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const item = new GitHubItem();
       item.repo = this._file.item.repo;
-      item.branch = this._file.item.repo.defaultBranch;
+      item.branch = this._file.item.branch;
       item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
       item.fileName = `${this._file.item.fileName}.json`;
 
