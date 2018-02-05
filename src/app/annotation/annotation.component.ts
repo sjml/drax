@@ -86,9 +86,13 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
       if (this.ann.text.length > 0 && this.oldText !== this.ann.text) {
         this.ann.timestamp = Date.now();
       }
-      setTimeout(() => {
-        this.change.emit();
-      });
+      this.change.emit();
     }
+  }
+
+  removeMe() {
+    this.ann.text = '';
+    this.ann.timestamp = 0;
+    this.change.emit();
   }
 }
