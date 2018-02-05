@@ -624,7 +624,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getMarkdownStateFromToken(tok: CodeMirror.Token) {
     let state = tok.state;
-    if (state.inner !== null) {
+    if (state.inner !== undefined && state.inner !== null) {
       if (state.state < 2) {
         return null;
       }
