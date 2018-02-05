@@ -298,8 +298,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       item.fileName = `${this._file.item.fileName}.json`;
 
       return this.ghAccess.getFile(item).then(fileResponse => {
-        fileResponse.contents = outputString;
-        return this.ghAccess.pushFile(fileResponse, commitMessage).then(val => {
+        let fPush: GitHubFile = null;
+        if (fileResponse !== null) {
+          fPush = fileResponse;
+          fPush.contents = outputString;
+        }
+        else {
+          fPush = new GitHubFile(outputString);
+          fPush.item = item;
+        }
+        return this.ghAccess.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
           if (val['success']) {
             this.originalRawAnnotations = annFileObj['annotations'];
             this.annotationsDirty = false;
@@ -321,9 +329,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                       .then((annPushRes) => {
                         this.change.emit();
                         return true;
+                      })
+                      .catch((err) => {
+                        console.error(err);
+                        return false;
                       });
                   })
                   .catch((err) => {
+                    console.error(err);
                     return false;
                   });
   }
