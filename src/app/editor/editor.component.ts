@@ -22,6 +22,7 @@ import '../../js-util/toml-frontmatter';
 import { ButtonState } from '../toolbar/toolbar-items';
 import { GitHubFile, GitHubItem, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 import { ModalService } from '../drax-modal/modal.service';
+import { DataRequestModalComponent } from '../drax-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './file-history-modal.component';
 import { Annotation, AnnotationSort } from '../annotation/annotation';
 import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
@@ -241,17 +242,61 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   prepForSave(execute: boolean): ButtonState {
     if (!(this._file.isDirty || this.annotationsDirty)) {
+      console.log('not dirty');
       return null;
     }
     if (execute) {
-      this.setMode(EditorMode.Locked);
+      this.modalService.generate(
+        DataRequestModalComponent,
+        {
+          display: {
+            title: 'Save File',
+            description: 'Save a new version of this file to GitHub. All past versions are kept, so your work is never lost.',
+            fields: [
+              {
+                name: 'commitMessage',
+                value: '',
+                required: true,
+                placeholder: 'Write a short note to describe your changes.',
+                showAsTextArea: true
+              }
+            ]
+          },
+          callback: (pressedOK, values) => {
+            if (!pressedOK) {
+              this.cancelSave();
+              return;
+            }
+            this.save(values['commitMessage']);
+          }
+        }
+      );
+      return ButtonState.Inactive;
     }
     return ButtonState.Active;
   }
 
   cancelSave(): boolean {
-    this.setMode(EditorMode.Edit);
     return true;
+  }
+
+  save(commitMessage: string): Promise<boolean> {
+    return this.pushMainFile(commitMessage)
+                  .then((mainPushRes) => {
+                    return this.pushAnnotationsFile(commitMessage)
+                      .then((annPushRes) => {
+                        this.change.emit();
+                        return true;
+                      })
+                      .catch((err) => {
+                        console.error(err);
+                        return false;
+                      });
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                    return false;
+                  });
   }
 
   pushMainFile(commitMessage: string): Promise<boolean> {
@@ -320,25 +365,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       });
     }
-  }
-
-  save(commitMessage: string): Promise<boolean> {
-    return this.pushMainFile(commitMessage)
-                  .then((mainPushRes) => {
-                    return this.pushAnnotationsFile(commitMessage)
-                      .then((annPushRes) => {
-                        this.change.emit();
-                        return true;
-                      })
-                      .catch((err) => {
-                        console.error(err);
-                        return false;
-                      });
-                  })
-                  .catch((err) => {
-                    console.error(err);
-                    return false;
-                  });
   }
 
   // runs periodically

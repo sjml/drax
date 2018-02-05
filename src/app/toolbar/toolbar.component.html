@@ -18,15 +18,4 @@
       <div *ngIf="item.itemType === 'SEP'" class="tbSep"></div>
     </div>
   </div>
-  <div class="memo" [class.hidden]="editor.mode === 'edit'">
-    <div class="arrow-up"></div>
-    <div class="memoPanel">
-      <textarea placeholder="Describe your changes here." [(ngModel)]="commitMessage"></textarea>
-      <div class="buttonBar">
-        <span class="panelButton fa fa-times icon icon-cancel" (click)="cancelSave()"></span>
-        <span class="panelButton fa fa-check icon icon-ok" [class.disabled]="commitMessage.length === 0" (click)="doSave()"></span>
-      </div>
-    </div>
-  </div>
-
 </div>
