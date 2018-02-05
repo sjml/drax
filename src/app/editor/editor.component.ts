@@ -674,7 +674,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         continue;
       }
 
-      if (startTok.state.quote !== 0) {
+      if (startTok.state.quote !== undefined && startTok.state.quote !== 0) {
         quoteCount++;
       }
     }

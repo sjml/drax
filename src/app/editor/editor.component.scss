@@ -10,6 +10,7 @@ $annotationBorderWidth: 2px;
   max-width: $editorMaxWidth;
   margin: auto;
   margin-top: $editorbarHeight;
+  flex-grow: 1;
 }
 
 // Actual code styling below here

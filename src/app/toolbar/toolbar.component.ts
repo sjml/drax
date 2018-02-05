@@ -61,7 +61,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.editor.change.subscribe(() => this.handleEditorChange());
-    this.editor.cursorActivity.subscribe(() => this.handleEditorChange());
+    this.editor.cursorActivity.subscribe(() => this.handleEditorChange(true));
   }
 
   cancelSave() {
@@ -90,12 +90,20 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     this.editor.takeFocus();
   }
 
-  handleEditorChange() {
+  handleEditorChange(isCursorChange: boolean = false) {
+    const nonCursor = [
+      'Save', 'Refresh', 'History', 'Add Comment', 'Toggle Comments'
+    ];
+
     for (const item of this.items) {
       if (!(item instanceof Button)) {
         continue;
       }
       const button = item as Button;
+
+      if (isCursorChange && nonCursor.indexOf(button.name) >= 0) {
+        continue;
+      }
 
       if (this.editor.markdownConfig.name.length === 0) {
         button.state = ButtonState.Disabled;

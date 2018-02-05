@@ -38,15 +38,17 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Annotation system
-    2. annotation file has git hash of parent file, knows if it's out of sync
-       - tries to correct if it can, based on range of annotation: 
-         1. if it's been deleted, annotation goes with it
-         2. if there have been additions or deletions before it, modify as needed
+1. Documentation
+  - Update user guide
+  - Write Markdown guide
 2. Keyboard commands
   - for toolbar buttons as makes sense
   - escape to dismiss modals and save popup
   - cmd-s to save, cmd-r to refresh
+3. Annotation files detecting if they're out of sync.
+   - tries to correct if it can, based on range of annotation: 
+      1. if it's been deleted, annotation goes with it
+      2. if there have been additions or deletions before it, modify as needed
 3. Image uploading
 4. HTML preview + side-by-side
 5. Fix mobile version? 
