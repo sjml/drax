@@ -422,6 +422,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ghAccess.getFileContentsByOid(this._file.item, oid).then((contents) => {
       if (contents !== null) {
         this.instance.setValue(contents);
+        this.annotations = [];
         this.instance.refresh();
       }
     });
