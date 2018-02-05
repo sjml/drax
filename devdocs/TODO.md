@@ -1,7 +1,6 @@
 # TODO
 
 ## UI
-* tooltips for toolbar buttons and logout
 * flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
 * fix layout of long directory names (consider tooltip for long names in general?)
@@ -19,7 +18,6 @@
 * single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
-* figure out min-width for editable area when screen is wide
 * spinners for saving and loading stuff in the explorer
 * store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
@@ -39,22 +37,22 @@
 
 ## Features
 1. Documentation
-  - Update user guide
-  - Write Markdown guide
+    - Update user guide
+    - Write Markdown guide
 2. Keyboard commands
-  - for toolbar buttons as makes sense
-  - escape to dismiss modals and save popup
-  - cmd-s to save, cmd-r to refresh
+    - for toolbar buttons as makes sense
+    - escape to dismiss modals and save popup
+    - cmd-s to save, cmd-r to refresh
 3. Annotation files detecting if they're out of sync.
-   - tries to correct if it can, based on range of annotation: 
+    - tries to correct if it can, based on range of annotation: 
       1. if it's been deleted, annotation goes with it
       2. if there have been additions or deletions before it, modify as needed
 3. Image uploading
 4. HTML preview + side-by-side
 5. Fix mobile version? 
 6. Single repo mode
-  - templates for new files
-  - setting to prevent creation of new files, new directories
+    - templates for new files
+    - setting to prevent creation of new files, new directories
 7. Merge changes if we're out of sync with the server
 8. Frontmatter parsing into options? 
 9. Offline mode and/or live collaboration
