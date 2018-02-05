@@ -9,13 +9,13 @@ Drax is not meant as a realtime collaborative editor; a Git-based backend isn't 
 
 
 ## Usage
-Point your users to the [user guide](./docs/User%20Guide.md) to ease them into both Git and Markdown. 
+Point your users to the [user guide](./src/assets/pages/user_guide.md) to ease them into both Git and Markdown. 
 
 
 ## Admin
-Drax was designed to be easy and cheap to deploy. (It even goes so far as to use the oh-so-unfashionable hash routing to enable this simplicity.) Its [releases](https://github.com/sjml/drax/releases) are boring old directories that can just be thrown on a shared webhost and work with some simple configuration. Check out the [installation docs](./docs/Administration.md#installation) for how to customize a version of Drax for your own usage. 
+Drax was designed to be easy and cheap to deploy. (It even goes so far as to use the oh-so-unfashionable hash routing to enable this simplicity.) Its [releases](https://github.com/sjml/drax/releases) are boring old directories that can just be thrown on a shared webhost and work with some simple configuration. Check out the [installation docs](./devdocs/Administration.md#installation) for how to customize a version of Drax for your own usage. 
 
-Repository owners can also do some [configuration](./docs/Administration.md#repository-configuration) to change how any Drax editor will treat the repo. 
+Repository owners can also do some [configuration](./devdocs/Administration.md#repository-configuration) to change how any Drax editor will treat the repo. 
 
 ## Development
-If you wanna hack on this thing, the [development docs](./docs/Developing.md) can get you started. 
+If you wanna hack on this thing, the [development docs](./devdocs/Developing.md) can get you started. 
