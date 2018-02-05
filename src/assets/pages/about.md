@@ -26,7 +26,15 @@ Things not to expect:
 * **WYSIWYG editor**: The goal is to make Markdown a little more manageable, not pretend you aren't writing Markdown. 
 * **Things other than GitHub for storing files**: other online editors become super clunky as they try to support multiple backends. 
 * **Editing non-Markdown files**: actually, you can already do this as they just show up as plaintext, but it's not really the most interesting use case. 
+* **Advanced Git features**: Drax is not meant to replace the command line or other fancy tools; it's aimed squarely at writers and thus purposely abstracts away a lot of Git's underbelly.
 
+Feedback that Would be Useful:
+* Bug reports! 
+* Feature requests (taking into account the above "things not to expect")
+* Places that might confuse people
+* Spots where someone using more advanced Git features makes Drax look broken
+
+Please use the [GitHub project's issues page](https://github.com/sjml/drax/issues) to submit your feedback. 
 
 <div class="deployInfo">
   revision %%GIT_REV%% deployed at %%DEPLOY_TIME%%
