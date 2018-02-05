@@ -254,18 +254,78 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     return true;
   }
 
+  pushMainFile(commitMessage: string): Promise<boolean> {
+    if (!this._file.isDirty) {
+      return Promise.resolve(true);
+    }
+    else {
+      return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
+        if (val['success']) {
+          this.changeGeneration = this.instance.getDoc().changeGeneration();
+          return Promise.resolve(true);
+        }
+        else {
+          console.error(val['message']);
+          return Promise.reject(val['message']);
+        }
+      });
+    }
+  }
+
+  pushAnnotationsFile(commitMessage: string): Promise<boolean> {
+    if (!this.annotationsDirty) {
+      return Promise.resolve(true);
+    }
+    else {
+      const annFileObj = {};
+      annFileObj['parentCommit'] = this._file.item.lastGet;
+      annFileObj['annotations'] = [];
+      for (const ann of this.annotations) {
+        const annObj = {};
+        annObj['from'] = { line: ann.from.line, ch: ann.from.ch };
+        annObj['to'] = { line: ann.to.line, ch: ann.to.ch };
+        annObj['author'] = ann.author;
+        annObj['timestamp'] = ann.timestamp;
+        annObj['text'] = ann.text;
+        annFileObj['annotations'].push(annObj);
+      }
+      const outputString = JSON.stringify(annFileObj, null, 2);
+
+      const item = new GitHubItem();
+      item.repo = this._file.item.repo;
+      item.branch = this._file.item.repo.defaultBranch;
+      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+      item.fileName = `${this._file.item.fileName}.json`;
+
+      return this.ghAccess.getFile(item).then(fileResponse => {
+        fileResponse.contents = outputString;
+        return this.ghAccess.pushFile(fileResponse, commitMessage).then(val => {
+          if (val['success']) {
+            this.originalRawAnnotations = annFileObj['annotations'];
+            this.annotationsDirty = false;
+            return Promise.resolve(true);
+          }
+          else {
+            console.error(val['message']);
+            return Promise.reject(val['message']);
+          }
+        });
+      });
+    }
+  }
+
   save(commitMessage: string): Promise<boolean> {
-    return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
-      if (val['success']) {
-        this.changeGeneration = this.instance.getDoc().changeGeneration();
-        this.change.emit();
-        return true;
-      }
-      else {
-        console.error(val['message']);
-        return false;
-      }
-    });
+    return this.pushMainFile(commitMessage)
+                  .then((mainPushRes) => {
+                    return this.pushAnnotationsFile(commitMessage)
+                      .then((annPushRes) => {
+                        this.change.emit();
+                        return true;
+                      });
+                  })
+                  .catch((err) => {
+                    return false;
+                  });
   }
 
   // runs periodically
