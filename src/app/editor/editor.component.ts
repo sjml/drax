@@ -242,7 +242,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   prepForSave(execute: boolean): ButtonState {
     if (!(this._file.isDirty || this.annotationsDirty)) {
-      console.log('not dirty');
       return null;
     }
     if (execute) {

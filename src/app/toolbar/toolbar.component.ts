@@ -91,7 +91,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
   }
 
   handleEditorChange(isCursorChange: boolean = false) {
-    const nonCursor = [
+    const nonMarkdown = [
       'Save', 'Refresh', 'History', 'Add Comment', 'Toggle Comments'
     ];
 
@@ -101,11 +101,12 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       }
       const button = item as Button;
 
-      if (isCursorChange && nonCursor.indexOf(button.name) >= 0) {
+      const isMDbutton = nonMarkdown.indexOf(button.name) < 0;
+      if (isCursorChange && !isMDbutton) {
         continue;
       }
 
-      if (this.editor.markdownConfig.name.length === 0) {
+      if (isMDbutton && this.editor.markdownConfig.name.length === 0) {
         button.state = ButtonState.Disabled;
         continue;
       }

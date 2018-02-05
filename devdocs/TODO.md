@@ -11,6 +11,7 @@
 
 ## Bugs
 * cursor positioning when toggling comments opened and closed
+* comments being inclusive at either ends causes problems
 * blockquote toggling across multiple paragraphs
     * also bullet lists
 * annotation lines get screwy when view gets widened and sidebar locks in
