@@ -1,5 +1,6 @@
 import { Component,
          OnInit,
+         AfterViewInit,
          OnDestroy,
          Input,
          Output,
@@ -36,7 +37,7 @@ export enum EditorMode {
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements OnInit, OnDestroy {
+export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('host') host: ElementRef;
   @Output() change = new EventEmitter();
@@ -51,6 +52,8 @@ export class EditorComponent implements OnInit, OnDestroy {
   changeGeneration = 0;
 
   annotations: Annotation[] = [];
+  originalRawAnnotations: any[] = null;
+  annotationsDirty = false;
 
   markdownConfig = {
     name: 'toml-frontmatter',
@@ -134,6 +137,16 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    this.annContComp.annotationChanges.subscribe(() => {
+      const oldDirty = this.annotationsDirty;
+      this.checkAnnotations();
+      if (oldDirty !== this.annotationsDirty) {
+        this.change.emit();
+      }
+    });
+  }
+
   ngOnDestroy() {
     if (this.checkInterval !== null) {
       window.clearInterval(this.checkInterval);
@@ -172,6 +185,8 @@ export class EditorComponent implements OnInit, OnDestroy {
     this.takeFocus();
 
     this.annotations = [];
+    this.originalRawAnnotations = null;
+    this.annotationsDirty = false;
     this.annContComp.clearLines();
     if (this._file.item.repo.config['hasConfig']) {
       // check for accompanying annotation file
@@ -184,6 +199,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         if (fileResponse !== null) {
           const annData = JSON.parse(fileResponse.contents);
           if (annData.annotations) {
+            this.originalRawAnnotations = annData.annotations;
             for (const ann of annData.annotations) {
               const newAnn = new Annotation();
               newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
@@ -224,7 +240,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
-    if (!this._file.isDirty) {
+    if (!(this._file.isDirty || this.annotationsDirty)) {
       return null;
     }
     if (execute) {
@@ -408,6 +424,57 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.annContComp.calculatePositions();
       });
     }
+  }
+
+  checkAnnotations() {
+    if (this.originalRawAnnotations === null) {
+      if (this.annotations.length === 0) {
+        this.annotationsDirty = false;
+        return;
+      }
+      else {
+        this.annotationsDirty = true;
+        return;
+      }
+    }
+    if (this.annotations.length !== this.originalRawAnnotations.length) {
+      this.annotationsDirty = true;
+      return;
+    }
+
+    for (let i = 0; i < this.annotations.length; i++) {
+      const ann = this.annotations[i];
+      const raw = this.originalRawAnnotations[i];
+      if (ann.author !== raw.author) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.timestamp !== raw.timestamp) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.text !== raw.text) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.from.line !== raw.from.line) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.from.ch !== raw.from.ch) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.to.line !== raw.to.line) {
+        this.annotationsDirty = true;
+        return;
+      }
+      if (ann.to.ch !== raw.to.ch) {
+        this.annotationsDirty = true;
+        return;
+      }
+    }
+    this.annotationsDirty = false;
   }
 
   /***** Text Formatting ******/

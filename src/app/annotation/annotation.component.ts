@@ -35,13 +35,18 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.topVar = new c.Variable({value: this.ann.extents.top});
     this.heightVar = new c.Variable();
+
+    if (this.ann.timestamp === 0) {
+      this.editing = true;
+      this.oldText = this.ann.text;
+    }
   }
 
   ngAfterViewInit() {
     this.heightVar.value = this.annChild.nativeElement.offsetHeight;
 
-    if (this.ann.timestamp === 0) {
-      this.tryEdit();
+    if (this.editing) {
+      this.textArea.nativeElement.focus();
     }
   }
 

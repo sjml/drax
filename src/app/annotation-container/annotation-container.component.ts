@@ -6,6 +6,7 @@ import { Component,
          QueryList,
          ElementRef,
          HostListener,
+         EventEmitter
        } from '@angular/core';
 
 import { Annotation, AnnotationSort } from '../annotation/annotation';
@@ -36,6 +37,8 @@ export class AnnotationContainerComponent implements AfterViewInit {
       });
     }
   }
+
+  annotationChanges = new EventEmitter();
 
   private _childChanges = [];
   @ViewChildren(AnnotationComponent)
@@ -72,11 +75,12 @@ export class AnnotationContainerComponent implements AfterViewInit {
       this.annChildren.forEach((annComp) => {
         this._childChanges.push(annComp.change.subscribe(() => {
           if (annComp.ann.text.length === 0 && annComp.ann.timestamp === 0) {
-            this.removeAnnotation(annComp.ann);
+            this.removeAnnotation(annComp);
           }
           else {
             this.calculatePositions();
           }
+          this.annotationChanges.emit();
         }));
       });
     });
@@ -87,9 +91,15 @@ export class AnnotationContainerComponent implements AfterViewInit {
     this._svgAnnLines.nativeElement.setAttribute('height', document.body.clientHeight);
   }
 
-  removeAnnotation(ann: Annotation) {
-    ann.marker.clear();
-    this.annotations.splice(this.annotations.indexOf(ann), 1);
+  removeAnnotation(annComp: AnnotationComponent) {
+    annComp.ann.marker.clear();
+
+    const index = this.annotations.indexOf(annComp.ann);
+    this.annotations.splice(index, 1);
+
+    this._childChanges[index].unsubscribe();
+    this._childChanges.splice(index, 1);
+
     setTimeout(() => {
       this.calculatePositions();
     });
