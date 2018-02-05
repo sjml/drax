@@ -14,7 +14,8 @@ Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it
 
 Things to expect:
 * Better keyboard shortcuts and overall UI polish. 
-* An annotation system for collaboration. 
+* The annotation system to work when file changes are made outside of Drax.
+  * Right now it probably explodes. That hasn't been tested. Not even a little.
 * Image uploading. 
 * Live HTML rendered preview.
 

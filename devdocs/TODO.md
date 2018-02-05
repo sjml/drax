@@ -39,7 +39,6 @@
 
 ## Features
 1. Annotation system
-    1. save annotations and push with rest of file
     2. annotation file has git hash of parent file, knows if it's out of sync
        - tries to correct if it can, based on range of annotation: 
          1. if it's been deleted, annotation goes with it
