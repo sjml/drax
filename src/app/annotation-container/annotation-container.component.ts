@@ -111,6 +111,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
     }
     if (this.annChildren.length === 0) {
       this.clearLines();
+      this.visible = false;
       return;
     }
 
