@@ -11,6 +11,8 @@
 
 ## Bugs
 * cursor positioning when toggling comments opened and closed
+* blockquote toggling across multiple paragraphs
+    * also bullet lists
 * annotation lines get screwy when view gets widened and sidebar locks in
 * set up a lock so onScroll response can't get double-called
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
@@ -19,6 +21,7 @@
 
 ## Polish
 * spinners for saving and loading stuff in the explorer
+* ability to toggle off links?
 * store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
     - also unify formatting of all the various queries

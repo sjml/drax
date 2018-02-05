@@ -622,6 +622,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     return tokens;
   }
 
+  private getMarkdownStateFromToken(tok: CodeMirror.Token) {
+    let state = tok.state;
+    if (state.inner !== null) {
+      if (state.state < 2) {
+        return null;
+      }
+      else {
+        state = state.inner;
+      }
+    }
+    return state;
+  }
+
   cycleHeaderLevel(execute: boolean): ButtonState {
     const range = this.getWorkingRange();
     const doc = this.instance.getDoc();
@@ -629,7 +642,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
 
-      if (! startTok || startTok.state.header === 0) {
+      let state = null;
+      if (startTok) {
+        state = this.getMarkdownStateFromToken(startTok);
+        if (state === null) {
+          return null;
+        }
+      }
+
+      if (! startTok || state.header === 0) {
         // not a header; make it one
         if (execute) {
           doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
@@ -674,7 +695,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         continue;
       }
 
-      if (startTok.state.quote !== undefined && startTok.state.quote !== 0) {
+      const state = this.getMarkdownStateFromToken(startTok);
+      if (state === null) {
+        return null;
+      }
+      if (state.quote !== 0) {
         quoteCount++;
       }
     }
@@ -725,7 +750,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         continue;
       }
 
-      if (startTok.state.list && bullets.indexOf(startTok.string) >= 0) {
+      const state = this.getMarkdownStateFromToken(startTok);
+      if (state === null) {
+        return null;
+      }
+
+      if (state.list && bullets.indexOf(startTok.string) >= 0) {
         bulletedCount++;
       }
     }
@@ -738,7 +768,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!startTok) {
               continue;
             }
-            if (startTok.state.list) {
+            const state = this.getMarkdownStateFromToken(startTok);
+            if (state.list) {
               doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'bulletToggle');
             }
           }
@@ -754,7 +785,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!startTok) {
               continue;
             }
-            if (!startTok.state.list) {
+            const state = this.getMarkdownStateFromToken(startTok);
+            if (!state.list) {
               doc.replaceRange('* ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'bulletToggle');
             }
           }
@@ -770,7 +802,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let hasLink = false;
     for (const tok of toks) {
-      if (tok[1].state.linkText || tok[1].state.linkTitle || tok[1].state.linkHref) {
+      const state = this.getMarkdownStateFromToken(tok[1]);
+      if (state === null) {
+        return null;
+      }
+      if (state.linkText || state.linkTitle || state.linkHref) {
         hasLink = true;
       }
     }
@@ -788,7 +824,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         doc.replaceRange(closing, selection.to(), selection.to(), 'linkCreation');
         doc.replaceRange('[', selection.from(), selection.from(), 'linkCreation');
 
-        // leaving subtraction by zero to remind myself that
+        // leaving subtraction of zero to remind myself that
         //   the offset from the back is intentional, to put the
         //   cursor right before the closing parenthesis
         selection.to().ch += closing.length - 0;
@@ -847,6 +883,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return ButtonState.Active;
     }
 
+    // check to make sure we're not in the frontmatter
+    for (const tok of tokens) {
+      const state = this.getMarkdownStateFromToken(tok[1]);
+      if (state === null) {
+        return null;
+      }
+    }
+
     let turningOn = true;
     if (tokens.length === 1) {
       if (tokens[0][1].string === `${formatting[0]}${formatting[0]}`) {
@@ -862,7 +906,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         return ButtonState.Inactive;
       }
 
-      if (tokens[0][1].state[symbolType]) {
+      const state = this.getMarkdownStateFromToken(tokens[0][1]);
+      if (state[symbolType]) {
         turningOn = false;
       }
     }
@@ -874,7 +919,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       let isFormatted = false;
       let hasPlain = false;
       for (const tok of tokens) {
-        if (tok[1].state[symbolType]) {
+        const state = this.getMarkdownStateFromToken(tok[1]);
+        if (state[symbolType]) {
           if (!isFormatted) {
             formattedStretchesCount += 1;
           }
@@ -888,7 +934,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (formattedStretchesCount === 1) {
         if (hasPlain) {
           const lastTok = tokens[tokens.length - 1][1];
-          turningOn = lastTok.state[symbolType];
+          const lastState = this.getMarkdownStateFromToken(lastTok);
+          turningOn = lastState[symbolType];
         }
         else {
           turningOn = false;
