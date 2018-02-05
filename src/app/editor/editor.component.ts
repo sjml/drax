@@ -22,7 +22,7 @@ import { ButtonState } from '../toolbar/toolbar-items';
 import { GitHubFile, GitHubItem, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
 import { ModalService } from '../drax-modal/modal.service';
 import { FileHistoryModalComponent } from './file-history-modal.component';
-import { Annotation } from '../annotation/annotation';
+import { Annotation, AnnotationSort } from '../annotation/annotation';
 import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
 
 export enum EditorMode {
@@ -312,7 +312,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleCommentGutter(execute: boolean): ButtonState {
+  toggleAnnotationGutter(execute: boolean): ButtonState {
     if (this.annotations.length === 0) {
       return null;
     }
@@ -331,6 +331,35 @@ export class EditorComponent implements OnInit, OnDestroy {
       }
       return ButtonState.Active;
     }
+  }
+
+  createNewAnnotation(execute: boolean): ButtonState {
+    if (execute) {
+      const a = new Annotation();
+      a.author = this.ghAccess.user.login;
+      a.text = '';
+      a.timestamp = 0;
+
+      const selectedRange = this.getWorkingRange();
+      a.from = selectedRange.from();
+      a.to = selectedRange.to();
+
+      const doc = this.instance.getDoc();
+      a.marker = doc.markText(a.from, a.to, {
+        className: 'annotation',
+        startStyle: 'annotationStart',
+        endStyle: 'annotationEnd',
+        inclusiveLeft: true,
+        inclusiveRight: true
+      });
+      a.extents = this.instance.cursorCoords(a.from);
+
+      this.annotations.push(a);
+      this.annotations.sort(AnnotationSort);
+      this.updateAnnotations();
+      return ButtonState.Inactive;
+    }
+    return ButtonState.Active;
   }
 
   updateAnnotations() {

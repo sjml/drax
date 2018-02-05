@@ -11,3 +11,23 @@ export class Annotation {
   displayHeight: number;
   removed = false;
 }
+
+export function AnnotationSort(a: Annotation, b: Annotation): number {
+  if (a.extents.top < b.extents.top) {
+    return -1;
+  }
+  if (a.extents.top === b.extents.top) {
+    if (a.extents.left < b.extents.left) {
+      return -1;
+    }
+    if (a.extents.left === b.extents.left) {
+      if (a.timestamp < b.timestamp) {
+        return -1;
+      }
+      else {
+        return 1;
+      }
+    }
+  }
+  return 1;
+}

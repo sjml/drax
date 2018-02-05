@@ -8,7 +8,7 @@ import { Component,
          HostListener,
        } from '@angular/core';
 
-import { Annotation } from '../annotation/annotation';
+import { Annotation, AnnotationSort } from '../annotation/annotation';
 import { AnnotationComponent } from '../annotation/annotation.component';
 
 import * as c from 'cassowary';
@@ -36,7 +36,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
   @Input()
   set annotations(annotations: Annotation[]) {
     this._annotations = annotations;
-    this._annotations.sort(this.annSort);
+    this._annotations.sort(AnnotationSort);
   }
 
   @ViewChild('svgAnnotationLines')
@@ -58,7 +58,12 @@ export class AnnotationContainerComponent implements AfterViewInit {
 
       this.annChildren.forEach((annComp) => {
         this._childChanges.push(annComp.change.subscribe(() => {
-          this.calculatePositions();
+          if (annComp.ann.text.length === 0 && annComp.ann.timestamp === 0) {
+            this.removeAnnotation(annComp.ann);
+          }
+          else {
+            this.calculatePositions();
+          }
         }));
       });
     });
@@ -67,6 +72,14 @@ export class AnnotationContainerComponent implements AfterViewInit {
   private updateSize() {
     this._svgAnnLines.nativeElement.setAttribute('width', document.body.clientWidth);
     this._svgAnnLines.nativeElement.setAttribute('height', document.body.clientHeight);
+  }
+
+  removeAnnotation(ann: Annotation) {
+    ann.marker.clear();
+    this.annotations.splice(this.annotations.indexOf(ann), 1);
+    setTimeout(() => {
+      this.calculatePositions();
+    });
   }
 
   calculatePositions() {
@@ -131,31 +144,5 @@ export class AnnotationContainerComponent implements AfterViewInit {
     this.annChildren.forEach((a) => {
       this.lines.push(a.getPointString());
     });
-  }
-
-  private annSort(a: Annotation | AnnotationComponent, b: Annotation | AnnotationComponent): number {
-    if (a instanceof AnnotationComponent ) {
-      a = a.ann;
-    }
-    if (b instanceof AnnotationComponent) {
-      b = b.ann;
-    }
-    if (a.extents.top < b.extents.top) {
-      return -1;
-    }
-    if (a.extents.top === b.extents.top) {
-      if (a.extents.left < b.extents.left) {
-        return -1;
-      }
-      if (a.extents.left === b.extents.left) {
-        if (a.timestamp < b.timestamp) {
-          return -1;
-        }
-        else {
-          return 1;
-        }
-      }
-    }
-    return 1;
   }
 }

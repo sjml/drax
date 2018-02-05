@@ -28,6 +28,7 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   heightVar: c.Variable;
 
   editing = false;
+  oldText = '';
 
   constructor() { }
 
@@ -38,6 +39,10 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.heightVar.value = this.annChild.nativeElement.offsetHeight;
+
+    if (this.ann.timestamp === 0) {
+      this.tryEdit();
+    }
   }
 
   resetVars() {
@@ -52,16 +57,23 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   }
 
   getShortDateString(): string {
-    return fns.distanceInWordsToNow(this.ann.timestamp);
+    if (this.ann.timestamp === 0) {
+      return '';
+    }
+    return `${fns.distanceInWordsToNow(this.ann.timestamp)} ago`;
   }
 
   getFullDateString(): string {
+    if (this.ann.timestamp === 0) {
+      return '';
+    }
     return fns.format(this.ann.timestamp, 'MMM D, YYYY, h:mm a');
   }
 
   tryEdit() {
     if (!this.editing) {
       this.editing = true;
+      this.oldText = this.ann.text;
       setTimeout(() => {
         this.textArea.nativeElement.focus();
       });
@@ -71,6 +83,9 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
   stopEdit() {
     if (this.editing) {
       this.editing = false;
+      if (this.ann.text.length > 0 && this.oldText !== this.ann.text) {
+        this.ann.timestamp = Date.now();
+      }
       setTimeout(() => {
         this.change.emit();
       });
