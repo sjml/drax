@@ -10,8 +10,6 @@
 * ugh, the icon layering is a pain; maybe upgrade to FA5 to use the SVG stuff
 
 ## Bugs
-* cursor positioning when toggling comments opened and closed
-* comments being inclusive at either ends causes problems
 * blockquote toggling across multiple paragraphs
     * also bullet lists
 * annotation lines get screwy when view gets widened and sidebar locks in
@@ -54,6 +52,8 @@
 3. Image uploading
 4. HTML preview + side-by-side
 5. Fix mobile version? 
+    - might not be possible to get CodeMirror working the way it needs to...
+    - is this really a use case to support? Possibly not.
 6. Single repo mode
     - templates for new files
     - setting to prevent creation of new files, new directories

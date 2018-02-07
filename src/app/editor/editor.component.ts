@@ -434,6 +434,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.annContComp.visible) {
       if (execute) {
         this.annContComp.visible = false;
+        setTimeout(() => {
+          this.instance.refresh();
+        });
       }
       return ButtonState.Inactive;
     }
@@ -442,6 +445,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.annContComp.visible = true;
         setTimeout(() => {
           this.updateAnnotations();
+          this.instance.refresh();
         });
       }
       return ButtonState.Active;
@@ -463,8 +467,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       className: 'annotation',
       startStyle: 'annotationStart',
       endStyle: 'annotationEnd',
-      inclusiveLeft: true,
-      inclusiveRight: true
+      inclusiveLeft: a.from.ch > 0,
+      inclusiveRight: a.to.ch < doc.getLine(a.to.line).length
     });
     a.extents = this.instance.cursorCoords(a.from);
 
