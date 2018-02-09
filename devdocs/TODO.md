@@ -19,6 +19,7 @@
 * single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
+* different colors for annotations from different people
 * spinners for saving and loading stuff in the explorer
 * ability to toggle off links?
 * store docs so undo history is preserved across navigation
