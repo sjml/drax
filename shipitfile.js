@@ -44,11 +44,14 @@ module.exports = function(shipit) {
                     .toString().trim();
     const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'})
                     .toString().trim();
+    const fullRev = execSync('git rev-parse HEAD', {encoding: 'utf-8'})
+                    .toString().trim();
 
     const aboutFile = `${shipit.config.workspace}/src/assets/pages/about.md`;
     const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
     const stamped = aboutContents
                       .replace('%%DEPLOY_TIME%%', time)
+                      .replace('%%GIT_FULL_REV%%', fullRev)
                       .replace('%%GIT_REV%%', rev);
     fs.writeFileSync(aboutFile, stamped);
     return shipit.local('pwd').then(function () {
