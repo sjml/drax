@@ -37,5 +37,5 @@ Feedback that Would be Useful:
 Please use the [GitHub project's issues page](https://github.com/sjml/drax/issues) to submit your feedback. 
 
 <div class="deployInfo">
-  revision <span class="icon fa fa-github"></span><a href="https://github.com/sjml/drax/commit/%%GIT_FULL_REV%%">%%GIT_REV%%</a> deployed at %%DEPLOY_TIME%%
+  <span class="icon fa fa-github"></span><a href="https://github.com/sjml/drax/commit/%%GIT_FULL_REV%%">%%GIT_REV%%</a> deployed at %%DEPLOY_TIME%%
 </div>
