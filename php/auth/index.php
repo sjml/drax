@@ -1,6 +1,9 @@
 <?php
   require_once 'vendor/autoload.php';
-  require_once './secrets.php';
+
+  ob_start();
+  require('./secrets.php');
+  ob_get_clean();
 
   session_start();
 
