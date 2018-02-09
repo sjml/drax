@@ -3,7 +3,7 @@
 <p>{{description}}</p>
 <hr>
 <div class="historyDisplay" *ngIf="historyData">
-  <div *ngFor="let entry of historyData.history"
+  <div *ngFor="let entry of historyData"
     class="historyItem"
     (click)="clickedItem(entry.oid)"
     >

@@ -401,17 +401,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (execute) {
       // show history
-      this.ghAccess.getFileHistory(this._file.item).then(response => {
-        this.modalService.generate(
-          FileHistoryModalComponent,
-          {
-            historyData: response,
-            callback: (oid: string) => {
-              this.loadOldVersion(oid);
-            }
+      this.modalService.generate(
+        FileHistoryModalComponent,
+        {
+          item: this._file.item,
+          ghAccess: this.ghAccess,
+          callback: (oid: string) => {
+            this.loadOldVersion(oid);
           }
-        );
-      });
+        }
+      );
       return ButtonState.Inactive;
     }
     return ButtonState.Active;

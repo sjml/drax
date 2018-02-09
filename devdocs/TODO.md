@@ -39,7 +39,6 @@
 
 ## Features
 1. Documentation
-    - Update user guide
     - Write Markdown guide
 2. Keyboard commands
     - for toolbar buttons as makes sense

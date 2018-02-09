@@ -8,6 +8,10 @@ body {
   font-family: $propFont;
 }
 
+body.noscroll {
+  overflow: hidden;
+}
+
 .icon {
   width: 1em;
   line-height: 1em;

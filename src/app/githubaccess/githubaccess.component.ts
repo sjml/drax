@@ -689,16 +689,20 @@ export class GitHubAccessComponent implements OnInit {
     });
   }
 
-  getFileHistory(item: GitHubItem, cursor: string = null): Promise<object> {
-    return this.graphQlQuery(Queries.getFileHistory(item), 'fileHistory').toPromise().then(response => {
+  getFileHistory(item: GitHubItem, cursor: string): Promise<object> {
+    return this.graphQlQuery(Queries.getFileHistory(item, cursor), 'fileHistory').toPromise().then(response => {
       const history = [];
       const historyNode = response['data']['repository']['ref']['target']['history'];
       const entries = historyNode['nodes'];
       const pageInfo = historyNode['pageInfo'];
       for (const entry of entries) {
+        let person = entry['author']['user'];
+        if (person === null) {
+          person = entry['committer']['user'];
+        }
         history.push({
-          userLogin: entry['author']['user']['login'],
-          userAvatar: entry['author']['user']['avatarUrl'],
+          userLogin: person ? person['login'] : null,
+          userAvatar: person ? person['avatarUrl'] : null,
           commitDate: entry['committedDate'],
           message: entry['message'],
           messageHeadline: entry['messageHeadline'],

@@ -5,7 +5,8 @@ import { Component,
          ViewChild,
          ReflectiveInjector,
          ComponentFactoryResolver,
-         Type
+         Type,
+         Renderer2
        } from '@angular/core';
 
 import { DataRequestModalComponent } from './data-request-modal.component';
@@ -16,6 +17,7 @@ import { ModalService } from './modal.service';
 export interface DraxModalType {
   host: DraxModalComponent;
   display: (data: object) => void;
+  onScroll?: (event: Event) => void;
 }
 
 @Component({
@@ -36,7 +38,8 @@ export class DraxModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalService,
-    private resolver: ComponentFactoryResolver
+    private resolver: ComponentFactoryResolver,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
@@ -78,6 +81,7 @@ export class DraxModalComponent implements OnInit {
     this.childComponent.instance.display(data);
 
     this.isVisible = true;
+    this.renderer.addClass(document.body, 'noscroll');
   }
 
   close() {
@@ -86,5 +90,12 @@ export class DraxModalComponent implements OnInit {
       return;
     }
     this.isVisible = false;
+    this.renderer.removeClass(document.body, 'noscroll');
+  }
+
+  onScroll(event: Event) {
+    if (this.childComponent !== null && this.childComponent.instance.onScroll !== undefined) {
+      this.childComponent.instance.onScroll(event);
+    }
   }
 }

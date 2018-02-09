@@ -1,4 +1,4 @@
-<div class="modal" [class.visible]="isVisible">
+<div class="modal" [class.visible]="isVisible" (scroll)="onScroll($event)">
   <div class="modalContent">
     <div #modalContent></div>
   </div>

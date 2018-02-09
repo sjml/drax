@@ -49,7 +49,7 @@ export module Queries {
   export function getRepoInfo(continuation: string = null): object {
     let contQuery = '';
     if (continuation !== null) {
-      contQuery = 'after: "' + continuation + '"';
+      contQuery = 'after: "' + continuation + '", ';
     }
     const qString = repoInfoTemplate.query.replace('%%CONTINUATION%%', contQuery);
     const repoInfoQuery = {};
@@ -156,13 +156,19 @@ export module Queries {
         ref(qualifiedName: "%%BRANCH%%") {
           target {
             ... on Commit {
-              history(first:20, path: "%%PATH%%") {
+              history(%%CONTINUATION%% first:50, path: "%%PATH%%") {
                 pageInfo {
                   hasNextPage
                   endCursor
                 }
                 nodes {
                   oid
+                  committer {
+                    user {
+                      login
+                      avatarUrl
+                    }
+                  }
                   author {
                     user {
                       login
@@ -180,7 +186,11 @@ export module Queries {
       }
     }
   `;
-  export function getFileHistory(item: GitHubItem): object {
+  export function getFileHistory(item: GitHubItem, continuation: string = null): object {
+    let contQuery = '';
+    if (continuation !== null) {
+      contQuery = 'after: "' + continuation + '", ';
+    }
     let branch = item.branch;
     if (branch === null || branch.length === 0) {
       branch = item.repo.defaultBranch;
@@ -189,6 +199,7 @@ export module Queries {
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
                       .replace('%%BRANCH%%', branch)
+                      .replace('%%CONTINUATION%%', contQuery)
                       .replace('%%PATH%%', item.fullPath());
     return {query: qString};
   }
