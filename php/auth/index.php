@@ -3,7 +3,7 @@
 
   ob_start();
   require('./secrets.php');
-  ob_get_clean();
+  ob_end_clean();
 
   session_start();
 
