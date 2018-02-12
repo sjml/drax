@@ -1,5 +1,7 @@
 @import '~sass/variables';
 
+$codeBgColor: rgb(228, 226, 226);
+
 .drax-page {
   max-width: $editorMaxWidth;
   margin: auto;
@@ -25,6 +27,22 @@
   h3 {
     margin-top: 1.5em;
     margin-bottom: -0.5em;
+  }
+
+  code {
+    background-color: $codeBgColor;
+    padding: 2px 4px;
+  }
+
+  pre {
+    background-color: $codeBgColor;
+    overflow: hidden;
+    padding: 2px;
+    display: block;
+
+    code {
+      padding: 0;
+    }
   }
 
   .deployInfo {
