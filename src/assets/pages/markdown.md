@@ -63,20 +63,64 @@ So, I can type `![a charming but lonely looking bear](https://placebear.com/290/
 
 ### Lists
 
+There are two kinds of lists you can make in Markdown, bulleted and numbered. 
 
+To make a bulleted list, put a `*` or `-` character at the start of a line, followed by a space. 
+
+```
+* First Item
+* Second Item
+* Third Item
+```
+
+Will show up like this: 
+
+* First Item
+* Second Item
+* Third Item
+
+To do a numbered list is very similar, but you put a number at the start of the line, followed by either a period or a close parenthesis. So you can say either:
+
+```
+1. One
+2. Two
+3. Three
+```
+
+**OR**
+
+```
+1) One
+2) Two
+3) Three
+```
+
+And it will become: 
+
+1. One
+2. Two
+3. Three
+
+Note that the actual order of the numbers you put in doesn't matter; the numbers that get output will always be in order and always start from 1. 
 
 
 ### Blockquotes
 
+To set off a section as an extended quote or pull quote, put a `>` followed by a space at the beginning of the line. There's a lot of variation in how this actually looks on your final page, but typically it involves changes to indentation, font size and color, etc. Talk to your designer if you have questions. 
+
+
 ### Monospacing
+
+Most of the time when you're writing prose, you want to use what's called a _proportional_ font, which means that the letters have different widths; this is usually more pleasing to the eye when reading large passages. Sometimes, though, you may want to make certain words or passages have the "typewriter" look, where a lowercase letter _I_ has the same width as a lowercase letter _M_. Fonts that look this way are called "monospace," and you can get them into your Markdown document by using backticks. 
+
+So in this sentence, the word `code` was actually written as <code>&#96;code&#96;</code>. (Throughout this guide, I've been using the monospaced formatting to show the "raw" Markdown code; note the difference between the first and second monospace stretches in that sentence!)
 
 ---
 
 ## Advanced Usage
 
-inline html; link to Gruber's page or commonmark's 
-https://daringfireball.net/projects/markdown/syntax
-http://commonmark.org/help/
+If you have some special bit of formatting that Markdown doesn't cover, you can always write raw HTML and it will work just fine. Learning HTML is beyond the scope of this document; rest assured there are plents of books and websites to teach you what you need to know. 
 
+We've covered the standard uses of Markdown that most writers of prose will need, but there are some more advanced features that we haven't covered. You can read the [original Markdown syntax description](https://daringfireball.net/projects/markdown/syntax) or try [CommonMark's interactive tutorial](http://commonmark.org/help/tutorial/) if you want to level up your skills a bit. 
 
-blah blah expert mode
+Good luck, and have fun! 
