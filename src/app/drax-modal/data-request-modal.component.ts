@@ -2,7 +2,8 @@ import { Component,
          AfterViewInit,
          ViewChildren,
          QueryList,
-         ElementRef
+         ElementRef,
+         HostListener
        } from '@angular/core';
 
 import { DraxModalType, DraxModalComponent } from './drax-modal.component';
@@ -31,14 +32,21 @@ export class DataRequestModalComponent implements AfterViewInit, DraxModalType {
   fields: ModalField[] = [];
   callback: (pressedOK: boolean, values: {}) => void = null;
 
+  @HostListener('body:keypress', ['$event'])
+  listenForEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.pressedCancel();
+    }
+  }
+
   constructor() {}
 
   ngAfterViewInit() {
-    this.displayFields.changes.subscribe(_ => {
-      if (this.displayFields.length > 0) {
+    if (this.displayFields.length > 0) {
+      setTimeout( () => {
         this.displayFields.first.nativeElement.focus();
-      }
-    });
+      });
+    }
   }
 
   display(data: {

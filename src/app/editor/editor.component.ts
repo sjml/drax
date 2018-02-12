@@ -91,6 +91,35 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    const standardMapping = {
+      'Ctrl-S': () => { this.prepForSave(true); },
+      'Ctrl-R': () => { this.refreshContents(true); },
+      'Ctrl-B': () => { this.toggleBold(true); },
+      'Ctrl-I': () => { this.toggleItalics(true); },
+      'Ctrl-H': () => { this.cycleHeaderLevel(true); },
+      'Ctrl-K': () => { this.createLink(true); },
+      'Ctrl-L': () => { this.toggleBulletList(true); },
+      'Ctrl-\'': () => { this.toggleBlockQuote(true); },
+    };
+    const macMapping = {
+      'Cmd-S': () => { this.prepForSave(true); },
+      'Cmd-R': () => { this.refreshContents(true); },
+      'Cmd-B': () => { this.toggleBold(true); },
+      'Cmd-I': () => { this.toggleItalics(true); },
+      'Cmd-H': () => { this.cycleHeaderLevel(true); },
+      'Cmd-K': () => { this.createLink(true); },
+      'Cmd-L': () => { this.toggleBulletList(true); },
+      'Cmd-\'': () => { this.toggleBlockQuote(true); },
+    };
+    let extraKeys = null;
+    if (/Mac/.test(window.navigator.platform)) {
+      extraKeys = macMapping;
+    }
+    else {
+      extraKeys = standardMapping;
+    }
+    extraKeys.Enter = 'newlineAndIndentContinueMarkdownList';
+
     const config  = {
       mode: this.markdownConfig,
       theme: 'drax',
@@ -101,9 +130,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       lineWrapping: true,
       autofocus: true,
       addModeClass: true,
-      extraKeys: {
-        Enter: 'newlineAndIndentContinueMarkdownList'
-      }
+      extraKeys: extraKeys
     };
 
     // host isn't guaranteed to be non-null because this is in

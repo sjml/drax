@@ -13,13 +13,12 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page.) The point is, there are features incoming. 
 
 Things to expect:
-* Better keyboard shortcuts and overall UI polish. 
+* Overall UI polish. 
 * Better error handling.
     * At the moment, if something goes wrong (you lose internet connection, the repository no longer exists, etc.), things just silently fail. This will be more graceful.
 * The annotation system to work when file changes are made outside of Drax.
     * Right now it probably explodes. That hasn't been tested. Not even a little.
 * Image uploading. 
-* Live HTML rendered preview.
 
 Things not to expect:
 * **Real-time collaboration**: unless there is some magic wand to wave to make this trivial and not require a server component. 

@@ -1,7 +1,8 @@
 import { Component,
          AfterViewInit,
          ViewChild,
-         ElementRef
+         ElementRef,
+         HostListener
        } from '@angular/core';
 
 import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
@@ -25,6 +26,13 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
   historyData = null;
 
   callback: (oid: string) => void = null;
+
+  @HostListener('body:keydown', ['$event'])
+  listenForEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.close();
+    }
+  }
 
   constructor() {}
 

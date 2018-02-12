@@ -39,23 +39,19 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Keyboard commands
-    - for toolbar buttons as makes sense
-    - escape to dismiss modals and save popup
-    - cmd-s to save, cmd-r to refresh
-2. Annotation files detecting if they're out of sync.
+1. Annotation files detecting if they're out of sync.
     - tries to correct if it can, based on range of annotation: 
       1. if it's been deleted, annotation goes with it
       2. if there have been additions or deletions before it, modify as needed
-3. Image uploading
-4. HTML preview + side-by-side
-5. Fix mobile version? 
+2. Image uploading
+3. HTML preview + side-by-side
+4. Fix mobile version? 
     - might not be possible to get CodeMirror working the way it needs to...
     - is this really a use case to support? Possibly not.
-6. Single repo mode
+5. Single repo mode
     - templates for new files
     - setting to prevent creation of new files, new directories
-7. Merge changes if we're out of sync with the server
-8. Frontmatter parsing into options? 
-9. Offline mode and/or live collaboration
+6. Merge changes if we're out of sync with the server
+7. Frontmatter parsing into options? 
+8. Offline mode and/or live collaboration
     - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.
