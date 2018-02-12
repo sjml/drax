@@ -39,13 +39,11 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Documentation
-    - Write Markdown guide
-2. Keyboard commands
+1. Keyboard commands
     - for toolbar buttons as makes sense
     - escape to dismiss modals and save popup
     - cmd-s to save, cmd-r to refresh
-3. Annotation files detecting if they're out of sync.
+2. Annotation files detecting if they're out of sync.
     - tries to correct if it can, based on range of annotation: 
       1. if it's been deleted, annotation goes with it
       2. if there have been additions or deletions before it, modify as needed
