@@ -53,6 +53,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   changeGeneration = 0;
 
   annotations: Annotation[] = [];
+  deadMarkers: CodeMirror.TextMarker[] = [];
   originalRawAnnotations: any[] = null;
   annotationsDirty = false;
 
@@ -523,6 +524,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateAnnotations() {
     const doc = this.instance.getDoc();
+
+    let revived = false;
+    for (const marker of this.deadMarkers) {
+      const currentRange = marker.find() as any;
+      if (currentRange !== undefined) {
+        const a: Annotation = marker['annotationData'];
+        a.removed = false;
+        this.annotations.push(a);
+        revived = true;
+      }
+    }
+    if (revived) {
+      this.annotations.sort(AnnotationSort);
+      this.deadMarkers = this.deadMarkers.filter((m) => m.find() === undefined);
+    }
+
     for (const ann of this.annotations) {
       if (ann.marker === null) {
         // creating the CM markers initially
@@ -539,6 +556,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         const currentRange = ann.marker.find() as any;
         if (currentRange === undefined) {
           ann.removed = true;
+          ann.marker['annotationData'] = ann;
+          this.deadMarkers.push(ann.marker);
         }
         else {
           ann.from = currentRange.from;
@@ -547,6 +566,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       ann.extents = this.instance.cursorCoords(ann.from);
     }
+
+    this.annotations = this.annotations.filter((a) => !a.removed);
 
     if (this.annContComp !== null) {
       setTimeout(() => {

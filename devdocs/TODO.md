@@ -39,8 +39,8 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Annotation files detecting if they're out of sync.
-    - tries to correct if it can, based on range of annotation: 
+1. Annotation fixes.
+    - Detect when they're out of sync, try to correct if possible, based on range of annotation: 
       1. if it's been deleted, annotation goes with it
       2. if there have been additions or deletions before it, modify as needed
 2. Image uploading
