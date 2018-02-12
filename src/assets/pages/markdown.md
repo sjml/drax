@@ -53,7 +53,7 @@ Since Markdown is used for writing web pages, of course you can use it to link t
 
 Images are one of the places where Markdown stumbles a little bit. You can put them into your writing, but you don't have a lot of control over how they'll appear. They also have to already exist somewhere on the web, which means you'll either need some kind of web hosting or be willing to mooch off other people's goodwill. Talk to your technical people or editors if you have questions on this. 
 
-In the meanwhile, the magical incantation that makes images appear is pretty similar to links. You just add an exclamation point in front of it, and what would have been the visible link text will instead be the tooltip that appears when you hover over it. 
+In the meanwhile, the magical incantation that makes images appear is pretty similar to links. You just add an exclamation point in front of it, and what would have been the visible link text will instead be a description that certain web browsers will use to describe the image (for the visually impaired, for instance). 
 
 So, I can type `![a charming but lonely looking bear](https://placebear.com/290/250)` to get the following in my final document: 
 
@@ -111,7 +111,7 @@ To set off a section as an extended quote or pull quote, put a `>` followed by a
 
 ### Monospacing
 
-Most of the time when you're writing prose, you want to use what's called a _proportional_ font, which means that the letters have different widths; this is usually more pleasing to the eye when reading large passages. Sometimes, though, you may want to make certain words or passages have the "typewriter" look, where a lowercase letter _I_ has the same width as a lowercase letter _M_. Fonts that look this way are called "monospace," and you can get them into your Markdown document by using backticks. 
+Most of the time when you're writing prose, you want to use what's called a _proportional_ font, which means that the letters have different widths; this is more pleasing to the eye when reading large passages. Sometimes, though, you may want to make certain words or passages have the "typewriter" look, where a lowercase letter "i" has the same width as a lowercase letter "m." Fonts that look this way are called "monospace," and you can get them into your Markdown document by using backticks. 
 
 So in this sentence, the word `code` was actually written as <code>&#96;code&#96;</code>. (Throughout this guide, I've been using the monospaced formatting to show the "raw" Markdown code; note the difference between the first and second monospace stretches in that sentence!)
 
