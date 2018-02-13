@@ -18,6 +18,10 @@ import * as fns from 'date-fns';
 })
 export class AnnotationComponent implements OnInit, AfterViewInit {
 
+  private static _currentColorIndex = 0;
+  private static _maxColorIndex = 5;
+  private static _nameColorMapping = {};
+
   @ViewChild('annotation') annChild: ElementRef;
   @ViewChild('textArea') textArea: ElementRef;
 
@@ -29,6 +33,19 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
 
   editing = false;
   oldText = '';
+
+  static getColorIndex(name: string): number {
+    if (name in AnnotationComponent._nameColorMapping) {
+      return AnnotationComponent._nameColorMapping[name];
+    }
+    AnnotationComponent._currentColorIndex += 1;
+    if (AnnotationComponent._currentColorIndex > AnnotationComponent._maxColorIndex) {
+      AnnotationComponent._currentColorIndex = 1;
+    }
+    AnnotationComponent._nameColorMapping[name] = AnnotationComponent._currentColorIndex;
+    return AnnotationComponent._currentColorIndex;
+  }
+
 
   constructor() { }
 
@@ -73,6 +90,10 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
       return '';
     }
     return fns.format(this.ann.timestamp, 'MMM D, YYYY, h:mm a');
+  }
+
+  getColorString(): string {
+    return `color${AnnotationComponent.getColorIndex(this.ann.author)}`;
   }
 
   tryEdit() {

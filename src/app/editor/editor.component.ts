@@ -27,6 +27,7 @@ import { ModalService } from '../drax-modal/modal.service';
 import { DataRequestModalComponent } from '../drax-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './file-history-modal.component';
 import { Annotation, AnnotationSort } from '../annotation/annotation';
+import { AnnotationComponent } from '../annotation/annotation.component';
 import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
 
 export enum EditorMode {
@@ -575,7 +576,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const doc = this.instance.getDoc();
     a.marker = doc.markText(a.from, a.to, {
-      className: 'annotation colorA',
+      className: `annotation color${AnnotationComponent.getColorIndex(a.author)}`,
       startStyle: 'annotationStart',
       endStyle: 'annotationEnd',
       inclusiveLeft: a.from.ch > 0,
@@ -612,7 +613,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     for (const ann of anns) {
       if (ann.marker === null) {
         ann.marker = doc.markText(ann.from, ann.to, {
-          className: 'annotation colorA',
+          className: `annotation color${AnnotationComponent.getColorIndex(ann.author)}`,
           startStyle: 'annotationStart',
           endStyle: 'annotationEnd',
           inclusiveLeft: ann.from.ch > 0,

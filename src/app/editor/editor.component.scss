@@ -86,25 +86,25 @@ $annotationBorderWidth: 2px;
       border-width: 0px;
     }
 
-    .annotation.colorA {
-      background-color: rgba($colorA, 0.5);
-      border-color: darken($colorA, 35%);
+    .annotation.color1 {
+      background-color: rgba($color1, 0.5);
+      border-color: darken($color1, 35%);
     }
-    .annotation.colorB {
-      background-color: rgba($colorB, 0.5);
-      border-color: darken($colorB, 35%);
+    .annotation.color2 {
+      background-color: rgba($color2, 0.5);
+      border-color: darken($color2, 35%);
     }
-    .annotation.colorC {
-      background-color: rgba($colorC, 0.5);
-      border-color: darken($colorC, 35%);
+    .annotation.color3 {
+      background-color: rgba($color3, 0.5);
+      border-color: darken($color3, 35%);
     }
-    .annotation.colorD {
-      background-color: rgba($colorD, 0.5);
-      border-color: darken($colorD, 35%);
+    .annotation.color4 {
+      background-color: rgba($color4, 0.5);
+      border-color: darken($color4, 35%);
     }
-    .annotation.colorE {
-      background-color: rgba($colorE, 0.5);
-      border-color: darken($colorE, 35%);
+    .annotation.color5 {
+      background-color: rgba($color5, 0.5);
+      border-color: darken($color5, 35%);
     }
 
     .annotationStart.annotationEnd {

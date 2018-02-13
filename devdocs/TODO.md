@@ -22,6 +22,7 @@
 * different colors for annotations from different people
 * spinners for saving and loading stuff in the explorer
 * ability to toggle off links?
+* Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
 * store docs so undo history is preserved across navigation
 * update to use proper GraphQL variables instead of replacing
     - also unify formatting of all the various queries
@@ -39,10 +40,6 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Annotation fixes.
-    - Color selection
-      - let user choose? or pick automagically?
-    - Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
 1. UI 
     - spinners
     - flash messages

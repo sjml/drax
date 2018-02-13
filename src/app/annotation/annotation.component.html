@@ -3,7 +3,7 @@
   [class.editing]="editing"
   (dblclick)="tryEdit()"
   >
-  <div class="attribution colorA">
+  <div class="attribution {{getColorString()}}">
     <span class="name">{{ann.author}}</span>
     <span class="date" title="{{getFullDateString()}}">{{getShortDateString()}}</span>
     <span class="deleteButton fa fa-remove" (click)="removeMe()"></span>
