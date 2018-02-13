@@ -1,6 +1,7 @@
 import { Component,
          AfterViewInit,
          OnInit,
+         OnDestroy,
          Input,
          ViewChild,
          ElementRef,
@@ -16,7 +17,7 @@ import * as fns from 'date-fns';
   templateUrl: './annotation.component.html',
   styleUrls: ['./annotation.component.scss']
 })
-export class AnnotationComponent implements OnInit, AfterViewInit {
+export class AnnotationComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private static _currentColorIndex = 0;
   private static _maxColorIndex = 5;
@@ -33,6 +34,11 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
 
   editing = false;
   oldText = '';
+
+  checkInterval: number = null;
+  fullDateString = '';
+  shortDateString = '';
+  colorString = '';
 
   static getColorIndex(name: string): number {
     if (name in AnnotationComponent._nameColorMapping) {
@@ -57,6 +63,9 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
       this.editing = true;
       this.oldText = this.ann.text;
     }
+
+    this.setStrings();
+    this.checkInterval = window.setInterval(() => this.setStrings(), 60 * 1000);
   }
 
   ngAfterViewInit() {
@@ -64,6 +73,13 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
 
     if (this.editing) {
       this.textArea.nativeElement.focus();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.checkInterval !== null) {
+      window.clearInterval(this.checkInterval);
+      this.checkInterval = null;
     }
   }
 
@@ -78,22 +94,17 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
            + ' ' + this.ann.extents.left + ',' + this.ann.extents.top;
   }
 
-  getShortDateString(): string {
+  setStrings() {
     if (this.ann.timestamp === 0) {
-      return '';
+      this.shortDateString = '';
+      this.fullDateString = '';
     }
-    return `${fns.distanceInWordsToNow(this.ann.timestamp)} ago`;
-  }
-
-  getFullDateString(): string {
-    if (this.ann.timestamp === 0) {
-      return '';
+    else {
+      this.shortDateString = `${fns.distanceInWordsToNow(this.ann.timestamp)} ago`;
+      this.fullDateString = fns.format(this.ann.timestamp, 'MMM D, YYYY, h:mm a');
     }
-    return fns.format(this.ann.timestamp, 'MMM D, YYYY, h:mm a');
-  }
 
-  getColorString(): string {
-    return `color${AnnotationComponent.getColorIndex(this.ann.author)}`;
+    this.colorString = `color${AnnotationComponent.getColorIndex(this.ann.author)}`;
   }
 
   tryEdit() {
@@ -112,6 +123,7 @@ export class AnnotationComponent implements OnInit, AfterViewInit {
       if (this.ann.text.length > 0 && this.oldText !== this.ann.text) {
         this.ann.timestamp = Date.now();
       }
+      this.setStrings();
       this.change.emit();
     }
   }

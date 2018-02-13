@@ -182,6 +182,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.checkInterval !== null) {
       window.clearInterval(this.checkInterval);
+      this.checkInterval = null;
     }
   }
 

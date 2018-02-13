@@ -19,7 +19,6 @@
 * single-character selections mess up post-formatting selection on ** and _
 
 ## Polish
-* different colors for annotations from different people
 * spinners for saving and loading stuff in the explorer
 * ability to toggle off links?
 * Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
@@ -43,6 +42,7 @@
 1. UI 
     - spinners
     - flash messages
+    - binary file handling/ignoring
 2. Image uploading
 3. HTML preview + side-by-side
 4. Fix mobile version? 

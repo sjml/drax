@@ -53,7 +53,7 @@
         <li *ngFor="let node of currentNavList"
           class="gitHubNode pure-menu-item"
           >
-          <a routerLink="{{ node.getRouterPath() }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
+          <a routerLink="{{ node.routerPath }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
             <div *ngIf="node.nodeType === 'REPO'" class="fa fa-database icon"></div>
             <div *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="fa fa-folder icon"></div>
             <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="fa fa-file icon"></div>

@@ -26,9 +26,31 @@ export class GitHubRepo extends GitHubNavNode {
   public owner: string;
   public name: string;
 
-  public isPrivate: boolean;
-  public description: string;
-  public defaultBranch: string;
+  private _isPrivate: boolean;
+  private _description: string;
+  private _defaultBranch: string;
+
+  public get isPrivate(): boolean {
+    return this._isPrivate;
+  }
+  public set isPrivate(v: boolean) {
+    this._isPrivate = v;
+    this.setRouterPath();
+  }
+  public get description(): string {
+    return this._description;
+  }
+  public set description(v: string) {
+    this._description = v;
+    this.setRouterPath();
+  }
+  public get defaultBranch(): string {
+    return this._defaultBranch;
+  }
+  public set defaultBranch(v: string) {
+    this._defaultBranch = v;
+    this.setRouterPath();
+  }
   public config: object = {
     hasConfig: false,
     ignoreHiddenFiles: true,
@@ -36,40 +58,76 @@ export class GitHubRepo extends GitHubNavNode {
     showOnlyMarkdown: false
   };
 
-  public getRouterPath() {
+  public routerPath: string;
+
+  private setRouterPath() {
     if (this.defaultBranch !== null) {
-      return `/${this.owner}/${this.name}:${this.defaultBranch}`;
+      this.routerPath = `/${this.owner}/${this.name}:${this.defaultBranch}`;
     }
     else {
-      return `/${this.owner}/${this.name}`;
+      this.routerPath = `/${this.owner}/${this.name}`;
     }
   }
 }
 
 export class GitHubItem extends GitHubNavNode {
   public nodeType = 'ITEM';
-  public repo: GitHubRepo;
-  public branch: string;
-  public dirPath: string;
-  public fileName: string;
+
+  private _repo: GitHubRepo;
+  public get repo(): GitHubRepo {
+    return this._repo;
+  }
+  public set repo(v: GitHubRepo) {
+    this._repo = v;
+    this.setPaths();
+  }
+
+  private _branch: string;
+  public get branch(): string {
+    return this._branch;
+  }
+  public set branch(v: string) {
+    this._branch = v;
+    this.setPaths();
+  }
+
+  private _dirPath: string;
+  public get dirPath(): string {
+    return this._dirPath;
+  }
+  public set dirPath(v: string) {
+    this._dirPath = v;
+    this.setPaths();
+  }
+
+  private _fileName: string;
+  public get fileName(): string {
+    return this._fileName;
+  }
+  public set fileName(v: string) {
+    this._fileName = v;
+    this.setPaths();
+  }
 
   public isDirectory: boolean;
   public isBinary: boolean;
   public lastGet: string;
 
-  public fullPath(): string {
-    if (this.dirPath === null || this.dirPath.length === 0) {
-      return this.fileName;
-    }
-    return `${this.dirPath}/${this.fileName}`;
-  }
+  public routerPath: string;
+  public routerPathDirOnly: string;
+  public fullPath: string;
 
-  public getRouterPath(dirOnly: boolean = false): string {
-    if (dirOnly) {
-      return `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.dirPath}`;
+  public setPaths() {
+    if (this.dirPath === undefined || this.dirPath === null || this.dirPath.length === 0) {
+      this.fullPath = this.fileName;
     }
     else {
-      return `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.fullPath()}`;
+      this.fullPath = `${this.dirPath}/${this.fileName}`;
+    }
+
+    if (this.repo) {
+      this.routerPathDirOnly = `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.dirPath}`;
+      this.routerPath = `/${this.repo.owner}/${this.repo.name}:${this.branch}/${this.fullPath}`;
     }
   }
 }
@@ -246,7 +304,7 @@ export class GitHubAccessComponent implements OnInit {
       else if (response['object'] === null) {
         pathGood = false;
       }
-      else if (!this.checkRoot(this.item.fullPath(), this.repo.config['contentRoot'])) {
+      else if (!this.checkRoot(this.item.fullPath, this.repo.config['contentRoot'])) {
         pathGood = false;
       }
       else {
@@ -262,7 +320,7 @@ export class GitHubAccessComponent implements OnInit {
       return;
     }
     if (!pathGood) {
-      let redirect = this.repo.getRouterPath();
+      let redirect = this.repo.routerPath;
       if (this.repo.config['contentRoot'].length > 0) {
         redirect += `/${this.repo.config['contentRoot']}`;
       }
@@ -397,7 +455,7 @@ export class GitHubAccessComponent implements OnInit {
 
     // TODO: UGH this is convoluted spaghetti
     if (item.dirPath !== null) {
-      if (item.fullPath() === item.repo.config['contentRoot']) {
+      if (item.fullPath === item.repo.config['contentRoot']) {
         this.upwardsLink = '/';
         this.upwardsLinkLabel = 'Repository List';
       }
@@ -416,7 +474,7 @@ export class GitHubAccessComponent implements OnInit {
           this.upwardsLink = '/';
         }
         else {
-          this.upwardsLink = item.getRouterPath(true);
+          this.upwardsLink = item.routerPathDirOnly;
         }
       }
     }
@@ -439,7 +497,7 @@ export class GitHubAccessComponent implements OnInit {
           ghItem.isDirectory = false;
           ghItem.isBinary = entry['object']['isBinary'];
         }
-        ghItem.dirPath = item.fullPath();
+        ghItem.dirPath = item.fullPath;
 
         if (!item.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
           this.currentNavList[index++] = ghItem;
@@ -476,7 +534,7 @@ export class GitHubAccessComponent implements OnInit {
                     // TODO: grace
                   }
                   else {
-                    this.router.navigateByUrl(repo.getRouterPath());
+                    this.router.navigateByUrl(repo.routerPath);
                   }
                 });
               }
@@ -518,7 +576,7 @@ export class GitHubAccessComponent implements OnInit {
           i.isBinary = false;
           i.branch = this.item.branch;
           if (this.item.isDirectory) {
-            i.dirPath = this.item.fullPath();
+            i.dirPath = this.item.fullPath;
           }
           else {
             i.dirPath = this.item.dirPath;
@@ -540,7 +598,7 @@ export class GitHubAccessComponent implements OnInit {
                     console.error(response['error']);
                   }
                   else {
-                    const path = f.item.getRouterPath(isDirectory);
+                    const path = isDirectory ? f.item.routerPathDirOnly : f.item.routerPath;
                     this.router.navigateByUrl(path);
                   }
                 });
@@ -603,7 +661,7 @@ export class GitHubAccessComponent implements OnInit {
   // this stuff annoyingly has to be done with the old API. :'(
   getFileContentsFromCommit(item: GitHubItem, commit: string): Promise<string> {
     // TODO: grace
-    const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.fullPath()}?ref=${commit}`;
+    const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.fullPath}?ref=${commit}`;
     return this.http.get(
       url,
       {
@@ -654,7 +712,7 @@ export class GitHubAccessComponent implements OnInit {
 
       return this.http.put(
         'https://api.github.com/repos/' +
-        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath()}`,
+        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath}`,
         args,
         {
           headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
