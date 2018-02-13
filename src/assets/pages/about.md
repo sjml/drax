@@ -16,8 +16,6 @@ Things to expect:
 * Overall UI polish. 
 * Better error handling.
     * At the moment, if something goes wrong (you lose internet connection, the repository no longer exists, etc.), things just silently fail. This will be more graceful.
-* The annotation system to work when file changes are made outside of Drax.
-    * Right now it probably explodes. That hasn't been tested. Not even a little.
 * Image uploading. 
 
 Things not to expect:
