@@ -23,10 +23,25 @@
     margin-top: 5px;
   }
 
+  .attribution.colorA {
+    background-color: $colorA;
+  }
+  .attribution.colorB {
+    background-color: $colorB;
+  }
+  .attribution.colorC {
+    background-color: $colorC;
+  }
+  .attribution.colorD {
+    background-color: $colorD;
+  }
+  .attribution.colorE {
+    background-color: $colorE;
+  }
+
   .attribution {
     display: flex;
     border-radius: 5px 5px 0 0;
-    background-color: aqua;
     padding-left: 10px;
     padding-bottom: 5px;
 

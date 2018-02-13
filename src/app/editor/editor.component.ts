@@ -575,7 +575,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const doc = this.instance.getDoc();
     a.marker = doc.markText(a.from, a.to, {
-      className: 'annotation',
+      className: 'annotation colorA',
       startStyle: 'annotationStart',
       endStyle: 'annotationEnd',
       inclusiveLeft: a.from.ch > 0,
@@ -612,7 +612,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     for (const ann of anns) {
       if (ann.marker === null) {
         ann.marker = doc.markText(ann.from, ann.to, {
-          className: 'annotation',
+          className: 'annotation colorA',
           startStyle: 'annotationStart',
           endStyle: 'annotationEnd',
           inclusiveLeft: ann.from.ch > 0,
