@@ -547,8 +547,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           className: 'annotation',
           startStyle: 'annotationStart',
           endStyle: 'annotationEnd',
-          inclusiveLeft: true,
-          inclusiveRight: true
+          inclusiveLeft: ann.from.ch > 0,
+          inclusiveRight: ann.to.ch < doc.getLine(ann.to.line).length
         });
       }
       else {
