@@ -48,7 +48,7 @@
 4. Fix mobile version? 
     - might not be possible to get CodeMirror working the way it needs to...
     - is this really a use case to support? Possibly not.
-5. Single repo mode
+5. Repo administration
     - templates for new files
     - setting to prevent creation of new files, new directories
 6. Merge changes if we're out of sync with the server

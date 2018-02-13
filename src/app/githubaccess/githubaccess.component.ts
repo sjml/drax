@@ -154,6 +154,7 @@ export class GitHubAccessComponent implements OnInit {
   GITHUB_URL = 'https://api.github.com/graphql';
 
   isOpen = false;
+  isInSingleRepoMode = false;
 
   bearerToken: string = null;
   user: GitHubUser = null;
@@ -250,8 +251,16 @@ export class GitHubAccessComponent implements OnInit {
     }
 
     this.repo = new GitHubRepo();
-    this.repo.owner = this.route.snapshot.paramMap.get('owner');
-    this.repo.name = this.route.snapshot.paramMap.get('name');
+    const singleRepo = this.config.getConfig('singleRepo');
+    if (singleRepo === null) {
+      this.repo.owner = this.route.snapshot.paramMap.get('owner');
+      this.repo.name = this.route.snapshot.paramMap.get('name');
+    }
+    else {
+      this.isInSingleRepoMode = true;
+      this.repo.owner = singleRepo.owner;
+      this.repo.name = singleRepo.name;
+    }
 
     if (!this.bearerToken || this.repo.owner === null || this.repo.name === null) {
       if (this.displayPage === null) {
@@ -482,6 +491,15 @@ export class GitHubAccessComponent implements OnInit {
       this.upwardsLink = '/';
       this.upwardsLinkLabel = 'Repository List';
     }
+
+    if (
+        this.isInSingleRepoMode
+        && this.upwardsLink === '/'
+        && this.upwardsLinkLabel === 'Repository List'
+      ) {
+        this.upwardsLink = null;
+        this.upwardsLinkLabel = null;
+      }
 
     this.graphQlQuery(Queries.getFileList(item), 'fileList').toPromise().then(response => {
       let index = 0;
