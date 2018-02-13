@@ -40,9 +40,12 @@
 
 ## Features
 1. Annotation fixes.
-    - Detect when they're out of sync, try to correct if possible, based on range of annotation: 
-      1. if it's been deleted, annotation goes with it
-      2. if there have been additions or deletions before it, modify as needed
+    - Color selection
+      - let user choose? or pick automagically?
+    - Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
+1. UI 
+    - spinners
+    - flash messages
 2. Image uploading
 3. HTML preview + side-by-side
 4. Fix mobile version? 

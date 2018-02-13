@@ -10,6 +10,8 @@ import { Component,
          HostListener
        } from '@angular/core';
 
+import * as JSDiff from 'diff';
+
 import * as CodeMirror from 'codemirror';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/edit/continuelist';
@@ -182,15 +184,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  loadFreshFile() {
+  private processFileContents() {
     const mdFileTypes = [
       'markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn',
       'mdtxt', 'mdtext', 'text', 'txt', 'Rmd'
     ];
-
-    const newDoc = CodeMirror.Doc(this._file.contents, this.markdownConfig);
-    this.instance.swapDoc(newDoc);
-    this.changeGeneration = this.instance.getDoc().changeGeneration();
 
     const pieces = this._file.item.fileName.split('.');
     const ext = pieces.pop();
@@ -208,46 +206,129 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     else {
       this.markdownConfig.name = '';
     }
-    this.instance.setOption('mode', this.markdownConfig);
+
+    const newDoc = CodeMirror.Doc(this._file.contents, this.markdownConfig);
+    this.instance.swapDoc(newDoc);
+    this.changeGeneration = this.instance.getDoc().changeGeneration();
 
     this.instance.refresh();
     this.takeFocus();
+  }
+
+  private async processAnnotations() {
+    const finalize = (anns: Annotation[] = null) => {
+      if (anns !== null) {
+        this.annotations = anns;
+      }
+      this.updateAnnotations();
+      this.change.emit();
+    };
 
     this.annotations = [];
     this.originalRawAnnotations = null;
     this.annotationsDirty = false;
     this.annContComp.clearLines();
-    if (this._file.item.repo.config['hasConfig']) {
-      // check for accompanying annotation file
-      const item = new GitHubItem();
-      item.repo = this._file.item.repo;
-      item.branch = this._file.item.branch;
-      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
-      item.fileName = `${this._file.item.fileName}.json`;
-      this.ghAccess.getFile(item).then(fileResponse => {
-        if (fileResponse !== null) {
-          const annData = JSON.parse(fileResponse.contents);
-          if (annData.annotations) {
-            this.originalRawAnnotations = annData.annotations;
-            for (const ann of annData.annotations) {
-              const newAnn = new Annotation();
-              newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
-              newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
-              newAnn.author = ann.author;
-              newAnn.timestamp = ann.timestamp;
-              newAnn.text = ann.text;
-              this.annotations.push(newAnn);
+    if (!this._file.item.repo.config['hasConfig']) {
+      return finalize();
+    }
+
+    // check for accompanying annotation file
+    const item = new GitHubItem();
+    item.repo = this._file.item.repo;
+    item.branch = this._file.item.branch;
+    item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+    item.fileName = `${this._file.item.fileName}.json`;
+    const fileResponse = await this.ghAccess.getFile(item);
+    if (fileResponse === null) {
+      return finalize();
+    }
+
+    const annData = JSON.parse(fileResponse.contents);
+    const newAnns: Annotation[] = [];
+    if (annData.annotations) {
+      this.originalRawAnnotations = annData.annotations;
+      for (const ann of annData.annotations) {
+        const newAnn = new Annotation();
+        newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
+        newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
+        newAnn.author = ann.author;
+        newAnn.timestamp = ann.timestamp;
+        newAnn.text = ann.text;
+        newAnns.push(newAnn);
+      }
+    }
+
+    if (annData.parentOid !== this._file.item.lastGet) {
+      // TODO: grace
+      const oldFileContents = await this.ghAccess.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
+      if (oldFileContents !== null) {
+        const diffs = JSDiff.diffChars(oldFileContents, this._file.contents);
+        const doc = this.instance.getDoc();
+        this.instance.operation(() => {
+          doc.setValue(oldFileContents);
+          this.initialMarkText(newAnns);
+
+          let lineIndex = 0;
+          let chIndex = 0;
+          for (const change of diffs) {
+            if (change.added === undefined && change.removed === undefined) {
+              for (const c of change.value) {
+                if (c === '\n') {
+                  lineIndex += 1;
+                  chIndex = 0;
+                }
+                else {
+                  chIndex += 1;
+                }
+              }
+            }
+            else if (change.removed === true) {
+              const from = { line: lineIndex, ch: chIndex };
+              const to = { line: lineIndex, ch: chIndex };
+              for (const c of change.value) {
+                if (c === '\n') {
+                  to.line += 1;
+                  to.ch = 0;
+                }
+                else {
+                  to.ch += 1;
+                }
+              }
+              doc.replaceRange('', from, to);
+            }
+            else if (change.added === true) {
+              const from = { line: lineIndex, ch: chIndex };
+              doc.replaceRange(change.value, from);
+              for (const c of change.value) {
+                if (c === '\n') {
+                  lineIndex += 1;
+                  chIndex = 0;
+                }
+                else {
+                  chIndex += 1;
+                }
+              }
             }
           }
-        }
-        this.updateAnnotations();
-        this.change.emit();
-      });
+
+          doc.clearHistory();
+          doc.markClean();
+        });
+      }
+      else {
+        this.initialMarkText(newAnns);
+      }
     }
     else {
-      this.updateAnnotations();
-      this.change.emit();
+      this.initialMarkText(newAnns);
     }
+
+    return finalize(newAnns);
+  }
+
+  loadFreshFile() {
+    this.processFileContents();
+    this.processAnnotations();
 
     // TODO: figure out if we can be more precise and do this
     //       to just a single element instead of the whole window
@@ -350,9 +431,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     else {
       const annFileObj = {};
-      annFileObj['parentCommit'] = this._file.item.lastGet;
+      annFileObj['parentOid'] = this._file.item.lastGet;
       annFileObj['annotations'] = [];
       for (const ann of this.annotations) {
+        if (ann.removed) {
+          continue;
+        }
         const annObj = {};
         annObj['from'] = { line: ann.from.line, ch: ann.from.ch };
         annObj['to'] = { line: ann.to.line, ch: ann.to.ch };
@@ -445,7 +529,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOldVersion(oid: string) {
-    this.ghAccess.getFileContentsByOid(this._file.item, oid).then((contents) => {
+    this.ghAccess.getFileContentsFromCommit(this._file.item, oid).then((contents) => {
       if (contents !== null) {
         this.instance.setValue(contents);
         this.annotations = [];
@@ -522,6 +606,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     return ButtonState.Active;
   }
 
+  private initialMarkText(anns: Annotation[]) {
+    // creating the CM markers initially
+    const doc = this.instance.getDoc();
+    for (const ann of anns) {
+      if (ann.marker === null) {
+        ann.marker = doc.markText(ann.from, ann.to, {
+          className: 'annotation',
+          startStyle: 'annotationStart',
+          endStyle: 'annotationEnd',
+          inclusiveLeft: ann.from.ch > 0,
+          inclusiveRight: ann.to.ch < doc.getLine(ann.to.line).length
+        });
+      }
+    }
+  }
+
   updateAnnotations() {
     const doc = this.instance.getDoc();
 
@@ -541,28 +641,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     for (const ann of this.annotations) {
-      if (ann.marker === null) {
-        // creating the CM markers initially
-        ann.marker = doc.markText(ann.from, ann.to, {
-          className: 'annotation',
-          startStyle: 'annotationStart',
-          endStyle: 'annotationEnd',
-          inclusiveLeft: ann.from.ch > 0,
-          inclusiveRight: ann.to.ch < doc.getLine(ann.to.line).length
-        });
+      // updating our annotations as the CM markers move around
+      const currentRange = ann.marker.find() as any;
+      if (currentRange === undefined) {
+        ann.removed = true;
+        ann.marker['annotationData'] = ann;
+        this.deadMarkers.push(ann.marker);
       }
       else {
-        // updating our annotations as the CM markers move around
-        const currentRange = ann.marker.find() as any;
-        if (currentRange === undefined) {
-          ann.removed = true;
-          ann.marker['annotationData'] = ann;
-          this.deadMarkers.push(ann.marker);
-        }
-        else {
-          ann.from = currentRange.from;
-          ann.to = currentRange.to;
-        }
+        ann.from = currentRange.from;
+        ann.to = currentRange.to;
       }
       ann.extents = this.instance.cursorCoords(ann.from);
     }

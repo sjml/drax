@@ -128,6 +128,25 @@ export module Queries {
     return {query: qString};
   }
 
+  const oidContentsTemplate = `
+    {
+      repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(oid: "%%OID%%") {
+          ... on Blob {
+            text
+          }
+        }
+      }
+    }
+  `;
+  export function getOidContents(repo: GitHubRepo, oid: string) {
+    const qString = oidContentsTemplate
+                      .replace('%%OWNER%%', repo.owner)
+                      .replace('%%NAME%%', repo.name)
+                      .replace('%%OID%%', oid);
+    return {query: qString};
+  }
+
   const pathInfoTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
