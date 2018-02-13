@@ -94,7 +94,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     const standardMapping = {
       'Ctrl-S': () => { this.prepForSave(true); },
-      'Ctrl-R': () => { this.refreshContents(true); },
+      // 'Ctrl-R': () => { this.refreshContents(true); },
       'Ctrl-B': () => { this.toggleBold(true); },
       'Ctrl-I': () => { this.toggleItalics(true); },
       'Ctrl-H': () => { this.cycleHeaderLevel(true); },
@@ -104,7 +104,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     const macMapping = {
       'Cmd-S': () => { this.prepForSave(true); },
-      'Cmd-R': () => { this.refreshContents(true); },
+      // 'Cmd-R': () => { this.refreshContents(true); },
       'Cmd-B': () => { this.toggleBold(true); },
       'Cmd-I': () => { this.toggleItalics(true); },
       'Cmd-H': () => { this.cycleHeaderLevel(true); },
