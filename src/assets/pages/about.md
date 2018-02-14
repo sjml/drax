@@ -13,6 +13,7 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 Drax is still [being developed](https://github.com/sjml/drax). Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page. The point is, there are features incoming. 
 
 Things to expect:
+* A playground where you can try out the editor and annotations without needing a GitHub account or repository.
 * Overall UI polish. 
     * Including a logo that's not as weird. Hopefully. Maybe. 
 * Better error handling.
