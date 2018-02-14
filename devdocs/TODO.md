@@ -39,6 +39,10 @@
 * need to store repository info too... 😬
 
 ## Features
+0. Refactor 
+    - separate out github access to be a service, leave UI as component
+    - move from chain of components to proper routing
+    - avoid weird if-elsing in githubaccess template
 1. UI 
     - spinners
     - flash messages

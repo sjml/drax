@@ -1,4 +1,4 @@
-# Drax
+<img src="./assets/images/DraxLogo.svg" alt="Logo for drax.io" class="draxLogo">
 
 Drax is a Markdown editor for GitHub repositories, aimed at a writer/editor workflow. 
 
@@ -10,10 +10,11 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 
 
 ## Work in Progress
-Drax is still [being developed](https://github.com/sjml/drax). (Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page.) The point is, there are features incoming. 
+Drax is still [being developed](https://github.com/sjml/drax). Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page. The point is, there are features incoming. 
 
 Things to expect:
 * Overall UI polish. 
+    * Including a logo that's not as weird. Hopefully. Maybe. 
 * Better error handling.
     * At the moment, if something goes wrong (you lose internet connection, the repository no longer exists, etc.), things just silently fail. This will be more graceful.
 * Image uploading. 

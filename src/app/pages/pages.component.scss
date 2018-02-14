@@ -14,6 +14,14 @@ $codeBgColor: rgb(228, 226, 226);
 }
 
 ::ng-deep {
+  .draxLogo {
+    max-width: 400px;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: -45px;
+  }
+
   a {
     text-decoration: none;
     color: rgb(50, 132, 255);
