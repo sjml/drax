@@ -44,6 +44,9 @@
     - separate out github access to be a service, leave UI as component
     - move from chain of components to proper routing
     - avoid weird if-elsing in githubaccess template
+0. Asset Caching
+    - Markdown file (and what else?!) can get cached; blergh
+    - figure out how to bust them
 1. Playground
     - editor and annotations to play with sans GitHub account
 2. UI 
