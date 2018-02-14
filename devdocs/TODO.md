@@ -17,6 +17,7 @@
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
 * navlist gets screwy on logout
 * single-character selections mess up post-formatting selection on ** and _
+* shipit rev-stamps from the enclosing repo, not the one actually being deployed
 
 ## Polish
 * spinners for saving and loading stuff in the explorer
@@ -43,19 +44,22 @@
     - separate out github access to be a service, leave UI as component
     - move from chain of components to proper routing
     - avoid weird if-elsing in githubaccess template
-1. UI 
+1. Playground
+    - editor and annotations to play with sans GitHub account
+2. UI 
     - spinners
     - flash messages
     - binary file handling/ignoring
-2. Image uploading
-3. HTML preview + side-by-side
-4. Fix mobile version? 
+    - warn before refreshing from server
+3. Image uploading
+4. HTML preview + side-by-side
+5. Fix mobile version? 
     - might not be possible to get CodeMirror working the way it needs to...
     - is this really a use case to support? Possibly not.
-5. Repo administration
+6. Repo administration
     - templates for new files
     - setting to prevent creation of new files, new directories
-6. Merge changes if we're out of sync with the server
-7. Frontmatter parsing into options? 
-8. Offline mode and/or live collaboration
+7. Offer to merge changes if we're out of sync with the server?
+8. Frontmatter parsing into options? 
+9. Offline mode and/or live collaboration
     - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.

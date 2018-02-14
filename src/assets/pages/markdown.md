@@ -36,7 +36,7 @@ If you want to put a horizontal line to separate sections more visibly, you just
 
 To make things **bold** or _italic_, you have some options in Markdown. Basically, you surround the text you care about with asterisks or underscores; one of them will make it _italic_, two of them will make it **bold**. 
 
-So you can say `__this__` to make your text look like __this__, OR `**this**` to get the same effect. If you only use one special character, `*like so*`, then your text will like *this*. 
+So you can say `__this__` to make your text look like __this__, OR `**this**` to get the same effect. If you only use one special character, `*like so*`, then your text will look like *this*. 
 
 Even though Markdown differentiates based off the number, it can be helpful to associate one of the characters with bold and one with italics. Because italics are often used where older typewritten material used to use underline, it's common to use the underscore for italic text, which leaves the asterisk for bold. The toolbar in Drax assumes that you're using two asterisks (`**`) to create bold text and a lone underscore (`_`) to make italics.
 
