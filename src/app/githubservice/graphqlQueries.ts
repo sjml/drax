@@ -1,4 +1,4 @@
-import { GitHubRepo, GitHubItem } from './githubaccess.component';
+import { GitHubRepo, GitHubItem } from '../githubservice/githubclasses';
 
 export module Queries {
   const userInfoTemplate = {

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, UrlSegment, UrlMatchResult } from '@angular/router';
 
-import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
+import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { PagesComponent } from './pages/pages.component';
 
 import * as cmBrowser from 'codemirror/src/util/browser';
@@ -60,7 +60,7 @@ export const routes: Routes = [
   },
   {
     matcher: repoBranchMatcher,
-    component: GitHubAccessComponent
+    component: FileBrowserComponent
   }
 ];
 

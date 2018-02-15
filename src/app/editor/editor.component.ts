@@ -22,8 +22,9 @@ import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
 import { ButtonState } from '../toolbar/toolbar-items';
-import { GitHubFile, GitHubItem, GitHubRepo, GitHubAccessComponent } from '../githubaccess/githubaccess.component';
+import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
 import { ModalService } from '../drax-modal/modal.service';
+import { GitHubService } from '../githubservice/github.service';
 import { DataRequestModalComponent } from '../drax-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './file-history-modal.component';
 import { Annotation, AnnotationSort } from '../annotation/annotation';
@@ -46,7 +47,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('host') host: ElementRef;
   @Output() change = new EventEmitter();
   @Output() cursorActivity = new EventEmitter();
-  @Input() ghAccess: GitHubAccessComponent;
 
   @ViewChild(AnnotationContainerComponent) annContComp: AnnotationContainerComponent;
 
@@ -90,7 +90,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateAnnotations();
   }
 
-  constructor(private modalService: ModalService) {
+  constructor(
+    private modalService: ModalService,
+    private gitHubService: GitHubService
+  ) {
     this.mode = EditorMode.Edit;
   }
 
@@ -240,7 +243,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     item.branch = this._file.item.branch;
     item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
     item.fileName = `${this._file.item.fileName}.json`;
-    const fileResponse = await this.ghAccess.getFile(item);
+    const fileResponse = await this.gitHubService.getFile(item);
     if (fileResponse === null) {
       return finalize();
     }
@@ -262,7 +265,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (annData.parentOid !== this._file.item.lastGet) {
       // TODO: grace
-      const oldFileContents = await this.ghAccess.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
+      const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
       if (oldFileContents !== null) {
         const diffs = JSDiff.diffChars(oldFileContents, this._file.contents);
         const doc = this.instance.getDoc();
@@ -414,7 +417,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return Promise.resolve(true);
     }
     else {
-      return this.ghAccess.pushFile(this._file, commitMessage).then(val => {
+      return this.gitHubService.pushFile(this._file, commitMessage).then(val => {
         if (val['success']) {
           this.changeGeneration = this.instance.getDoc().changeGeneration();
           return Promise.resolve(true);
@@ -455,7 +458,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
       item.fileName = `${this._file.item.fileName}.json`;
 
-      return this.ghAccess.getFile(item).then(fileResponse => {
+      return this.gitHubService.getFile(item).then(fileResponse => {
         let fPush: GitHubFile = null;
         if (fileResponse !== null) {
           fPush = fileResponse;
@@ -465,7 +468,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           fPush = new GitHubFile(outputString);
           fPush.item = item;
         }
-        return this.ghAccess.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
+        return this.gitHubService.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
           if (val['success']) {
             this.originalRawAnnotations = annFileObj['annotations'];
             this.annotationsDirty = false;
@@ -485,7 +488,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this._file === null) {
       return;
     }
-    this.ghAccess.getPathInfo(this._file.item).then(response => {
+    this.gitHubService.getPathInfo(this._file.item).then(response => {
       if (response === null || response['object'] === null) {
         console.error('File no longer exists.');
         return;
@@ -502,7 +505,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
     if (execute) {
-      this.ghAccess.getFile(this._file.item).then(newFile => {
+      this.gitHubService.getFile(this._file.item).then(newFile => {
         this.file = newFile;
       });
     }
@@ -519,7 +522,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         FileHistoryModalComponent,
         {
           item: this._file.item,
-          ghAccess: this.ghAccess,
           callback: (oid: string) => {
             this.loadOldVersion(oid);
           }
@@ -531,7 +533,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOldVersion(oid: string) {
-    this.ghAccess.getFileContentsFromCommit(this._file.item, oid).then((contents) => {
+    this.gitHubService.getFileContentsFromCommit(this._file.item, oid).then((contents) => {
       if (contents !== null) {
         this.instance.setValue(contents);
         this.annotations = [];
@@ -567,7 +569,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createNewAnnotation() {
     const a = new Annotation();
-    a.author = this.ghAccess.user.login;
+    a.author = this.gitHubService.user.login;
     a.text = '';
     a.timestamp = 0;
 

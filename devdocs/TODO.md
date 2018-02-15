@@ -41,9 +41,8 @@
 
 ## Features
 0. Refactor 
-    - separate out github access to be a service, leave UI as component
     - move from chain of components to proper routing
-    - avoid weird if-elsing in githubaccess template
+    - avoid weird if-elsing in filebrowser template
 0. Asset Caching
     - Markdown file (and what else?!) can get cached; blergh
     - figure out how to bust them

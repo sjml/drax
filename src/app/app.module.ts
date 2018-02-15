@@ -5,10 +5,12 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 
-import { AppComponent } from './app.component';
 import { ConfigService } from './config.service';
+import { GitHubService } from './githubservice/github.service';
 import { ModalService } from './drax-modal/modal.service';
-import { GitHubAccessComponent } from './githubaccess/githubaccess.component';
+
+import { AppComponent } from './app.component';
+import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { EditorComponent } from './editor/editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AppRoutingModule } from './/app-routing.module';
@@ -22,7 +24,7 @@ import { AnnotationComponent } from './annotation/annotation.component';
 @NgModule({
   declarations: [
     AppComponent,
-    GitHubAccessComponent,
+    FileBrowserComponent,
     EditorComponent,
     ToolbarComponent,
     PagesComponent,
@@ -41,6 +43,7 @@ import { AnnotationComponent } from './annotation/annotation.component';
   ],
   providers: [
     ConfigService,
+    GitHubService,
     ModalService,
     {
       provide: APP_INITIALIZER,

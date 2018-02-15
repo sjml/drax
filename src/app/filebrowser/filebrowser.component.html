@@ -5,17 +5,17 @@
 
   <div id="sidebar" (scroll)="onScroll($event)">
     <div class="gitHubWidget">
-      <div *ngIf="!user && bearerToken !== null" class="gitHubConnectPrompt">
+      <div *ngIf="!gitHubService.user && gitHubService.bearerToken !== null" class="gitHubConnectPrompt">
         <div class="fa fa-circle-o-notch icon fa-spin"></div>
         <div class="loginPrompt">Signing in...</div>
       </div>
-      <div *ngIf="!user && bearerToken === null" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
+      <div *ngIf="!gitHubService.user && gitHubService.bearerToken === null" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
         <div class="fa fa-github icon"></div>
         <div class="loginPrompt">Click to sign in with GitHub</div>
       </div>
-      <div *ngIf="user" class="gitHubUserInfo">
-        <img class="avatar" src="{{ user.avatarUrl }}&s=96" alt="{{ user.login }} avatar">
-        <div class="username">{{ user.login }}</div>
+      <div *ngIf="gitHubService.user" class="gitHubUserInfo">
+        <img class="avatar" src="{{ gitHubService.user.avatarUrl }}&s=96" alt="{{ gitHubService.user.login }} avatar">
+        <div class="username">{{ gitHubService.user.login }}</div>
         <span class="fa fa-sign-out" (click)="logout()"></span>
       </div>
     </div>
@@ -59,7 +59,7 @@
             <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="fa fa-file icon"></div>
             <div class="nodeName">
               <div *ngIf="node.nodeType === 'REPO'">
-                <div *ngIf="node.owner !== this.user.login" class="prefixName" >
+                <div *ngIf="node.owner !== this.gitHubService.user.login" class="prefixName" >
                   {{node.owner}}/</div>{{ node.name }}
               </div>
               <div *ngIf="node.nodeType === 'ITEM'">
@@ -76,7 +76,7 @@
 
 <div id="main">
   <div *ngIf="workingFile !== null">
-    <app-editor [file]="workingFile" [ghAccess]="this"></app-editor>
+    <app-editor [file]="workingFile"></app-editor>
   </div>
   <div *ngIf="displayPage !== null && workingFile === null">
     <app-pages [pageName]="displayPage"></app-pages>

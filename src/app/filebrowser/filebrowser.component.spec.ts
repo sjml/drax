@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GitHubAccessComponent } from './githubaccess.component';
+import { FileBrowserComponent } from './filebrowser.component';
 
-describe('GitHubAccessComponent', () => {
-  let component: GitHubAccessComponent;
-  let fixture: ComponentFixture<GitHubAccessComponent>;
+describe('FileBrowserComponent', () => {
+  let component: FileBrowserComponent;
+  let fixture: ComponentFixture<FileBrowserComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GitHubAccessComponent ]
+      declarations: [ FileBrowserComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GitHubAccessComponent);
+    fixture = TestBed.createComponent(FileBrowserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
