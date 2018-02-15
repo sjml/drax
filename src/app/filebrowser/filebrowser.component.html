@@ -9,7 +9,7 @@
         <div class="fa fa-circle-o-notch icon fa-spin"></div>
         <div class="loginPrompt">Signing in...</div>
       </div>
-      <div *ngIf="!gitHubService.user && gitHubService.bearerToken === null" (click)="attemptAuthorization()" class="gitHubConnectPrompt">
+      <div *ngIf="!gitHubService.user && gitHubService.bearerToken === null" (click)="gitHubService.attemptAuthorization()" class="gitHubConnectPrompt">
         <div class="fa fa-github icon"></div>
         <div class="loginPrompt">Click to sign in with GitHub</div>
       </div>
@@ -71,9 +71,9 @@
         </li>
       </ul>
     </div>
-  </div>
 </div>
 
+<!--
 <div id="main">
   <div *ngIf="workingFile !== null">
     <app-editor [file]="workingFile"></app-editor>
@@ -82,4 +82,4 @@
     <app-pages [pageName]="displayPage"></app-pages>
   </div>
 </div>
-
+ -->

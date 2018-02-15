@@ -39,6 +39,12 @@ export module Queries {
                 defaultBranchRef {
                   name
                 }
+                object(expression: "master:.drax/config.json") {
+                  ... on Blob {
+                    text
+                    oid
+                  }
+                }
               }
             }
           }
@@ -66,6 +72,12 @@ export module Queries {
           description
           defaultBranchRef {
             name
+          }
+          object(expression: "master:.drax/config.json") {
+            ... on Blob {
+              text
+              oid
+            }
           }
         }
       }

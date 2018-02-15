@@ -21,7 +21,14 @@ export class GitHubService {
   constructor(
     private http: HttpClient,
     private config: ConfigService
-  ) { }
+  ) {
+    this.init();
+  }
+
+  init() {
+    console.log('loading current user');
+    this.loadCurrentUser();
+  }
 
   loadCurrentUser(): Promise<GitHubUser> {
     if (this.bearerToken === null) {
@@ -85,6 +92,85 @@ export class GitHubService {
     );
   }
 
+  loadRepoData(repo: GitHubRepo): Promise<boolean> {
+    if (repo === null) {
+      return Promise.resolve(false);
+    }
+
+    // don't do a total refetch if we've gotten data in last 5 minutes
+    const now = Date.now();
+    if (repo.lastFetchTime !== null && repo.lastFetchTime - now > 60 * 5 * 1000) {
+      return Promise.resolve(true);
+    }
+
+    return this.getSingleRepo(repo).then(response => {
+      if (response === null) {
+        repo.lastFetchTime = null;
+        return false;
+      }
+      repo.defaultBranch = response['defaultBranchRef']['name'];
+      repo.isPrivate = response['isPrivate'];
+      repo.description = response['description'];
+      repo.lastFetchTime = now;
+
+      // check for remote configuration
+      const confObject = response['object'];
+      if (confObject !== null) {
+        const remoteConfig = JSON.parse(confObject.text);
+        repo.config = Object.assign(repo.config, remoteConfig);
+        repo.config['hasConfig'] = true;
+      }
+      return true;
+    });
+  }
+
+  private checkRoot(dirPath: string, contentRoot: string): boolean {
+    if (contentRoot.length === 0) {
+      return true;
+    }
+    if (dirPath === null) {
+      return false;
+    }
+    if (dirPath.startsWith(contentRoot)) {
+      return true;
+    }
+    return false;
+  }
+
+  loadItemData(item: GitHubItem): Promise<boolean> {
+    if (item === null) {
+      return Promise.resolve(false);
+    }
+
+    return this.loadRepoData(item.repo).then(repoResponse => {
+      if (repoResponse === false) {
+        item.lastGet = null;
+        return false;
+      }
+      if (item.branch === null) {
+        item.branch = item.repo.defaultBranch;
+      }
+      return this.getPathInfo(item).then(itemResponse => {
+        if (itemResponse === null) {
+          item.lastGet = null;
+          return false;
+        }
+        if (itemResponse['object'] === null) {
+          item.lastGet = null;
+          return false;
+        }
+        if (!this.checkRoot(item.fullPath, item.repo.config['contentRoot'])) {
+          item.lastGet = null;
+          return false;
+        }
+
+        item.isDirectory = itemResponse['object']['__typename'] === 'Tree';
+        item.lastGet = itemResponse['object']['oid'];
+        return true;
+      });
+    });
+  }
+
   /***** Data Access *****/
   private graphQlQuery(query: object, queryLog: string): Observable<object> {
     if (!environment.production) {
@@ -134,6 +220,7 @@ export class GitHubService {
         newRepo.owner = repo.owner.login;
         // TODO: play around with a repo that has no default branch (no pushes)
         newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : '';
+        newRepo.lastFetchTime = Date.now();
         repos.push(newRepo);
       }
 
@@ -281,7 +368,14 @@ export class GitHubService {
 
     ).toPromise().then(response => {
       console.log(response);
-      return {success: true, name: response['name']};
+      const newRepo = new GitHubRepo();
+      newRepo.owner = this.user.login;
+      newRepo.name = response['name'];
+      newRepo.isPrivate = false;
+      newRepo.description = description;
+      newRepo.defaultBranch = response['default_branch'];
+      newRepo.lastFetchTime = Date.now();
+      return {success: true, repo: newRepo};
     })
     .catch(error => {
       // TODO: grace

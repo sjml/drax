@@ -3,64 +3,32 @@ import { RouterModule, Routes, UrlSegment, UrlMatchResult } from '@angular/route
 
 import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { PagesComponent } from './pages/pages.component';
+import { EditorComponent } from './editor/editor.component';
 
 import * as cmBrowser from 'codemirror/src/util/browser';
 
+// TODO
+// if (cmBrowser.mobile) {
+//   // use CM's detection for this since it's the part causing problems
+//   const p = new UrlSegment('pages', {});
+//   const s = new UrlSegment('sadness', {});
+//   return {consumed: [p, s], posParams: {pageName: s}};
+// }
 export function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
-  if (cmBrowser.mobile) {
-    // use CM's detection for this since it's the part causing problems
-    const p = new UrlSegment('pages', {});
-    const s = new UrlSegment('sadness', {});
-    return {consumed: [p, s], posParams: {pageName: s}};
-  }
-
-  if (urlSegs.length < 2) {
-    return {consumed: urlSegs, posParams: {}};
-  }
-  const consumed: UrlSegment[] = [];
-  const params = {};
-
-  const seg0 = urlSegs[0];
-  const seg1 = urlSegs[1];
-
-  if (seg0.path === 'pages') {
-    params['pageName'] = seg1;
-    consumed.push(seg0, seg1);
-    return {consumed: consumed, posParams: params};
-  }
-
-  consumed.push(seg0);
-  params['owner'] = seg0;
-
-  const splits = seg1.path.split(':');
-  params['name'] = new UrlSegment(splits[0], {});
-  if (splits.length > 1) {
-    params['branch'] = new UrlSegment(splits[1], {});
-  }
-  consumed.push(seg1);
-
-  if (urlSegs.length > 2) {
-    const pathSegs = urlSegs.slice(2).map(urlSeg => {
-      consumed.push(urlSeg);
-      return urlSeg.path;
-    });
-    const lastSeg = pathSegs.pop();
-    params['dirPath'] = new UrlSegment(pathSegs.join('/'), {});
-    params['itemName'] = new UrlSegment(lastSeg, {});
-  }
-
-  return {consumed: consumed, posParams: params};
+  return null;
 }
 
 export const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: '/pages/about'
+    path: 'pages/:pageName',
+    component: PagesComponent
   },
   {
-    matcher: repoBranchMatcher,
-    component: FileBrowserComponent
+    path: 'edit',
+    children: [{
+      path: '**',
+      component: EditorComponent
+    }]
   }
 ];
 

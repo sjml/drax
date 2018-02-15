@@ -13,6 +13,7 @@ export class GitHubRepo extends GitHubNavNode {
   public nodeType = 'REPO';
   public owner: string;
   public name: string;
+  public lastFetchTime: number;
 
   private _isPrivate: boolean;
   private _description: string;

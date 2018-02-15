@@ -9,6 +9,7 @@ import { Component,
          EventEmitter,
          HostListener
        } from '@angular/core';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 
 import * as JSDiff from 'diff';
 
@@ -21,12 +22,14 @@ import 'codemirror/mode/yaml-frontmatter/yaml-frontmatter';
 import 'codemirror/mode/toml/toml';
 import '../../js-util/toml-frontmatter';
 
-import { ButtonState } from '../toolbar/toolbar-items';
-import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
-import { ModalService } from '../drax-modal/modal.service';
+import { ConfigService } from '../config.service';
 import { GitHubService } from '../githubservice/github.service';
+import { ModalService } from '../drax-modal/modal.service';
 import { DataRequestModalComponent } from '../drax-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './file-history-modal.component';
+
+import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
+import { ButtonState } from '../toolbar/toolbar-items';
 import { Annotation, AnnotationSort } from '../annotation/annotation';
 import { AnnotationComponent } from '../annotation/annotation.component';
 import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
@@ -67,7 +70,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   _file: GitHubFile = null;
-  @Input() set file(v: GitHubFile) {
+  set file(v: GitHubFile) {
     if (v !== this._file) {
       this.fileOutOfSync = false;
       window.clearInterval(this.checkInterval);
@@ -91,6 +94,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(
+    private route: ActivatedRoute,
+    private config: ConfigService,
     private modalService: ModalService,
     private gitHubService: GitHubService
   ) {
@@ -145,7 +150,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //  to values changing in bad times in the view
     //  This shouldn't work, but does, which makes me nervous...
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.loadFreshFile();
+    this.route.url.subscribe(url => {
+      this.loadFromUrl(url);
+    });
 
     this.instance.on('changes', () => {
       if (!this._file) {
@@ -187,6 +194,44 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       window.clearInterval(this.checkInterval);
       this.checkInterval = null;
     }
+  }
+
+  private async loadFromUrl(urlSegs: UrlSegment[]) {
+    if (urlSegs.length < 2) {
+      return; // TODO: error
+    }
+
+    const repo = new GitHubRepo();
+    repo.owner = urlSegs[0].path;
+    const splits = urlSegs[1].path.split(':');
+    repo.name = splits[0];
+
+    const singleRepoData = this.config.getConfig('singleRepo');
+    if (singleRepoData !== null) {
+      if (
+             repo.owner !== singleRepoData['owner']
+          || repo.name  !== singleRepoData['name']
+         ) {
+        // TODO: crap out or redirect?
+      }
+    }
+
+    const item = new GitHubItem();
+    item.repo = repo;
+    if (splits.length > 1) {
+      item.branch = splits[1];
+    }
+    if (urlSegs.length > 2) {
+      item.fileName = urlSegs.pop().path;
+      item.dirPath = urlSegs.slice(2).join('/');
+    }
+
+    // TODO: do this with only one remote call
+    const itemLoaded = await this.gitHubService.loadItemData(item);
+    if (!itemLoaded) {
+      return; // TODO: error
+    }
+    this.file = await this.gitHubService.getFile(item);
   }
 
   private processFileContents() {
@@ -332,8 +377,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadFreshFile() {
-    this.processFileContents();
-    this.processAnnotations();
+    if (this._file) {
+      this.processFileContents();
+      this.processAnnotations();
+    }
 
     // TODO: figure out if we can be more precise and do this
     //       to just a single element instead of the whole window
@@ -355,7 +402,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
-    if (!(this._file.isDirty || this.annotationsDirty)) {
+    if (!this._file || !(this._file.isDirty || this.annotationsDirty)) {
       return null;
     }
     if (execute) {
@@ -513,7 +560,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showHistory(execute: boolean): ButtonState {
-    if (this._file.item.lastGet === null) {
+    if (!this._file || this._file.item.lastGet === null) {
       return null;
     }
     if (execute) {

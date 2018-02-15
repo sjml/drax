@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
@@ -7,7 +6,6 @@ import { environment } from '../../environments/environment';
 import { GitHubFile,
          GitHubItem,
          GitHubRepo,
-         GitHubUser,
          GitHubNavNode
        } from '../githubservice/githubclasses';
 import { GitHubService } from '../githubservice/github.service';
@@ -44,12 +42,9 @@ export class FileBrowserComponent implements OnInit {
     private gitHubService: GitHubService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
   ) { }
 
   ngOnInit() {
-    this.gitHubService.loadCurrentUser();
-
     this.route.params.subscribe(_ => {
       this.loadFromLocation();
     });
@@ -69,12 +64,8 @@ export class FileBrowserComponent implements OnInit {
 
   // TODO: have this take params from the subscription
   loadFromLocation() {
-    const newPage = this.route.snapshot.paramMap.get('pageName');
-    if (newPage !== null) {
-      this.displayPage = newPage;
-      this.workingFile = null;
-    }
-
+    // TODO: if in single repo mode, don't change
+    // TODO: check owner/name against current repo and don't reload if unnecessary
     this.repo = new GitHubRepo();
     const singleRepo = this.config.getConfig('singleRepo');
     if (singleRepo === null) {
@@ -108,52 +99,15 @@ export class FileBrowserComponent implements OnInit {
     this.checkRepoAndFile();
   }
 
-  private checkRoot(dirPath: string, contentRoot: string): boolean {
-    if (contentRoot.length === 0) {
-      return true;
-    }
-    if (dirPath === null) {
-      return false;
-    }
-    if (dirPath.startsWith(contentRoot)) {
-      return true;
-    }
-    return false;
-  }
-
   async checkRepoAndFile() {
-    let repoGood = null;
-    let pathGood = false;
-
-    await this.loadRepo(this.repo).then(resp => repoGood = resp);
-    if (this.item.branch === null) {
-      this.item.branch = this.repo.defaultBranch;
-    }
-
-    // are we a file or directory? need to get info.
-    await this.gitHubService.getPathInfo(this.item).then(response => {
-      if (response === null) {
-        repoGood = false;
-      }
-      else if (response['object'] === null) {
-        pathGood = false;
-      }
-      else if (!this.checkRoot(this.item.fullPath, this.repo.config['contentRoot'])) {
-        pathGood = false;
-      }
-      else {
-        pathGood = true;
-        this.item.isDirectory = response['object']['__typename'] === 'Tree';
-        this.item.lastGet = response['object']['oid'];
-      }
-    });
+    await this.gitHubService.loadItemData(this.item);
 
     // (if it's null, the check hasn't completed yet)
-    if (repoGood === false) {
+    if (this.item.repo.lastFetchTime === null) {
       this.router.navigateByUrl('/');
       return;
     }
-    if (!pathGood) {
+    if (this.item.lastGet === null) {
       let redirect = this.repo.routerPath;
       if (this.repo.config['contentRoot'].length > 0) {
         redirect += `/${this.repo.config['contentRoot']}`;
@@ -181,35 +135,6 @@ export class FileBrowserComponent implements OnInit {
         this.workingFile = respFile;
       });
     }
-  }
-
-  loadRepo(repo: GitHubRepo): Promise<boolean> {
-    if (repo === null) {
-      return Promise.resolve(false);
-    }
-    return this.gitHubService.getSingleRepo(repo).then(response => {
-      if (response === null) {
-        return false;
-      }
-      repo.defaultBranch = response['defaultBranchRef']['name'];
-      repo.isPrivate = response['isPrivate'];
-      repo.description = response['description'];
-
-      // check for remote configuration
-      const item = new GitHubItem();
-      item.repo = repo;
-      item.branch = repo.defaultBranch;
-      item.dirPath = '.drax';
-      item.fileName = 'config.json';
-      return this.gitHubService.getFile(item).then(fileResponse => {
-        if (fileResponse !== null) {
-          const remoteConfig = JSON.parse(fileResponse.contents);
-          repo.config = Object.assign(repo.config, remoteConfig);
-          repo.config['hasConfig'] = true;
-        }
-        return true;
-      });
-    });
   }
 
   onScroll(event: Event) {
@@ -323,17 +248,7 @@ export class FileBrowserComponent implements OnInit {
                 // TODO: grace
               }
               else {
-                const repo = new GitHubRepo();
-                repo.owner = this.gitHubService.user.login;
-                repo.name = response['name'];
-                this.loadRepo(repo).then((success) => {
-                  if (!success) {
-                    // TODO: grace
-                  }
-                  else {
-                    this.router.navigateByUrl(repo.routerPath);
-                  }
-                });
+                this.router.navigateByUrl(response['repo'].routerPath);
               }
             });
         }
