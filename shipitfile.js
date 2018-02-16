@@ -55,7 +55,7 @@ module.exports = function(shipit) {
                       .replace('%%GIT_REV%%', rev);
     fs.writeFileSync(aboutFile, stamped);
     return shipit.local('pwd').then(function () {
-      // shipit.emit('stamped');
+      shipit.emit('stamped');
     });
   });
 
