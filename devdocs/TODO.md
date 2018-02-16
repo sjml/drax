@@ -22,7 +22,7 @@
 
 ## Polish
 * sidebar link is off-center on Chrome
-* spinners for saving and loading stuff in the explorer
+* see if the flash of unadjusted annotations can be avoided (calling calculate positions when hidden?)
 * ability to toggle off links?
 * Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
 * store docs so undo history is preserved across navigation
@@ -42,13 +42,13 @@
 * need to store repository info too... 😬
 
 ## Features
-1. UI 
+1. Testing
+    - yeah, this is overdue
+2. UI 
     - spinners
     - flash messages
     - binary file handling/ignoring
     - warn before refreshing from server
-2. Testing
-    - yeah, this is overdue
 3. Image uploading
 4. GitHub caching
     - at least check if we've gotten an item in the last second or so and share

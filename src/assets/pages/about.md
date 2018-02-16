@@ -2,7 +2,9 @@
 
 Drax is a Markdown editor for GitHub repositories, aimed at a writer/editor workflow. 
 
-If you're a writer who's wondering how to get started, check out the [user guide](/#/pages/user_guide). You can play around with [the editor](/#/playground) if you like. If you already have a GitHub account and want to see how it works on your own stuff, log in and find a repo with a Markdown document to edit.
+[See what it's like to write prose in Drax](/#/playground), complete with annotations and formatting. 
+
+If you're a writer who's wondering how to get started, check out the [user guide](/#/pages/user_guide). If you already have a GitHub account and want to see how it works on your own stuff, log in and find a repo with a Markdown document to edit.
 
 There are lots of web-based Markdown editors, but this one is designed with two chief goals: 
 1. Make it easy to edit files on GitHub for people who know next-to-nothing about it. 
@@ -13,7 +15,6 @@ There are lots of web-based Markdown editors, but this one is designed with two 
 Drax is still [being developed](https://github.com/sjml/drax). Or maybe not; it could have died off by the time you read this. Check the deployment date at the bottom of this page. The point is, there are features incoming. 
 
 Things to expect:
-* A playground where you can try out the editor and annotations without needing a GitHub account or repository.
 * Overall UI polish. 
     * Including a logo that's not as weird. Hopefully. Maybe. 
 * Better error handling.
