@@ -27,7 +27,7 @@ export class PagesComponent implements OnInit {
 
   private loadPage(pageName: string) {
     if (pageName) {
-      this.http.get(`./assets/pages/${pageName}.md`, {responseType: 'text'}).toPromise()
+      this.http.get(`./assets/pages/${pageName}.md?${Date.now()}`, {responseType: 'text'}).toPromise()
         .then((response) => {
           const md = MD('default', {
             html: true,
