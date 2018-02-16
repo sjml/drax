@@ -1,5 +1,7 @@
 <app-drax-modal></app-drax-modal>
 <div id="layout" [class.sidebarOpen]="isSidebarOpen">
-  <router-outlet></router-outlet>
+  <app-filebrowser></app-filebrowser>
+  <div id="main">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-

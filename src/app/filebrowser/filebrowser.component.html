@@ -22,7 +22,7 @@
 
     <div class="pure-menu">
       <ul class="gitHubNavList pure-menu-list">
-        <li *ngIf="user" class="pure-menu-item">
+        <li *ngIf="gitHubService.user" class="pure-menu-item">
           <div class="creationBar">
             <a *ngIf="!upwardsLink && !isInSingleRepoMode" class="fa-stack repo"
               (click)="createNewRepoButtonResponse()"
@@ -45,41 +45,16 @@
           </div>
         </li>
         <li *ngIf="upwardsLink" class="pure-menu-item upwardsLink">
-          <a class="pure-menu-link" routerLink="{{upwardsLink}}">
+          <div class="pure-menu-link" (click)="loadNode(upwardsLink)">
             <span class="fa fa-arrow-left icon"></span>
-            <div>{{upwardsLinkLabel}}</div>
-          </a>
+            <span>{{upwardsLinkLabel}}</span>
+          </div>
         </li>
         <li *ngFor="let node of currentNavList"
           class="gitHubNode pure-menu-item"
           >
-          <a routerLink="{{ node.routerPath }}" class="pure-menu-link" routerLinkActive="pure-menu-selected">
-            <div *ngIf="node.nodeType === 'REPO'" class="fa fa-database icon"></div>
-            <div *ngIf="node.nodeType === 'ITEM' && node.isDirectory" class="fa fa-folder icon"></div>
-            <div *ngIf="node.nodeType === 'ITEM' && !node.isDirectory" class="fa fa-file icon"></div>
-            <div class="nodeName">
-              <div *ngIf="node.nodeType === 'REPO'">
-                <div *ngIf="node.owner !== this.gitHubService.user.login" class="prefixName" >
-                  {{node.owner}}/</div>{{ node.name }}
-              </div>
-              <div *ngIf="node.nodeType === 'ITEM'">
-                {{ node.fileName }}
-              </div>
-            </div>
-            <div *ngIf="node.nodeType === 'REPO' || (node.nodeType === 'ITEM' && node.isDirectory)" class="fa fa-chevron-right chevron"></div>
-          </a>
+          <app-filebrowserentry [parent]="this" [navItem]="node"></app-filebrowserentry>
         </li>
       </ul>
     </div>
 </div>
-
-<!--
-<div id="main">
-  <div *ngIf="workingFile !== null">
-    <app-editor [file]="workingFile"></app-editor>
-  </div>
-  <div *ngIf="displayPage !== null && workingFile === null">
-    <app-pages [pageName]="displayPage"></app-pages>
-  </div>
-</div>
- -->

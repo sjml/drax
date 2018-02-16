@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../../environments/environment';
 import { GitHubFile,
          GitHubItem,
          GitHubRepo,
-         GitHubNavNode
+         GitHubNavNode,
+         GitHubRepoList
        } from '../githubservice/githubclasses';
 import { GitHubService } from '../githubservice/github.service';
 import { ConfigService } from '../config.service';
@@ -28,9 +30,8 @@ export class FileBrowserComponent implements OnInit {
   item: GitHubItem = null;
 
   workingFile: GitHubFile = null;
-  displayPage: string = null;
 
-  upwardsLink: string = null;
+  upwardsLink: GitHubNavNode = null;
   upwardsLinkLabel: string = null;
   currentNavList: GitHubNavNode[] = [];
 
@@ -42,12 +43,13 @@ export class FileBrowserComponent implements OnInit {
     private gitHubService: GitHubService,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(_ => {
-      this.loadFromLocation();
-    });
+    this.isInSingleRepoMode = this.config.getConfig('singleRepo') !== null;
+    this.loadFromUrl(this.location.path().split('/'));
+    // this.loadNode(null);
   }
 
   toggleOpen() {
@@ -62,79 +64,81 @@ export class FileBrowserComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
-  // TODO: have this take params from the subscription
-  loadFromLocation() {
-    // TODO: if in single repo mode, don't change
-    // TODO: check owner/name against current repo and don't reload if unnecessary
-    this.repo = new GitHubRepo();
-    const singleRepo = this.config.getConfig('singleRepo');
-    if (singleRepo === null) {
-      this.repo.owner = this.route.snapshot.paramMap.get('owner');
-      this.repo.name = this.route.snapshot.paramMap.get('name');
+  loadNode(node: GitHubNavNode, initial: boolean = false) {
+    if (node instanceof GitHubRepo) {
+      const item = new GitHubItem();
+      item.repo = node;
+      item.dirPath = null;
+      item.fileName = '';
+      item.isDirectory = true;
+      item.branch = item.repo.defaultBranch;
+      this.loadNode(item);
+    }
+    else if (node instanceof GitHubItem) {
+      this.repo = node.repo;
+      this.item = node;
+      if (node.isDirectory) {
+        this.loadDirectoryListing(node);
+      }
+      else {
+        if (!initial) {
+          this.router.navigate(['edit'].concat(node.getRouterPath()));
+        }
+        else {
+          this.loadDirectoryListing(node.makeParentItem());
+        }
+      }
     }
     else {
-      this.isInSingleRepoMode = true;
-      this.repo.owner = singleRepo.owner;
-      this.repo.name = singleRepo.name;
+      this.repo = null;
+      this.item = null;
+      this.loadRepositoryList();
     }
-
-    if (!this.gitHubService.bearerToken || this.repo.owner === null || this.repo.name === null) {
-      if (this.displayPage === null) {
-        this.router.navigateByUrl('/');
-      }
-      if (this.gitHubService.bearerToken) {
-        this.loadRepositoryList().then(cont => {
-          this.repositoryListCursor = cont;
-        });
-      }
-      return;
-    }
-
-    this.item = new GitHubItem();
-    this.item.branch = this.route.snapshot.paramMap.get('branch');
-    this.item.dirPath = this.route.snapshot.paramMap.get('dirPath');
-    this.item.fileName = this.route.snapshot.paramMap.get('itemName') || '';
-    this.item.repo = this.repo;
-
-    this.checkRepoAndFile();
   }
 
-  async checkRepoAndFile() {
-    await this.gitHubService.loadItemData(this.item);
-
-    // (if it's null, the check hasn't completed yet)
-    if (this.item.repo.lastFetchTime === null) {
-      this.router.navigateByUrl('/');
-      return;
-    }
-    if (this.item.lastGet === null) {
-      let redirect = this.repo.routerPath;
-      if (this.repo.config['contentRoot'].length > 0) {
-        redirect += `/${this.repo.config['contentRoot']}`;
-      }
-      this.router.navigateByUrl(redirect);
+  async loadFromUrl(url: string[]) {
+    // TODO: if in single repo mode, don't change
+    // TODO: check owner/name against current repo and don't reload if unnecessary
+    url = url.filter(s => s.length > 0);
+    const firstSeg = url.shift();
+    if (firstSeg !== 'edit') {
+      this.repo = null;
       this.item = null;
+      this.loadNode(null);
+    }
+    const segs = url.map(s => new UrlSegment(s, {}));
+    const data = this.gitHubService.getDataFromUrl(segs);
+    if (this.isInSingleRepoMode) {
+      const singleRepo = this.config.getConfig('singleRepo');
+      if (data.repo === null) {
+        data.repo = new GitHubRepo();
+        data.repo.owner = singleRepo.owner;
+        data.repo.name = singleRepo.name;
+      }
+      else {
+        if (data.repo.owner !== singleRepo.owner || data.repo.name !== singleRepo.name) {
+          this.repo = null;
+          this.item = null;
+          this.loadNode(null);
+          return;
+        }
+      }
+    }
+    if (data.repo === null) {
+      this.repo = null;
+      this.item = null;
+      this.loadNode(null);
       return;
     }
 
-    if (this.item.isDirectory) {
-      this.loadDirectoryListing(this.item);
+    if (data.item === null) {
+      await this.gitHubService.loadRepoData(data.repo);
+      this.loadNode(data.repo);
+      return;
     }
-    else {
-      const parent = new GitHubItem();
-      parent.repo = this.item.repo;
-      parent.branch = this.item.branch;
-      parent.isDirectory = true;
 
-      const pathSegs = this.item.dirPath.split('/');
-      parent.fileName = pathSegs.pop();
-      parent.dirPath = pathSegs.join('/');
-
-      this.loadDirectoryListing(parent);
-      this.gitHubService.getFile(this.item).then(respFile => {
-        this.workingFile = respFile;
-      });
-    }
+    await this.gitHubService.loadItemData(data.item);
+    this.loadNode(data.item, true);
   }
 
   onScroll(event: Event) {
@@ -147,86 +151,70 @@ export class FileBrowserComponent implements OnInit {
       const max = event.srcElement.scrollHeight;
 
       if (max - offset < 20) {
-        this.loadRepositoryList(this.repositoryListCursor).then(cont => {
-          this.repositoryListCursor = cont;
-        });
+        this.loadRepositoryList(this.repositoryListCursor);
       }
     }
   }
 
-  loadRepositoryList(cursor: string = null): Promise<string> {
+  loadRepositoryList(cursor: string = null) {
     this.repo = null;
     this.item = null;
-    this.upwardsLinkLabel = null;
     this.upwardsLink = null;
+    this.upwardsLinkLabel = null;
 
     let index = 0;
     if (cursor !== null) {
       index = this.currentNavList.length;
     }
-    return this.gitHubService.getRepoList(cursor).then(response => {
+    this.gitHubService.getRepoList(cursor).then(response => {
       for (const newRepo of response.repos) {
         this.currentNavList[index++] = newRepo;
       }
       this.currentNavList.length = index;
 
-      return response.continuation;
+      this.repositoryListCursor = response.continuation;
     });
   }
 
-  loadDirectoryListing(item: GitHubItem) {
+  async loadDirectoryListing(item: GitHubItem) {
     if (!item.isDirectory) {
       console.error('Cannot load listing of non-directory.');
       return;
     }
 
-    this.repositoryListCursor = null;
+    await this.gitHubService.loadItemData(this.item);
 
-    // TODO: UGH this is convoluted spaghetti
     if (item.dirPath !== null) {
-      if (item.fullPath === item.repo.config['contentRoot']) {
-        this.upwardsLink = '/';
-        this.upwardsLinkLabel = 'Repository List';
+      if (item.getFullPath() === item.repo.config['contentRoot']) {
+        this.upwardsLink = new GitHubRepoList();
+      }
+      else if (item.dirPath.length === 0) {
+        this.upwardsLink = item.repo;
       }
       else {
-        const pathSegs = item.dirPath.split('/');
-        this.upwardsLinkLabel = pathSegs.pop();
-        if (this.upwardsLinkLabel.length === 0) {
-          if (item.fileName.length === 0) {
-            this.upwardsLinkLabel = 'Repository List';
-          }
-          else {
-            this.upwardsLinkLabel = `${item.repo.owner}/${item.repo.name}:${item.branch}`;
-          }
-        }
-        if (this.upwardsLinkLabel === 'Repository List') {
-          this.upwardsLink = '/';
-        }
-        else {
-          this.upwardsLink = item.routerPathDirOnly;
-        }
+        this.upwardsLink = item.makeParentItem();
       }
     }
     else {
-      this.upwardsLink = '/';
+      this.upwardsLink = new GitHubRepoList();
+    }
+
+    if (this.upwardsLink instanceof GitHubRepo) {
+      this.upwardsLinkLabel = `${this.upwardsLink.owner}/${this.upwardsLink.name}:${item.branch}`;
+    }
+    else if (this.upwardsLink instanceof GitHubItem) {
+      this.upwardsLinkLabel = this.upwardsLink.fileName;
+    }
+    else if (this.upwardsLink instanceof GitHubRepoList) {
       this.upwardsLinkLabel = 'Repository List';
     }
 
-    if (
-        this.isInSingleRepoMode
-        && this.upwardsLink === '/'
-        && this.upwardsLinkLabel === 'Repository List'
-      ) {
-      this.upwardsLink = null;
-      this.upwardsLinkLabel = null;
+    this.repositoryListCursor = null;
+    const itemList = await this.gitHubService.getFileList(item);
+    for (let i = 0; i < itemList.length; i++) {
+      this.currentNavList[i] = itemList[i];
     }
-
-    this.gitHubService.getFileList(item).then(itemList => {
-      for (let i = 0; i < itemList.length; i++) {
-        this.currentNavList[i] = itemList[i];
-      }
-      this.currentNavList.length = itemList.length;
-    });
+    this.currentNavList.length = itemList.length;
   }
 
   createNewRepoButtonResponse() {
@@ -288,7 +276,7 @@ export class FileBrowserComponent implements OnInit {
           i.isBinary = false;
           i.branch = this.item.branch;
           if (this.item.isDirectory) {
-            i.dirPath = this.item.fullPath;
+            i.dirPath = this.item.getFullPath();
           }
           else {
             i.dirPath = this.item.dirPath;
@@ -310,8 +298,8 @@ export class FileBrowserComponent implements OnInit {
                     console.error(response['error']);
                   }
                   else {
-                    const path = isDirectory ? f.item.routerPathDirOnly : f.item.routerPath;
-                    this.router.navigateByUrl(path);
+                    const path = f.item.getRouterPath();
+                    this.router.navigate(['edit'].concat(path));
                   }
                 });
         }

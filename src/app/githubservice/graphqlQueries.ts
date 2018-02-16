@@ -114,7 +114,7 @@ export module Queries {
     const qString = fileListTemplate
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
-                      .replace('%%EXPRESSION%%', `${item.branch}:${item.fullPath}`);
+                      .replace('%%EXPRESSION%%', `${item.branch}:${item.getFullPath()}`);
 
     return {query: qString};
   }
@@ -135,7 +135,7 @@ export module Queries {
     const qString = fileContentsTemplate
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
-                      .replace('%%EXPRESSION%%', `expression: "${item.branch}:${item.fullPath}"`)
+                      .replace('%%EXPRESSION%%', `expression: "${item.branch}:${item.getFullPath()}"`)
                       .replace('%%TEXT%%', 'text');
     return {query: qString};
   }
@@ -177,7 +177,7 @@ export module Queries {
     const qString = pathInfoTemplate
                       .replace('%%OWNER%%', item.repo.owner)
                       .replace('%%NAME%%', item.repo.name)
-                      .replace('%%EXPRESSION%%', `${branch}:${item.fullPath}`);
+                      .replace('%%EXPRESSION%%', `${branch}:${item.getFullPath()}`);
     return {query: qString};
   }
 
@@ -231,7 +231,7 @@ export module Queries {
                       .replace('%%NAME%%', item.repo.name)
                       .replace('%%BRANCH%%', branch)
                       .replace('%%CONTINUATION%%', contQuery)
-                      .replace('%%PATH%%', item.fullPath);
+                      .replace('%%PATH%%', item.getFullPath());
     return {query: qString};
   }
 }

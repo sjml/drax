@@ -4,3 +4,9 @@
 #layout {
   @include transition($sidebarTransition);
 }
+
+@media (min-width: $sidebarWidthThreshold) {
+  #main {
+    margin-left: $sidebarWidth;
+  }
+}

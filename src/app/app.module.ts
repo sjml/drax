@@ -20,11 +20,13 @@ import { DataRequestModalComponent } from './drax-modal/data-request-modal.compo
 import { FileHistoryModalComponent } from './editor/file-history-modal.component';
 import { AnnotationContainerComponent } from './annotation-container/annotation-container.component';
 import { AnnotationComponent } from './annotation/annotation.component';
+import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FileBrowserComponent,
+    FileBrowserEntryComponent,
     EditorComponent,
     ToolbarComponent,
     PagesComponent,

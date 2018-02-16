@@ -53,6 +53,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
   set annotations(annotations: Annotation[]) {
     this._annotations = annotations;
     this._annotations.sort(AnnotationSort);
+    this.updateSize();
   }
 
   @ViewChild('svgAnnotationLines')

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { UrlSegment } from '@angular/router';
+
 import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../../environments/environment';
@@ -159,7 +161,7 @@ export class GitHubService {
           item.lastGet = null;
           return false;
         }
-        if (!this.checkRoot(item.fullPath, item.repo.config['contentRoot'])) {
+        if (!this.checkRoot(item.getFullPath(), item.repo.config['contentRoot'])) {
           item.lastGet = null;
           return false;
         }
@@ -169,6 +171,39 @@ export class GitHubService {
         return true;
       });
     });
+  }
+
+  getDataFromUrl(urlSegs: UrlSegment[]): {repo: GitHubRepo, item: GitHubItem } {
+    if (urlSegs.length < 2) {
+      return { repo: null, item: null }; // TODO: error
+    }
+
+    const repo = new GitHubRepo();
+    repo.owner = urlSegs[0].path;
+    const splits = urlSegs[1].path.split(':');
+    repo.name = splits[0];
+
+    const singleRepoData = this.config.getConfig('singleRepo');
+    if (singleRepoData !== null) {
+      if (
+             repo.owner !== singleRepoData['owner']
+          || repo.name  !== singleRepoData['name']
+         ) {
+        return { repo: null, item: null };
+      }
+    }
+
+    let item: GitHubItem = null;
+    if (urlSegs.length > 2) {
+      item = new GitHubItem();
+      item.repo = repo;
+      if (splits.length > 1) {
+        item.branch = splits[1];
+      }
+      item.fileName = urlSegs.pop().path;
+      item.dirPath = urlSegs.slice(2).join('/');
+    }
+    return {repo: repo, item: item};
   }
 
   /***** Data Access *****/
@@ -234,18 +269,18 @@ export class GitHubService {
     });
   }
 
-  getFileList(item: GitHubItem): Promise<GitHubItem[]> {
-    if (!item.isDirectory) {
+  getFileList(dir: GitHubItem): Promise<GitHubItem[]> {
+    if (!dir.isDirectory) {
       console.error('Cannot load listing of non-directory.');
       return null;
     }
 
-    return this.graphQlQuery(Queries.getFileList(item), 'fileList').toPromise().then(response => {
+    return this.graphQlQuery(Queries.getFileList(dir), 'fileList').toPromise().then(response => {
       const items: GitHubItem[] = [];
       for (const entry of response['data']['repository']['object']['entries']) {
         const ghItem = new GitHubItem();
-        ghItem.repo = item.repo;
-        ghItem.branch = item.branch;
+        ghItem.repo = dir.repo;
+        ghItem.branch = dir.branch;
         ghItem.fileName = entry['name'];
         if (entry['type'] === 'tree') {
           ghItem.isDirectory = true;
@@ -254,9 +289,9 @@ export class GitHubService {
           ghItem.isDirectory = false;
           ghItem.isBinary = entry['object']['isBinary'];
         }
-        ghItem.dirPath = item.fullPath;
+        ghItem.dirPath = dir.getFullPath();
 
-        if (!item.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
+        if (!dir.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
           items.push(ghItem);
         }
       }
@@ -281,7 +316,7 @@ export class GitHubService {
   // this stuff annoyingly has to be done with the old API. :'(
   getFileContentsFromCommit(item: GitHubItem, commit: string): Promise<string> {
     // TODO: grace
-    const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.fullPath}?ref=${commit}`;
+    const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.getFullPath()}?ref=${commit}`;
     return this.http.get(
       url,
       {
@@ -332,7 +367,7 @@ export class GitHubService {
 
       return this.http.put(
         'https://api.github.com/repos/' +
-        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.fullPath}`,
+        `${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.getFullPath()}`,
         args,
         {
           headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),

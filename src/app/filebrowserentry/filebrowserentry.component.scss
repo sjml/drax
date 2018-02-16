@@ -1,0 +1,35 @@
+.fileBrowserNode {
+  color: #999;
+  border: none;
+  padding: 0.6em 0 0.6em 0.6em;
+
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  .prefixName {
+    color: rgb(95, 95, 95);
+  }
+
+  .icon {
+    margin-right: 5px;
+  }
+
+  .nodeName {
+    flex-grow: 1;
+  }
+
+  .chevron {
+    margin-right: 5px;
+  }
+}
+
+.fileBrowserNode:hover,
+.fileBrowserNode:focus {
+  background: #333;
+}
+
+.fileBrowserNode.pure-menu-selected {
+  background: #1f8dd6;
+  color: #fff;
+}

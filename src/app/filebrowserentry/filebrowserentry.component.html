@@ -1,0 +1,11 @@
+<div
+  class="pure-menu-link fileBrowserNode"
+  routerLinkActive="pure-menu-selected"
+  (click)="clicked()"
+  >
+  <div class="fa fa-{{iconName}} icon"></div>
+  <div class="nodeName">
+    <span *ngIf="prefixLabel" class="prefixName" >{{prefixLabel}}/</span>{{label}}
+  </div>
+  <div *ngIf="isContainer" class="fa fa-chevron-right chevron"></div>
+</div>

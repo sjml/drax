@@ -20,6 +20,11 @@ export function repoBranchMatcher(urlSegs: UrlSegment[]): UrlMatchResult {
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '/pages/about'
+  },
+  {
     path: 'pages/:pageName',
     component: PagesComponent
   },

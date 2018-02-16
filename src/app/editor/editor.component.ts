@@ -9,7 +9,7 @@ import { Component,
          EventEmitter,
          HostListener
        } from '@angular/core';
-import { ActivatedRoute, UrlSegment } from '@angular/router';
+import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 
 import * as JSDiff from 'diff';
 
@@ -95,6 +95,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private config: ConfigService,
     private modalService: ModalService,
     private gitHubService: GitHubService
@@ -197,41 +198,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async loadFromUrl(urlSegs: UrlSegment[]) {
-    if (urlSegs.length < 2) {
-      return; // TODO: error
-    }
-
-    const repo = new GitHubRepo();
-    repo.owner = urlSegs[0].path;
-    const splits = urlSegs[1].path.split(':');
-    repo.name = splits[0];
-
-    const singleRepoData = this.config.getConfig('singleRepo');
-    if (singleRepoData !== null) {
-      if (
-             repo.owner !== singleRepoData['owner']
-          || repo.name  !== singleRepoData['name']
-         ) {
-        // TODO: crap out or redirect?
-      }
-    }
-
-    const item = new GitHubItem();
-    item.repo = repo;
-    if (splits.length > 1) {
-      item.branch = splits[1];
-    }
-    if (urlSegs.length > 2) {
-      item.fileName = urlSegs.pop().path;
-      item.dirPath = urlSegs.slice(2).join('/');
-    }
+    const data = this.gitHubService.getDataFromUrl(urlSegs);
 
     // TODO: do this with only one remote call
-    const itemLoaded = await this.gitHubService.loadItemData(item);
+    const itemLoaded = await this.gitHubService.loadItemData(data.item);
     if (!itemLoaded) {
-      return; // TODO: error
+      this.router.navigateByUrl('/');
+      return;
     }
-    this.file = await this.gitHubService.getFile(item);
+    this.file = await this.gitHubService.getFile(data.item);
   }
 
   private processFileContents() {
