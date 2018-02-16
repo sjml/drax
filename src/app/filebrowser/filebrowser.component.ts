@@ -91,6 +91,8 @@ export class FileBrowserComponent implements OnInit {
       }
       else {
         if (!initial) {
+          // TODO: this only loads the directory listing to get the
+          //   selected color showing up. Gotta be a better way.
           this.loadDirectoryListing(node.makeParentItem());
           const segs = ['edit'].concat(node.getRouterPath());
           this.router.navigate(segs);
