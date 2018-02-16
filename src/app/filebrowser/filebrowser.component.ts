@@ -38,7 +38,7 @@ export class FileBrowserComponent implements OnInit {
   constructor(
     private config: ConfigService,
     private modalService: ModalService,
-    private gitHubService: GitHubService,
+    public gitHubService: GitHubService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location
