@@ -91,7 +91,8 @@ export class FileBrowserComponent implements OnInit {
       }
       else {
         if (!initial) {
-          this.router.navigate(['edit'].concat(node.getRouterPath()));
+          const segs = ['edit'].concat(node.getRouterPath());
+          this.router.navigate(segs);
         }
         else {
           this.loadDirectoryListing(node.makeParentItem());

@@ -59,12 +59,11 @@ export class GitHubItem extends GitHubNavNode {
   }
 
   public getRouterPath(dirOnly: boolean = false): string[] {
-    const ret = [this.repo.owner, `${this.repo.name}:${this.branch}`];
-    if (dirOnly) {
-      ret.push(this.dirPath);
-    }
-    else {
-      ret.push(this.getFullPath());
+    let ret = [this.repo.owner, `${this.repo.name}:${this.branch}`];
+    const dir = this.dirPath.split('/').filter(s => s.length > 0);
+    ret = ret.concat(dir);
+    if (!dirOnly) {
+      ret.push(this.fileName);
     }
     return ret;
   }

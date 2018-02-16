@@ -88,6 +88,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   get file(): GitHubFile { return this._file; }
   fileOutOfSync: boolean;
+  outwardFileData: { prefix: string, name: string, link: string } = null;
 
   @HostListener('window:resize') onResize() {
     this.updateAnnotations();
@@ -353,8 +354,25 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadFreshFile() {
     if (this._file) {
+      const item = this._file.item;
+      let link = `https://github.com/${item.repo.owner}/${item.repo.name}/blob/${item.branch}/`;
+      if (item.dirPath === null || item.dirPath.length === 0) {
+        link += item.fileName;
+      }
+      else {
+        link += `${item.dirPath}/${item.fileName}`;
+      }
+      this.outwardFileData = {
+        prefix: `${item.repo.owner}/${item.repo.name}/`,
+        name: item.fileName,
+        link: link
+      };
+
       this.processFileContents();
       this.processAnnotations();
+    }
+    else {
+      this.outwardFileData = null;
     }
 
     // TODO: figure out if we can be more precise and do this
