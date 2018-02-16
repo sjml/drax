@@ -1,6 +1,6 @@
 <div
   class="pure-menu-link fileBrowserNode"
-  routerLinkActive="pure-menu-selected"
+  [class.pure-menu-selected]="selected"
   (click)="clicked()"
   >
   <div class="fa fa-{{iconName}} icon"></div>

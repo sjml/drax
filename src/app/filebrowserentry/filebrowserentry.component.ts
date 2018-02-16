@@ -17,6 +17,7 @@ export class FileBrowserEntryComponent implements OnInit {
   isContainer = true;
   label: string = null;
   prefixLabel: string = null;
+  selected = false;
 
   constructor(
     private gitHubService: GitHubService
@@ -39,6 +40,9 @@ export class FileBrowserEntryComponent implements OnInit {
         this.label = this.navItem.fileName;
         this.iconName = 'file';
         this.isContainer = false;
+        if (this.navItem.pathMatch(this.parent.item)) {
+          this.selected = true;
+        }
       }
     }
   }

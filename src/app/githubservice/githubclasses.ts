@@ -49,6 +49,31 @@ export class GitHubItem extends GitHubNavNode {
   public isBinary: boolean;
   public lastGet: string;
 
+  public pathMatch(other: GitHubItem): boolean {
+    if (this.repo !== other.repo) {
+      if (this.repo === null || other.repo === null) {
+        return false;
+      }
+      if (this.repo.owner !== other.repo.owner) {
+        return false;
+      }
+      if (this.repo.name !== other.repo.name) {
+        return false;
+      }
+    }
+    if (this.branch !== other.branch) {
+      return false;
+    }
+    if (this.dirPath !== other.dirPath) {
+      return false;
+    }
+    if (this.fileName !== other.fileName) {
+      return false;
+    }
+
+    return true;
+  }
+
   public getFullPath(): string {
     if (this.dirPath === undefined || this.dirPath === null || this.dirPath.length === 0) {
       return this.fileName;
