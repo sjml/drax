@@ -112,7 +112,7 @@ export class GitHubService {
 
     // don't do a total refetch if we've gotten data in last 5 minutes
     const now = Date.now();
-    if (repo.lastFetchTime !== null && repo.lastFetchTime - now > 60 * 5 * 1000) {
+    if (repo.lastFetchTime !== null && repo.lastFetchTime - now < 60 * 5 * 1000) {
       return Promise.resolve(true);
     }
 
