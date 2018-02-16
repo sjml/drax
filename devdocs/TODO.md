@@ -41,6 +41,7 @@
 * need to store repository info too... 😬
 
 ## Features
+- test new file, directory, and repo creation
 0. TODO addressing
     - review commented parts of .html files
     - inventory, either move stuff to the above lists or deal with it

@@ -471,56 +471,51 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   pushAnnotationsFile(commitMessage: string): Promise<boolean> {
-    if (!this.annotationsDirty) {
-      return Promise.resolve(true);
-    }
-    else {
-      const annFileObj = {};
-      annFileObj['parentOid'] = this._file.item.lastGet;
-      annFileObj['annotations'] = [];
-      for (const ann of this.annotations) {
-        if (ann.removed) {
-          continue;
-        }
-        const annObj = {};
-        annObj['from'] = { line: ann.from.line, ch: ann.from.ch };
-        annObj['to'] = { line: ann.to.line, ch: ann.to.ch };
-        annObj['author'] = ann.author;
-        annObj['timestamp'] = ann.timestamp;
-        annObj['text'] = ann.text;
-        annFileObj['annotations'].push(annObj);
+    const annFileObj = {};
+    annFileObj['parentOid'] = this._file.item.lastGet;
+    annFileObj['annotations'] = [];
+    for (const ann of this.annotations) {
+      if (ann.removed) {
+        continue;
       }
-      const outputString = JSON.stringify(annFileObj, null, 2);
+      const annObj = {};
+      annObj['from'] = { line: ann.from.line, ch: ann.from.ch };
+      annObj['to'] = { line: ann.to.line, ch: ann.to.ch };
+      annObj['author'] = ann.author;
+      annObj['timestamp'] = ann.timestamp;
+      annObj['text'] = ann.text;
+      annFileObj['annotations'].push(annObj);
+    }
+    const outputString = JSON.stringify(annFileObj, null, 2);
 
-      const item = new GitHubItem();
-      item.repo = this._file.item.repo;
-      item.branch = this._file.item.branch;
-      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
-      item.fileName = `${this._file.item.fileName}.json`;
+    const item = new GitHubItem();
+    item.repo = this._file.item.repo;
+    item.branch = this._file.item.branch;
+    item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+    item.fileName = `${this._file.item.fileName}.json`;
 
-      return this.gitHubService.getFile(item).then(fileResponse => {
-        let fPush: GitHubFile = null;
-        if (fileResponse !== null) {
-          fPush = fileResponse;
-          fPush.contents = outputString;
+    return this.gitHubService.getFile(item).then(fileResponse => {
+      let fPush: GitHubFile = null;
+      if (fileResponse !== null) {
+        fPush = fileResponse;
+        fPush.contents = outputString;
+      }
+      else {
+        fPush = new GitHubFile(outputString);
+        fPush.item = item;
+      }
+      return this.gitHubService.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
+        if (val['success']) {
+          this.originalRawAnnotations = annFileObj['annotations'];
+          this.annotationsDirty = false;
+          return Promise.resolve(true);
         }
         else {
-          fPush = new GitHubFile(outputString);
-          fPush.item = item;
+          console.error(val['message']);
+          return Promise.reject(val['message']);
         }
-        return this.gitHubService.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
-          if (val['success']) {
-            this.originalRawAnnotations = annFileObj['annotations'];
-            this.annotationsDirty = false;
-            return Promise.resolve(true);
-          }
-          else {
-            console.error(val['message']);
-            return Promise.reject(val['message']);
-          }
-        });
       });
-    }
+    });
   }
 
   // runs periodically
