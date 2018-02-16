@@ -9,7 +9,7 @@
         <div class="fa fa-circle-o-notch icon fa-spin"></div>
         <div class="loginPrompt">Signing in...</div>
       </div>
-      <div *ngIf="!gitHubService.user && gitHubService.bearerToken === null" (click)="gitHubService.attemptAuthorization()" class="gitHubConnectPrompt">
+      <div *ngIf="!gitHubService.user && gitHubService.bearerToken === null" (click)="loginPrompt()" class="gitHubConnectPrompt">
         <div class="fa fa-github icon"></div>
         <div class="loginPrompt">Click to sign in with GitHub</div>
       </div>

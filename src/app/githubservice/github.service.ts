@@ -23,16 +23,12 @@ export class GitHubService {
   constructor(
     private http: HttpClient,
     private config: ConfigService
-  ) {
-    this.init();
-  }
+  ) {}
 
-  init() {
-    console.log('loading current user');
-    this.loadCurrentUser();
-  }
-
-  loadCurrentUser(): Promise<GitHubUser> {
+  getCurrentUser(): Promise<GitHubUser> {
+    if (this.user) {
+      return Promise.resolve(this.user);
+    }
     if (this.bearerToken === null) {
       this.bearerToken = localStorage.getItem('gitHubBearerToken');
       if (this.bearerToken === null) {
@@ -41,11 +37,12 @@ export class GitHubService {
     }
     return this.getUserData()
                   .then(user => {
-                    this.user = new GitHubUser();
-                    this.user.fullName = user['name'];
-                    this.user.login = user['login'];
-                    this.user.avatarUrl = user['avatarUrl'];
+                    const newUser = new GitHubUser();
+                    newUser.fullName = user['name'];
+                    newUser.login = user['login'];
+                    newUser.avatarUrl = user['avatarUrl'];
 
+                    this.user = newUser;
                     return this.user;
                   })
                   .catch(err => {
@@ -55,7 +52,13 @@ export class GitHubService {
                   });
   }
 
-  attemptAuthorization() {
+  logout() {
+    localStorage.removeItem('gitHubBearerToken');
+    this.bearerToken = null;
+    this.user = null;
+  }
+
+  attemptAuthorization(callback: (user: GitHubUser) => void = null) {
     const popUpWidth  = 400;
     const popUpHeight = 500;
 
@@ -82,8 +85,16 @@ export class GitHubService {
       if (event.data.status === 'OK') {
         this.bearerToken = event.data.code;
         localStorage.setItem('gitHubBearerToken', event.data.code);
-        this.loadCurrentUser();
-        // TODO: this.loadFromLocation();
+        this.getCurrentUser().then((user) => {
+          if (callback !== null) {
+            callback(user);
+          }
+        });
+      }
+      else {
+        if (callback !== null) {
+          callback(null);
+        }
       }
     }, false);
 

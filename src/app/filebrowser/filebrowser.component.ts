@@ -29,8 +29,6 @@ export class FileBrowserComponent implements OnInit {
   repo: GitHubRepo = null;
   item: GitHubItem = null;
 
-  workingFile: GitHubFile = null;
-
   upwardsLink: GitHubNavNode = null;
   upwardsLinkLabel: string = null;
   currentNavList: GitHubNavNode[] = [];
@@ -48,19 +46,30 @@ export class FileBrowserComponent implements OnInit {
 
   ngOnInit() {
     this.isInSingleRepoMode = this.config.getConfig('singleRepo') !== null;
-    this.loadFromUrl(this.location.path().split('/'));
-    // this.loadNode(null);
+    this.gitHubService.getCurrentUser().then(user => {
+      if (user !== null) {
+        this.loadFromUrl(this.location.path().split('/'));
+      }
+    });
   }
 
   toggleOpen() {
     this.isOpen = !this.isOpen;
   }
 
+  loginPrompt() {
+    this.gitHubService.attemptAuthorization((user) => {
+      if (user !== null) {
+        this.loadNode(null);
+      }
+    });
+  }
+
   logout() {
-    localStorage.removeItem('gitHubBearerToken');
-    this.workingFile = null;
+    this.gitHubService.logout();
     this.repo = null;
     this.currentNavList = [];
+    this.upwardsLink = null;
     this.router.navigateByUrl('/');
   }
 

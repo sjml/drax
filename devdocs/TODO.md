@@ -41,10 +41,6 @@
 * need to store repository info too... 😬
 
 ## Features
-0. Refactor 
-    - logging in doesn't load repo list
-    - move from chain of components to proper routing
-    - avoid weird if-elsing in filebrowser template
 0. TODO addressing
     - review commented parts of .html files
     - inventory, either move stuff to the above lists or deal with it
