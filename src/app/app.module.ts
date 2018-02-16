@@ -22,6 +22,7 @@ import { FileHistoryModalComponent } from './editor/file-history-modal.component
 import { AnnotationContainerComponent } from './annotation-container/annotation-container.component';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';
+import { PlaygroundComponent } from './playground/playground.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.c
     DataRequestModalComponent,
     FileHistoryModalComponent,
     AnnotationContainerComponent,
-    AnnotationComponent
+    AnnotationComponent,
+    PlaygroundComponent
   ],
   imports: [
     BrowserModule,

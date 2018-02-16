@@ -2,7 +2,7 @@
 
 Drax is a Markdown editor for GitHub repositories, aimed at a writer/editor workflow. 
 
-If you're a writer who's wondering how to get started, check out the [user guide](/#/pages/user_guide). If you already have a GitHub account and want to see how it works, log in and find a repo with a Markdown document to edit.
+If you're a writer who's wondering how to get started, check out the [user guide](/#/pages/user_guide). You can play around with [the editor](/#/playground) if you like. If you already have a GitHub account and want to see how it works on your own stuff, log in and find a repo with a Markdown document to edit.
 
 There are lots of web-based Markdown editors, but this one is designed with two chief goals: 
 1. Make it easy to edit files on GitHub for people who know next-to-nothing about it. 

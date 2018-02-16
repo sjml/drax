@@ -5,6 +5,7 @@ import { MobileGuard } from './mobile.guard';
 import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { PagesComponent } from './pages/pages.component';
 import { EditorComponent } from './editor/editor.component';
+import { PlaygroundComponent } from './playground/playground.component';
 
 
 export const routes: Routes = [
@@ -16,6 +17,11 @@ export const routes: Routes = [
   {
     path: 'pages/:pageName',
     component: PagesComponent
+  },
+  {
+    path: 'playground',
+    canActivate: [MobileGuard],
+    component: PlaygroundComponent
   },
   {
     path: 'edit',

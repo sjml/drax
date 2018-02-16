@@ -64,10 +64,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   annotationsDirty = false;
 
   markdownConfig = {
-    name: 'toml-frontmatter',
+    name: 'markdown',
     base: 'markdown',
     strikethrough: true
   };
+
+  @Input()
+  isPlayground = false;
 
   _file: GitHubFile = null;
   set file(v: GitHubFile) {
@@ -152,9 +155,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //  to values changing in bad times in the view
     //  This shouldn't work, but does, which makes me nervous...
     this.instance = CodeMirror.fromTextArea(this.host.nativeElement, config);
-    this.route.url.subscribe(url => {
-      this.loadFromUrl(url);
-    });
+
+    if (!this.isPlayground) {
+      this.route.url.subscribe(url => {
+        this.loadFromUrl(url);
+      });
+    }
+    else {
+
+    }
 
     this.instance.on('changes', () => {
       if (!this._file) {
@@ -395,7 +404,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
-    if (!this._file || !(this._file.isDirty || this.annotationsDirty)) {
+    if (this.isPlayground || !this._file || !(this._file.isDirty || this.annotationsDirty)) {
       return null;
     }
     if (execute) {
@@ -520,7 +529,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // runs periodically
   checkAgainstServer() {
-    if (this._file === null) {
+    if (this.isPlayground || this._file === null) {
       return;
     }
     this.gitHubService.getPathInfo(this._file.item).then(response => {
@@ -536,7 +545,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   refreshContents(execute: boolean): ButtonState {
-    if (!this.fileOutOfSync) {
+    if (this.isPlayground || !this.fileOutOfSync) {
       return null;
     }
     if (execute) {
@@ -548,7 +557,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showHistory(execute: boolean): ButtonState {
-    if (!this._file || this._file.item.lastGet === null) {
+    if (this.isPlayground || !this._file || this._file.item.lastGet === null) {
       return null;
     }
     if (execute) {
@@ -604,13 +613,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createNewAnnotation() {
     const a = new Annotation();
-    a.author = this.gitHubService.user.login;
+    if (this.gitHubService.user) {
+      a.author = this.gitHubService.user.login;
+    }
+    else {
+      a.author = 'You';
+    }
     a.text = '';
     a.timestamp = 0;
 
     const selectedRange = this.getWorkingRange();
     a.from = selectedRange.from();
     a.to = selectedRange.to();
+    console.log('from:', a.from, 'to:', a.to);
 
     const doc = this.instance.getDoc();
     a.marker = doc.markText(a.from, a.to, {

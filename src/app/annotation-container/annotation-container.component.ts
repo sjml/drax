@@ -79,7 +79,9 @@ export class AnnotationContainerComponent implements AfterViewInit {
             this.removeAnnotation(annComp);
           }
           else {
-            this.calculatePositions();
+            setTimeout(() => {
+              this.calculatePositions();
+            });
           }
           this.annotationChanges.emit();
         }));

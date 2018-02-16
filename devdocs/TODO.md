@@ -42,26 +42,24 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Playground
-    - editor and annotations to play with sans GitHub account
-2. UI 
+1. UI 
     - spinners
     - flash messages
     - binary file handling/ignoring
     - warn before refreshing from server
-3. Testing
+2. Testing
     - yeah, this is overdue
-4. Image uploading
-5. GitHub caching
+3. Image uploading
+4. GitHub caching
     - at least check if we've gotten an item in the last second or so and share
     - maybe isolate the constructors and move everyone to get items from the service
-6. Fix mobile version? 
+5. Fix mobile version? 
     - might not be possible to get CodeMirror working the way it needs to...
     - is this really a use case to support? Possibly not.
-7. Repo administration
+6. Repo administration
     - templates for new files
     - setting to prevent creation of new files, new directories
-8. Offer to merge changes if we're out of sync with the server?
-9. Frontmatter parsing into options? 
-10. Offline mode and/or live collaboration
+7. Offer to merge changes if we're out of sync with the server?
+8. Frontmatter parsing into options? 
+9. Offline mode and/or live collaboration
     - resurrect the prosemirror branch for this, or examine stuff like Quill, Slate, etc.
