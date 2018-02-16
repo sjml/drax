@@ -32,7 +32,7 @@ export class GitHubService {
     if (this.bearerToken === null) {
       this.bearerToken = localStorage.getItem('gitHubBearerToken');
       if (this.bearerToken === null) {
-        return null;
+        return Promise.resolve(null);
       }
     }
     return this.getUserData()
