@@ -246,7 +246,7 @@ export class FileBrowserComponent implements OnInit {
                 // TODO: grace
               }
               else {
-                this.router.navigateByUrl(response['repo'].routerPath);
+                this.loadNode(response['repo']);
               }
             });
         }
@@ -292,7 +292,7 @@ export class FileBrowserComponent implements OnInit {
             i.dirPath = this.item.dirPath;
           }
           if (isDirectory) { // creating new directory
-            i.dirPath += `${values['pathName']}`;
+            i.dirPath += `/${values['pathName']}`;
             i.fileName = '.gitkeep';
           }
           else {
@@ -308,8 +308,14 @@ export class FileBrowserComponent implements OnInit {
                     console.error(response['error']);
                   }
                   else {
-                    const path = f.item.getRouterPath();
-                    this.router.navigate(['edit'].concat(path));
+                    if (isDirectory) {
+                      const enclosingFolder = f.item.makeParentItem().makeParentItem();
+                      this.loadNode(enclosingFolder);
+                    }
+                    else {
+                      this.loadDirectoryListing(f.item.makeParentItem());
+                      this.loadNode(f.item);
+                    }
                   }
                 });
         }

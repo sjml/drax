@@ -18,6 +18,7 @@
 * navlist gets screwy on logout
 * single-character selections mess up post-formatting selection on ** and _
 * shipit rev-stamps from the enclosing repo, not the one actually being deployed
+* some weirdness on reload if a repo in the list no longer exists
 
 ## Polish
 * sidebar link is off-center on Chrome
@@ -42,9 +43,6 @@
 
 ## Features
 - test new file, directory, and repo creation
-0. TODO addressing
-    - review commented parts of .html files
-    - inventory, either move stuff to the above lists or deal with it
 0. Asset Caching
     - Markdown file (and what else?!) can get cached; blergh
     - figure out how to bust them
@@ -56,7 +54,9 @@
     - binary file handling/ignoring
     - warn before refreshing from server
 3. Image uploading
-4. HTML preview + side-by-side
+4. GitHub caching
+    - at least check if we've gotten an item in the last second or so and share
+    - maybe isolate the constructors and move everyone to get items from the service
 5. Fix mobile version? 
     - might not be possible to get CodeMirror working the way it needs to...
     - is this really a use case to support? Possibly not.

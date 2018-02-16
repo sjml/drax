@@ -364,7 +364,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.outwardFileData = {
         prefix: `${item.repo.owner}/${item.repo.name}/`,
-        name: item.fileName,
+        name: item.getFullPath(),
         link: link
       };
 

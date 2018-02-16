@@ -186,7 +186,7 @@ export class GitHubService {
 
   getDataFromUrl(urlSegs: UrlSegment[]): {repo: GitHubRepo, item: GitHubItem } {
     if (urlSegs.length < 2) {
-      return { repo: null, item: null }; // TODO: error
+      return { repo: null, item: null }; // TODO: grace
     }
 
     const repo = new GitHubRepo();
@@ -413,7 +413,6 @@ export class GitHubService {
       }
 
     ).toPromise().then(response => {
-      console.log(response);
       const newRepo = new GitHubRepo();
       newRepo.owner = this.user.login;
       newRepo.name = response['name'];

@@ -1,6 +1,6 @@
 <div class="editorBar">
   <div *ngIf="editor.outwardFileData" class="fileInfo">
-    <span class="repoInfo">{{editor.outwardFileData.prefix}}</span>{{editor.outwardFileData.name}}
+    <a href="{{editor.outwardFileData.link}}"><span class="icon fa fa-github"></span></a><span class="repoInfo">{{editor.outwardFileData.prefix}}</span>{{editor.outwardFileData.name}}
   </div>
   <div class="toolbar">
     <div *ngFor="let item of items">
