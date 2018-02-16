@@ -17,7 +17,6 @@
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
 * navlist gets screwy on logout
 * single-character selections mess up post-formatting selection on ** and _
-* shipit rev-stamps from the enclosing repo, not the one actually being deployed
 * some weirdness on reload if a repo in the list no longer exists
 
 ## Polish

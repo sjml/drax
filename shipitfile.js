@@ -42,9 +42,9 @@ module.exports = function(shipit) {
     shipit.log(chalk.green('Adding git-rev and timestamp'));
     const time = execSync('date +"%l:%M %p %Z, %d %B %Y"', {encoding: 'utf-8'})
                     .toString().trim();
-    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8'})
+    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8', cwd: shipit.config.workspace})
                     .toString().trim();
-    const fullRev = execSync('git rev-parse HEAD', {encoding: 'utf-8'})
+    const fullRev = execSync('git rev-parse HEAD', {encoding: 'utf-8', cwd: shipit.config.workspace})
                     .toString().trim();
 
     const aboutFile = `${shipit.config.workspace}/src/assets/pages/about.md`;
@@ -55,7 +55,7 @@ module.exports = function(shipit) {
                       .replace('%%GIT_REV%%', rev);
     fs.writeFileSync(aboutFile, stamped);
     return shipit.local('pwd').then(function () {
-      shipit.emit('stamped');
+      // shipit.emit('stamped');
     });
   });
 
