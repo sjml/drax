@@ -2,6 +2,7 @@
   <div *ngIf="editor.outwardFileData" class="fileInfo">
     <a href="{{editor.outwardFileData.link}}"><span class="icon fa fa-github"></span></a><span class="repoInfo">{{editor.outwardFileData.prefix}}</span>{{editor.outwardFileData.name}}
   </div>
+  <div *ngIf="!editor.outwardFileData" class="fileInfo">&nbsp;</div>
   <div class="toolbar">
     <div *ngFor="let item of items">
       <div class="buttonItem" *ngIf="item && item.itemType === 'BUTTON'">
