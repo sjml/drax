@@ -5,6 +5,7 @@
 .sidebar-link {
   position: fixed;
   display: block;
+  z-index: 30;
   top: ($editorbarHeight - (35px + 20px)) / 2;
   left: 0;
   width: 35px;

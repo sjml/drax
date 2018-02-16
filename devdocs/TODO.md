@@ -20,6 +20,7 @@
 * shipit rev-stamps from the enclosing repo, not the one actually being deployed
 
 ## Polish
+* sidebar link is off-center on Chrome
 * spinners for saving and loading stuff in the explorer
 * ability to toggle off links?
 * Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
