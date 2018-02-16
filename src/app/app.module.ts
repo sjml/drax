@@ -8,6 +8,7 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 import { ConfigService } from './config.service';
 import { GitHubService } from './githubservice/github.service';
 import { ModalService } from './drax-modal/modal.service';
+import { MobileGuard } from './mobile.guard';
 
 import { AppComponent } from './app.component';
 import { FileBrowserComponent } from './filebrowser/filebrowser.component';
@@ -47,6 +48,7 @@ import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.c
     ConfigService,
     GitHubService,
     ModalService,
+    MobileGuard,
     {
       provide: APP_INITIALIZER,
       useFactory: (config: ConfigService) => () => config.load(),
