@@ -875,29 +875,31 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           doc.replaceRange('# ', CodeMirror.Pos(lineIndex, 0), CodeMirror.Pos(lineIndex, 0), 'headercycle');
         }
       }
-      else if (startTok.string === '# ') {
+      else if (state.header === 1) {
         if (execute) {
           doc.replaceRange('## ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
         }
       }
-      else if (startTok.string === '## ') {
+      else if (state.header === 2) {
         if (execute) {
           doc.replaceRange('### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
         }
       }
-      else if (startTok.string === '### ') {
+      else if (state.header === 3) {
         if (execute) {
           doc.replaceRange('#### ', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
         }
       }
-      else if (startTok.string === '#### ') {
+      else if (state.header > 0) {
         // max header; clear it
         if (execute) {
           doc.replaceRange('', CodeMirror.Pos(lineIndex, startTok.start), CodeMirror.Pos(lineIndex, startTok.end), 'headercycle');
         }
       }
     }
-
+    if (execute) {
+      return ButtonState.Inactive;
+    }
     return ButtonState.Active;
   }
 
