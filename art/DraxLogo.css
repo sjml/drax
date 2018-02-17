@@ -1,0 +1,8 @@
+@media (max-width: 350px) {
+  #small {
+    display: block;
+  }
+  #full {
+    display: none
+  }
+}

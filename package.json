@@ -59,6 +59,7 @@
     "shipit-cli": "^3.0.0",
     "shipit-deploy": "^2.5.1",
     "ssh2": "^0.5.5",
+    "svgo": "^1.0.4",
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
     "typescript": "~2.4.2"

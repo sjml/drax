@@ -6,6 +6,7 @@ dist.tar.gz
 /dist
 /tmp
 /out-tsc
+/art/out
 
 # dependencies
 /node_modules
