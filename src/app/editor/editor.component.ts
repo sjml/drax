@@ -207,13 +207,18 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // NB: there's a mirror image of this in BinaryViewerComponent
   private async loadFromUrl(urlSegs: UrlSegment[]) {
     const data = this.gitHubService.getDataFromUrl(urlSegs);
 
-    // TODO: do this with only one remote call
+    // TODO: try to do this with only one remote call
     const itemLoaded = await this.gitHubService.loadItemData(data.item);
     if (!itemLoaded) {
       this.router.navigateByUrl('/');
+      return;
+    }
+    if (data.item.isBinary) {
+      this.router.navigate(['bin'].concat(data.item.getRouterPath()));
       return;
     }
     this.file = await this.gitHubService.getFile(data.item);
@@ -363,18 +368,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadFreshFile() {
     if (this._file) {
-      const item = this._file.item;
-      let link = `https://github.com/${item.repo.owner}/${item.repo.name}/blob/${item.branch}/`;
-      if (item.dirPath === null || item.dirPath.length === 0) {
-        link += item.fileName;
-      }
-      else {
-        link += `${item.dirPath}/${item.fileName}`;
-      }
       this.outwardFileData = {
-        prefix: `${item.repo.owner}/${item.repo.name}/`,
-        name: item.getFullPath(),
-        link: link
+        prefix: `${this._file.item.repo.owner}/${this._file.item.repo.name}/`,
+        name: this._file.item.getFullPath(),
+        link: this._file.item.getGitHubLink()
       };
 
       this.processFileContents();

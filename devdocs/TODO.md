@@ -6,10 +6,10 @@
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
-* figure out how to deal with binary files...
 * ugh, the icon layering is a pain; maybe upgrade to FA5 to use the SVG stuff
 
 ## Bugs
+* if there's a stored bearerToken that is no longer valid, the login prompt will hang
 * blockquote toggling across multiple paragraphs
     * also bullet lists
 * annotation lines get screwy when view gets widened and sidebar locks in
@@ -46,7 +46,6 @@
 2. UI 
     - spinners
     - flash messages
-    - binary file handling/ignoring
     - warn before refreshing from server
 3. Image uploading
 4. GitHub caching

@@ -23,6 +23,7 @@ import { AnnotationContainerComponent } from './annotation-container/annotation-
 import { AnnotationComponent } from './annotation/annotation.component';
 import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';
 import { PlaygroundComponent } from './playground/playground.component';
+import { BinaryViewerComponent } from './binaryviewer/binaryviewer.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { PlaygroundComponent } from './playground/playground.component';
     FileHistoryModalComponent,
     AnnotationContainerComponent,
     AnnotationComponent,
-    PlaygroundComponent
+    PlaygroundComponent,
+    BinaryViewerComponent
   ],
   imports: [
     BrowserModule,

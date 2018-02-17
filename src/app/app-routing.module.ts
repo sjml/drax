@@ -6,6 +6,7 @@ import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { PagesComponent } from './pages/pages.component';
 import { EditorComponent } from './editor/editor.component';
 import { PlaygroundComponent } from './playground/playground.component';
+import { BinaryViewerComponent } from './binaryviewer/binaryviewer.component';
 
 
 export const routes: Routes = [
@@ -29,6 +30,13 @@ export const routes: Routes = [
     children: [{
       path: '**',
       component: EditorComponent
+    }]
+  },
+  {
+    path: 'bin',
+    children: [{
+      path: '**',
+      component: BinaryViewerComponent
     }]
   }
 ];

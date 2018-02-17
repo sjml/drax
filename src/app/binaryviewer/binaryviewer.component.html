@@ -1,0 +1,9 @@
+<div class="errorMessage">
+  <p class="main">😞 Drax doesn’t work with non-text files. 😭</p>
+  <p *ngIf="item" class="linkOut">
+    <span class="icon fa fa-github"></span>
+    <a href="{{gitHubLink}}" target="_blank">
+      Click here to view {{item.fileName}} in GitHub.
+    </a>
+  </p>
+</div>

@@ -178,6 +178,9 @@ export class GitHubService {
         }
 
         item.isDirectory = itemResponse['object']['__typename'] === 'Tree';
+        if (!item.isDirectory) {
+          item.isBinary = itemResponse['object']['isBinary'];
+        }
         item.lastGet = itemResponse['object']['oid'];
         return true;
       });

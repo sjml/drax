@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
+import { Router, ActivatedRoute, UrlSegment, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../../environments/environment';
@@ -46,9 +46,14 @@ export class FileBrowserComponent implements OnInit {
 
   ngOnInit() {
     this.isInSingleRepoMode = this.config.getConfig('singleRepo') !== null;
-    this.gitHubService.getCurrentUser().then(user => {
-      if (user !== null) {
-        this.loadFromUrl(this.location.path().split('/'));
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.gitHubService.getCurrentUser().then(user => {
+          if (user !== null) {
+            this.loadFromUrl(event.urlAfterRedirects.split('/'));
+          }
+        });
       }
     });
   }
@@ -94,7 +99,11 @@ export class FileBrowserComponent implements OnInit {
           // TODO: this only loads the directory listing to get the
           //   selected color showing up. Gotta be a better way.
           this.loadDirectoryListing(node.makeParentItem());
-          const segs = ['edit'].concat(node.getRouterPath());
+          let baseComp = 'edit';
+          if (node.isBinary) {
+            baseComp = 'bin';
+          }
+          const segs = [baseComp].concat(node.getRouterPath());
           this.router.navigate(segs);
         }
         else {
@@ -114,7 +123,7 @@ export class FileBrowserComponent implements OnInit {
     // TODO: check owner/name against current repo and don't reload if unnecessary
     url = url.filter(s => s.length > 0);
     const firstSeg = url.shift();
-    if (firstSeg !== 'edit') {
+    if (firstSeg !== 'edit' && firstSeg !== 'bin') {
       this.repo = null;
       this.item = null;
       this.loadNode(null);

@@ -1,0 +1,22 @@
+.errorMessage {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding-top: 90px;
+
+  .main {
+    font-size: xx-large;
+  }
+
+  .linkOut {
+    font-size: larger;
+  }
+
+  .icon {
+    font-size: 150%;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}

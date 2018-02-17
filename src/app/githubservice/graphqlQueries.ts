@@ -165,6 +165,9 @@ export module Queries {
         object(expression: "%%EXPRESSION%%") {
           __typename
           oid
+          ... on Blob {
+            isBinary
+          }
         }
       }
     }
