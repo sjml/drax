@@ -3,7 +3,7 @@ import { Component,
          ComponentRef,
          ViewContainerRef,
          ViewChild,
-         ReflectiveInjector,
+         Injector,
          ComponentFactoryResolver,
          Type,
          Renderer2
@@ -51,9 +51,7 @@ export class DraxModalComponent implements OnInit {
     if (!data) { data = {}; }
 
     const inputProviders = Object.keys(data).map((keyName) => ({ provide: keyName, useValue: data[keyName] }) );
-    const resolvedInputs = ReflectiveInjector.resolve(inputProviders);
-
-    const injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, this.childContainer.parentInjector);
+    const injector = Injector.create({providers: inputProviders});
 
     const factory = this.resolver.resolveComponentFactory(compType);
     const comp = factory.create(injector);
