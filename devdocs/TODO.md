@@ -1,7 +1,6 @@
 # TODO
 
 ## UI
-* flash messages (successful save / unsuccessful save / file changed / etc.)
 * let you choose different branches
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
@@ -10,18 +9,17 @@
 
 ## Bugs
 * if there's a stored bearerToken that is no longer valid, the login prompt will hang
+* some weirdness on reload if a repo in the list no longer exists
+* navlist gets screwy on logout
 * blockquote toggling across multiple paragraphs
     * also bullet lists
+* single-character selections mess up post-formatting selection on ** and _
 * annotation lines get screwy when view gets widened and sidebar locks in
 * set up a lock so onScroll response can't get double-called
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
-* navlist gets screwy on logout
-* single-character selections mess up post-formatting selection on ** and _
-* some weirdness on reload if a repo in the list no longer exists
 
 ## Polish
 * sidebar link is off-center on Chrome
-* see if the flash of unadjusted annotations can be avoided (calling calculate positions when hidden?)
 * ability to toggle off links?
 * Look into whether it makes sense to toggle comments back on if they were on before we switched away and back (per-file mode, persistent storage? )
 * store docs so undo history is preserved across navigation
@@ -32,8 +30,8 @@
 * use getenv('variable_name') as option when constructing secrets in PHP
     - conditional include of secrets file, pull from env if not there, show error
 * add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
-* logo
 * add indicator for when repo has remote configuration ("Drax-enabled!")
+* icon work, script to generate sizes, favicon, responsive svg? 
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
@@ -43,6 +41,7 @@
 ## Features
 1. Testing
     - yeah, this is overdue
+    - set up travis, push to dev.drax.io on tests passing
 2. UI 
     - spinners
     - flash messages
