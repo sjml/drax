@@ -22,22 +22,7 @@ mkdir -p $OUT_DIR
 if [ -f $FINAL_EXPORT ] && [ $FINAL_EXPORT -nt $AI_FILE ]; then
   echo "Exported file already; carry on."
 else
-  osascript <<-END
-    if application "Adobe Illustrator" is running then
-      set wasRunning to true
-    else
-      set wasRunning to false
-    end if
-
-    tell application "Adobe Illustrator"
-      activate
-      do javascript "#include ${cwd}/ai2svg.js"
-    end tell
-
-    if wasRunning then
-      tell application "Adobe Illustrator" to quit
-    end if
-END
+  osascript ./aiExport.scpt
 fi
 
 # Optimize the output SVG and copy it to the assets folder
