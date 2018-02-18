@@ -26,7 +26,7 @@ module.exports = function(shipit) {
   shipit.blTask('build', function () {
     shipit.log(chalk.green('Making fresh production build'));
     const commands = [
-      'npm install',
+      'npm install --production',
       'npm run build'
     ];
     return shipit.local(
@@ -75,6 +75,7 @@ module.exports = function(shipit) {
           });
   });
 
+  // dummy function
   shipit.task('pwd', function () {
     return shipit.remote('pwd');
   });

@@ -33,7 +33,6 @@
     "diff-match-patch": "^1.0.0",
     "markdown-it": "^8.4.0",
     "ngx-textarea-autosize": "^1.1.1",
-    "puppeteer": "^1.1.0",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.20"
   },
@@ -58,6 +57,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.1.2",
+    "puppeteer": "^1.1.0",
     "shipit-cli": "^3.0.0",
     "shipit-deploy": "^2.5.1",
     "ssh2": "^0.5.5",
