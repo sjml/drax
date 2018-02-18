@@ -1,4 +1,8 @@
-<img src="./assets/images/DraxLogo.svg" alt="Logo for drax.io" class="draxLogo">
+<picture class="draxLogo">
+    <source media="(min-width: 900px)" srcset="./assets/images/DraxLogo.svg">
+    <source media="(max-width: 899px)" srcset="./assets/images/DraxLogoSimple.svg">
+    <img src="./assets/images/DraxLogo.svg" alt="Logo for drax.io" class="draxLogo">
+</picture>
 
 Drax is a Markdown editor for GitHub repositories, aimed at a writer/editor workflow. 
 
