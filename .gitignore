@@ -1,5 +1,4 @@
 # deployment artifacts
-deploy-keys.json
 dist.tar.gz
 
 # compiled output

@@ -2,16 +2,14 @@ const fs = require('fs');
 const chalk = require('chalk');
 const execSync = require('child_process').execSync
 
-const keys = require('./deploy-keys');
-
 const config = {
   default: {
     workspace: './tmp/drax-build',
-    repositoryUrl: keys.repo,
+    repositoryUrl: 'git@github.com:sjml/drax.git',
     shallowClone: true,
     dirToCopy: 'dist',
 
-    servers: `${keys.user}@${keys.server}`,
+    servers: `dh_sv9qqc@drax.io`,
     deployTo: "./drax.io",
     keepReleases: 10,
     deleteOnRollback: true
