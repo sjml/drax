@@ -64,24 +64,6 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     this.editor.cursorActivity.subscribe(() => this.handleEditorChange(true));
   }
 
-  cancelSave() {
-    this.editor.cancelSave();
-    this.handleEditorChange();
-    this.editor.takeFocus();
-    this.commitMessage = '';
-  }
-
-  doSave() {
-    if (this.commitMessage.length > 0) {
-      this.editor.save(this.commitMessage).then(val => {
-        this.editor.setMode(EditorMode.Edit);
-        this.handleEditorChange();
-        this.editor.takeFocus();
-        this.commitMessage = '';
-      });
-    }
-  }
-
   handleClick(button: Button) {
     if (button.state === ButtonState.Disabled) {
       return;
