@@ -43,14 +43,20 @@ module.exports = function(shipit) {
 
   shipit.blTask('stamp', function() {
     shipit.log(chalk.green('Adding git-rev and timestamp'));
-    const time = execSync('date +"%l:%M %p %Z, %d %B %Y"', {encoding: 'utf-8'})
-                    .toString().trim();
-    const rev = execSync('git rev-parse --short HEAD', {encoding: 'utf-8', cwd: shipit.config.workspace})
-                    .toString().trim();
-    const fullRev = execSync('git rev-parse HEAD', {encoding: 'utf-8', cwd: shipit.config.workspace})
-                    .toString().trim();
+    const time = execSync('date +"%l:%M %p %Z, %d %B %Y"',
+                    {encoding: 'utf-8'}).toString().trim();
+    const fullRev = execSync('git rev-parse HEAD',
+                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+    let rev = execSync('git rev-parse --short HEAD',
+                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
 
-    const aboutFile = `${shipit.config.workspace}/src/assets/pages/about.md`;
+    try {
+      rev = execSync('git describe --exact-match --tags $(git log -n1 --pretty=\'%h\')',
+                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+    }
+    catch(err) { /* no-op; keep it as the short-rev */ }
+
+    const aboutFile = `${shipit.config.workspace}/dist/assets/pages/about.md`;
     const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
     const stamped = aboutContents
                       .replace('%%DEPLOY_TIME%%', time)
@@ -78,16 +84,16 @@ module.exports = function(shipit) {
           });
   });
 
-  // dummy function
+  // dummy task
   shipit.task('pwd', function () {
     return shipit.remote('pwd');
   });
 
-  shipit.on('fetched', function () {
+  shipit.on('built', function () {
     return shipit.start('stamp');
   });
 
-  shipit.on('stamped', function () {
+  shipit.on('fetched', function () {
     return shipit.start('build');
   });
 
