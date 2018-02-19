@@ -5,7 +5,7 @@ const execSync = require('child_process').execSync
 const config = {
   default: {
     workspace: './tmp/drax-build',
-    repositoryUrl: 'git@github.com:sjml/drax.git',
+    repositoryUrl: 'https://github.com/sjml/drax.git',
     shallowClone: true,
     dirToCopy: 'dist',
 
