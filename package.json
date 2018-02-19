@@ -1,6 +1,6 @@
 {
   "name": "drax",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -42,17 +42,16 @@
     "@angular/language-service": "5.2.5",
     "@types/codemirror": "0.0.55",
     "@types/diff": "^3.2.2",
-    "@types/jasmine": "~2.5.53",
+    "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
     "@types/markdown-it": "0.0.4",
     "@types/node": "^6.0.96",
     "@types/puppeteer": "^1.0.0",
     "codelyzer": "^4.1.0",
-    "jasmine-core": "~2.6.2",
-    "jasmine-spec-reporter": "~4.1.0",
-    "karma": "~1.7.0",
-    "karma-chrome-launcher": "~2.1.1",
-    "karma-cli": "~1.0.1",
+    "jasmine-core": "~2.8.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~2.0.0",
+    "karma-chrome-launcher": "~2.2.0",
     "karma-coverage-istanbul-reporter": "^1.4.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
@@ -62,8 +61,8 @@
     "shipit-deploy": "^2.5.1",
     "ssh2": "^0.5.5",
     "svgo": "^1.0.4",
-    "ts-node": "~3.2.0",
-    "tslint": "~5.7.0",
+    "ts-node": "~4.1.0",
+    "tslint": "~5.9.1",
     "typescript": "2.6.2"
   }
 }
