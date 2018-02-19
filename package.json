@@ -10,7 +10,8 @@
     "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
     "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
-    "test": "ng test",
+    "test": "ng test --browsers ChromeHeadless --single-run",
+    "testw": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
