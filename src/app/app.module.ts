@@ -14,7 +14,7 @@ import { AppComponent } from './app.component';
 import { FileBrowserComponent } from './filebrowser/filebrowser.component';
 import { EditorComponent } from './editor/editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './drax-modal/drax-modal.component';
 import { DataRequestModalComponent } from './drax-modal/data-request-modal.component';
