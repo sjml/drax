@@ -6,6 +6,7 @@ node_js:
 
 
 addons:
+  ssh_known_hosts: drax.io
   apt:
     sources:
     - google-chrome
