@@ -16,7 +16,7 @@ fi
 
 git tag -a $version -m "$message"
 
-echo -n "Push tag to origin repo? (default - yes): "
+echo -n "Push tag and local commits to origin repo? (default - yes): "
 read pushResponse
 case ${pushResponse:0:1} in
   n|N )
@@ -27,5 +27,26 @@ case ${pushResponse:0:1} in
   ;;
 esac
 if [ "$push" = true ]; then
-  git push origin $version
+  git push --follow-tags
+
+  echo -n "Do you want to make a release out of this? (default - no): "
+  read relResponse
+  case ${relResponse:0:1} in
+    y|Y )
+      release=true
+    ;;
+    * )
+      release=false
+    ;;
+  esac
+  if [ "$release" = true ]; then
+    # TODO: take the notes in advance? Automate this from a changelist or something?
+    echo "Creating release. Stick around for a minute; you'll need to write some notes."
+    mkdir -p tmp/drax-$version
+    npm run build
+    mv dist tmp/drax-$version/drax
+    cp devdocs/Administration.md tmp/drax-$version/README.md
+    tar -czvf tmp/drax-$version.tar.gz -C tmp ./drax-$version
+    hub release create -a tmp/drax-$version.tar.gz $version
+  fi
 fi

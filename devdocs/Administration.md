@@ -4,6 +4,8 @@ Note: this document is for systems administrators who want to run their own vers
 
 If you just want to edit and annotate documents, this doesn't apply to you. Just go to the [Drax home page](https://drax.io) and get started. 
 
+For more general documentation, see the [README doc at the main GitHub repository](https://github.com/sjml/drax/blob/master/README.md).
+
 
 ## Repository Configuration
 As the owner of a repository, you can add some configuration options for Drax that will affect how it interacts with your specific repository. At the root level, create a folder called `.drax` and put a file called `config.json` there. (Obviously make sure to commit and push this to GitHub so Drax can see it.) 
@@ -22,7 +24,7 @@ That said, the use of PHP is minimal. Minus dependencies, the logic of Drax's se
 
 So, to install, it's just two steps. 
 1. Grab the latest release from [the releases page](https://github.com/sjml/drax/releases).
-2. Unzip it and put it somewhere hostable.
+2. Unzip it and put the `drax` directory somewhere hostable.
 
 Of course, it won't be usable at all in this state. **You have to configure it first.** That's a little more complicated.
 
@@ -44,4 +46,4 @@ You can edit the `drax-config.json` file in the root of the distribution to chan
 * `authUrl`: If you need to run the authorization server somewhere else (another domain or another port, for example), you can put the URL for it here and Drax will try to run the GitHub login through there. Default: `./auth`
 * `singleRepo`: If you want your site to only allow viewing and editing of a particular repository, put its owner and name in an object here. So if you only wanted to allow editing of the [main Drax repository](https://github.com/sjml/drax), you would set it to `{ "owner": "sjml", "name": "drax" }`. Default is null, which allows editing of any repository which the logged-in user can access. 
 
-You'll also want to edit the [About page](../src/assets/pages/about.md), which gets displayed when Drax is first loaded, to put a custom greeting and information there. 
+You'll also want to edit the "About" page (in `drax/assets/pages/about.md`), which gets displayed when Drax is first loaded, to put a custom greeting and information there. 
