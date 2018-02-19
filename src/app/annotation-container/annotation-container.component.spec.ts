@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AnnotationContainerComponent } from './annotation-container.component';
 
-describe('AnnotationContainerComponent', () => {
+xdescribe('AnnotationContainerComponent', () => {
   let component: AnnotationContainerComponent;
   let fixture: ComponentFixture<AnnotationContainerComponent>;
 

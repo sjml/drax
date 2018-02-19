@@ -19,7 +19,7 @@ class FileBrowserTestComponent {
   }
 }
 
-fdescribe('FileBrowserEntryComponent', () => {
+describe('FileBrowserEntryComponent', () => {
   let testHost: FileBrowserTestComponent;
   let fixture: ComponentFixture<FileBrowserTestComponent>;
   let entryEl: DebugElement;

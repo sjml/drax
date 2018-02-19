@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BinaryViewerComponent } from './binaryviewer.component';
 
-describe('BinaryViewerComponent', () => {
+xdescribe('BinaryViewerComponent', () => {
   let component: BinaryViewerComponent;
   let fixture: ComponentFixture<BinaryViewerComponent>;
 
