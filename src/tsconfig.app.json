@@ -10,6 +10,7 @@
   },
   "include": [
     "../node_modules/ngx-textarea-autosize/index.ts",
+    "../node_modules/ngx-textarea-autosize/autosize.directive.ts",
     "**/*.ts"
   ],
   "exclude": [

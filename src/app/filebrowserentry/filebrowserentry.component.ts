@@ -12,7 +12,14 @@ import { GitHubNavNode, GitHubRepo, GitHubItem } from '../githubservice/githubcl
 export class FileBrowserEntryComponent implements OnInit {
 
   @Input() parent: FileBrowserComponent = null;
-  @Input() navItem: GitHubNavNode = null;
+
+  private _navItem: GitHubNavNode = null;
+  @Input() set navItem(newNode: GitHubNavNode) {
+    this._navItem = newNode;
+    this.onNavItemChange();
+  }
+  get navItem(): GitHubNavNode { return this._navItem; }
+
   iconName: string = null;
   isContainer = true;
   label: string = null;
@@ -24,10 +31,16 @@ export class FileBrowserEntryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  onNavItemChange() {
     if (this.navItem instanceof GitHubRepo) {
       this.label = this.navItem.name;
       if (this.navItem.owner !== this.gitHubService.user.login) {
         this.prefixLabel = this.navItem.owner;
+      }
+      else {
+        this.prefixLabel = null;
       }
       this.iconName = 'database';
     }
