@@ -12,10 +12,15 @@ const config = {
     dirToCopy: 'dist',
 
     servers: `${keys.user}@${keys.server}`,
-    deployTo: keys.deployDir,
+    deployTo: "./drax.io",
     keepReleases: 10,
     deleteOnRollback: true
   },
+  dev: {
+    deployTo: "./dev.drax.io",
+    keepReleases: 1,
+    deleteOnRollback: false
+  }
 };
 
 module.exports = function(shipit) {
