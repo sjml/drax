@@ -66,6 +66,12 @@ describe('ToolbarComponent', () => {
     handleChangeSpy = spyOn(component, 'handleEditorChange').and.callThrough();
   });
 
+  afterEach(() => {
+    if (fixture && fixture.debugElement) {
+      document.body.removeChild(fixture.debugElement.nativeElement);
+    }
+  });
+
   it('should be created with 13 buttons and 4 separators', () => {
     let buttonCount = 0;
     let sepCount = 0;

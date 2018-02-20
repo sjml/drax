@@ -44,6 +44,12 @@ describe('AnnotationComponent', () => {
     AnnotationComponent.clearColorMapping();
   }));
 
+  afterEach(() => {
+    if (fixture && fixture.debugElement) {
+      document.body.removeChild(fixture.debugElement.nativeElement);
+    }
+  });
+
   describe('new annotation', () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(AnnotationContainerMockComponent);

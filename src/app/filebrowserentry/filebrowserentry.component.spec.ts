@@ -76,6 +76,12 @@ describe('FileBrowserEntryComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    if (fixture && fixture.debugElement) {
+      document.body.removeChild(fixture.debugElement.nativeElement);
+    }
+  });
+
   it('should tell its parent to load when clicked', () => {
     testHost.node = unownedRepo;
     fixture.detectChanges();

@@ -42,6 +42,9 @@ describe('PagesComponent', () => {
 
   afterEach(() => {
     httpMock.verify();
+    if (fixture && fixture.debugElement) {
+      document.body.removeChild(fixture.debugElement.nativeElement);
+    }
   });
 
   beforeEach(() => {
