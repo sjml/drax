@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@angular/core';
 
-import { DraxModalComponent, DraxModalType } from './drax-modal.component';
+import { DraxModalComponent, DraxModalType } from './drax-modal/drax-modal.component';
 
 @Injectable()
 export class ModalService {

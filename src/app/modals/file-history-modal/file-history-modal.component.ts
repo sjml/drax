@@ -6,8 +6,8 @@ import { Component,
        } from '@angular/core';
 
 import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
-import { GitHubItem } from '../githubservice/githubclasses';
-import { GitHubService } from '../githubservice/github.service';
+import { GitHubItem } from '../../githubservice/githubclasses';
+import { GitHubService } from '../../githubservice/github.service';
 
 @Component({
   selector: 'app-file-history-modal',

@@ -12,8 +12,8 @@ import { GitHubFile,
        } from '../githubservice/githubclasses';
 import { GitHubService } from '../githubservice/github.service';
 import { ConfigService } from '../config.service';
-import { ModalService } from '../drax-modal/modal.service';
-import { DataRequestModalComponent, ModalField } from '../data-request-modal/data-request-modal.component';
+import { ModalService } from '../modals/modal.service';
+import { DataRequestModalComponent, ModalField } from '../modals/data-request-modal/data-request-modal.component';
 
 
 @Component({

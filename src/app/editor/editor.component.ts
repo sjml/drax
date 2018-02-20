@@ -24,9 +24,9 @@ import '../../js-util/toml-frontmatter';
 
 import { ConfigService } from '../config.service';
 import { GitHubService } from '../githubservice/github.service';
-import { ModalService } from '../drax-modal/modal.service';
-import { DataRequestModalComponent } from '../data-request-modal/data-request-modal.component';
-import { FileHistoryModalComponent } from './file-history-modal.component';
+import { ModalService } from '../modals/modal.service';
+import { DataRequestModalComponent } from '../modals/data-request-modal/data-request-modal.component';
+import { FileHistoryModalComponent } from '../modals/file-history-modal/file-history-modal.component';
 
 import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
 import { ButtonState } from '../toolbar/toolbar-items';

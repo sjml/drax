@@ -7,7 +7,7 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 
 import { ConfigService } from './config.service';
 import { GitHubService } from './githubservice/github.service';
-import { ModalService } from './drax-modal/modal.service';
+import { ModalService } from './modals/modal.service';
 import { MobileGuard } from './mobile.guard';
 
 import { AppComponent } from './app.component';
@@ -16,9 +16,9 @@ import { EditorComponent } from './editor/editor.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { AppRoutingModule } from './app-routing.module';
 import { PagesComponent } from './pages/pages.component';
-import { DraxModalComponent } from './drax-modal/drax-modal.component';
-import { DataRequestModalComponent } from './data-request-modal/data-request-modal.component';
-import { FileHistoryModalComponent } from './editor/file-history-modal.component';
+import { DraxModalComponent } from './modals/drax-modal/drax-modal.component';
+import { DataRequestModalComponent } from './modals/data-request-modal/data-request-modal.component';
+import { FileHistoryModalComponent } from './modals/file-history-modal/file-history-modal.component';
 import { AnnotationContainerComponent } from './annotation-container/annotation-container.component';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';

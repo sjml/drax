@@ -10,9 +10,9 @@ import { Component,
        } from '@angular/core';
 
 import { DataRequestModalComponent } from '../data-request-modal/data-request-modal.component';
-import { FileHistoryModalComponent } from '../editor/file-history-modal.component';
+import { FileHistoryModalComponent } from '../file-history-modal/file-history-modal.component';
 
-import { ModalService } from './modal.service';
+import { ModalService } from '../modal.service';
 
 export interface DraxModalType {
   host: DraxModalComponent;
