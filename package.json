@@ -11,7 +11,7 @@
     "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
-    "ci": "ng test --browsers ChromeHeadless --single-run",
+    "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --single-run",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -55,6 +55,7 @@
     "karma": "~2.0.0",
     "karma-chrome-launcher": "~2.2.0",
     "karma-coverage-istanbul-reporter": "^1.4.1",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.1.2",
