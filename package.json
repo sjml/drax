@@ -13,6 +13,7 @@
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
     "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --single-run",
     "test": "ng test",
+    "test:nomap": "ng test --sourcemap=false",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

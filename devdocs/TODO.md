@@ -40,11 +40,21 @@
 
 ## Features
 1. Testing
-    - yeah, this is overdue
-    - set up travis, push to dev.drax.io on tests passing
+    - Annotation
+    - BinaryViewer
+    - AnnotationContainer
+    - DraxModal (might all just get punted to e2e)
+      - DataRequestModal
+      - FileHistoryModal
+      - ModalService
+    - Editor
+    - FileBrowser
+    - GitHubService
+    - routing
+    - e2e?
 2. UI 
-    - spinners
     - flash messages
+    - spinners
     - warn before refreshing from server
 3. Image uploading
 4. GitHub caching

@@ -23,4 +23,10 @@ xdescribe('AnnotationContainerComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // test annotation sorting
+  // two annotations by same author have same color
+  // five annotation authors have different colors; sixth is the same
+
+
 });

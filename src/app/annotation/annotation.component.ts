@@ -52,6 +52,12 @@ export class AnnotationComponent implements OnInit, AfterViewInit, OnDestroy {
     return AnnotationComponent._currentColorIndex;
   }
 
+  // should only be called in testing
+  static clearColorMapping() {
+    AnnotationComponent._nameColorMapping = {};
+    AnnotationComponent._currentColorIndex = 0;
+  }
+
 
   constructor() { }
 

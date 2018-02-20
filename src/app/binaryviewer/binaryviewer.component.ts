@@ -30,7 +30,6 @@ export class BinaryViewerComponent implements OnInit {
   private async loadFromUrl(urlSegs: UrlSegment[]) {
     const data = this.gitHubService.getDataFromUrl(urlSegs);
 
-    // TODO: try to do this with only one remote call
     const itemLoaded = await this.gitHubService.loadItemData(data.item);
     if (!itemLoaded) {
       this.router.navigateByUrl('/');
