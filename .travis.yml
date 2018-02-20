@@ -20,9 +20,9 @@ before_install:
   - ssh-add /tmp/deploy_rsa
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - phpenv --version
+  - phpenv version
   - phpenv global 7.0
-  - phpenv --version
+  - phpenv version
 
 script:
   - npm run ci
