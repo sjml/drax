@@ -6,7 +6,7 @@ import { Component,
          HostListener
        } from '@angular/core';
 
-import { DraxModalType, DraxModalComponent } from './drax-modal.component';
+import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
 
 export interface ModalField {
   name: string;

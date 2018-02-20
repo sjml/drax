@@ -9,7 +9,7 @@ import { Component,
          Renderer2
        } from '@angular/core';
 
-import { DataRequestModalComponent } from './data-request-modal.component';
+import { DataRequestModalComponent } from '../data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from '../editor/file-history-modal.component';
 
 import { ModalService } from './modal.service';
