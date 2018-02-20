@@ -12,7 +12,7 @@
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
     "ci": "ng test --browsers ChromeHeadless --single-run",
-    "test": "ng test --sourcemaps=false",
+    "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

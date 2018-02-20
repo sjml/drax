@@ -15,8 +15,6 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
 
   @Input('editor') editor: EditorComponent;
 
-  commitMessage = '';
-
   constructor() { }
 
   ngOnInit() {
@@ -64,12 +62,13 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
     this.editor.cursorActivity.subscribe(() => this.handleEditorChange(true));
   }
 
-  handleClick(button: Button) {
+  handleClick(button: Button): boolean {
     if (button.state === ButtonState.Disabled) {
-      return;
+      return false;
     }
     button.state = button.callback(true);
     this.editor.takeFocus();
+    return true;
   }
 
   handleEditorChange(isCursorChange: boolean = false) {
