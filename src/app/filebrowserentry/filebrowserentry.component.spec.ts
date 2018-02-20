@@ -80,6 +80,7 @@ describe('FileBrowserEntryComponent', () => {
     testHost.node = unownedRepo;
     fixture.detectChanges();
 
+    // TODO: change this to use spy
     expect(testHost.loadedNode).toEqual(null);
     entryEl.triggerEventHandler('click', { button: 0 });
     expect(testHost.loadedNode).toEqual(unownedRepo);

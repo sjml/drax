@@ -20,8 +20,8 @@ export class PagesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.loadPage(params.pageName);
+    this.route.paramMap.subscribe(paramMap => {
+      this.loadPage(paramMap.get('pageName'));
     });
   }
 
@@ -41,14 +41,14 @@ export class PagesComponent implements OnInit {
         })
         .catch((err) => {
           // redirect to base
-          console.error(err);
+          // console.error(err);
           this.router.navigateByUrl('/');
         })
-      ;
-    }
-    else {
-      console.log(this.route.snapshot.params);
-      this.host.nativeElement.innerHTML = '';
+        ;
+      }
+      else {
+        // console.error('No page given to PagesComponent.');
+        this.router.navigateByUrl('/');
     }
   }
 

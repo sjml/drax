@@ -2,20 +2,29 @@ const fs = require('fs');
 const chalk = require('chalk');
 const execSync = require('child_process').execSync
 
+const keys = {
+  repo: 'https://github.com/sjml/drax.git',
+  user: 'dh_sv9qqc',
+  server: 'drax.io',
+  devDir: './dev.drax.io',
+  stableDir: './drax.io',
+  stampZone: 'America/New_York'
+}
+
 const config = {
   default: {
     workspace: './tmp/drax-build',
-    repositoryUrl: 'https://github.com/sjml/drax.git',
+    repositoryUrl: keys.repo,
     shallowClone: true,
     dirToCopy: 'dist',
 
-    servers: `dh_sv9qqc@drax.io`,
-    deployTo: "./drax.io",
+    servers: `${keys.user}@${keys.server}`,
+    deployTo: keys.stableDir,
     keepReleases: 10,
     deleteOnRollback: true
   },
   dev: {
-    deployTo: "./dev.drax.io",
+    deployTo: keys.devDir,
     keepReleases: 1,
     deleteOnRollback: false
   }
@@ -43,7 +52,7 @@ module.exports = function(shipit) {
 
   shipit.blTask('stamp', function() {
     shipit.log(chalk.green('Adding git-rev and timestamp'));
-    const time = execSync('date +"%l:%M %p %Z, %d %B %Y"',
+    const time = execSync(`TZ=${keys.stampZone} date +"%l:%M %p %Z, %d %B %Y"`,
                     {encoding: 'utf-8'}).toString().trim();
     const fullRev = execSync('git rev-parse HEAD',
                     {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
