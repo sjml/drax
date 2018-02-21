@@ -2,24 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BinaryViewerComponent } from './binaryviewer.component';
 
-xdescribe('BinaryViewerComponent', () => {
-  let component: BinaryViewerComponent;
-  let fixture: ComponentFixture<BinaryViewerComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ BinaryViewerComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(BinaryViewerComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+// Trivial functionality; at the moment, this isn't worth setting
+//   up tests for.
+// (Because it interacts with HTTP and GitHub, setting up the tests
+//   would be a huge pain.)
+// If this ever ends up actually loading files or something, this is
+//   worth setting up testing.

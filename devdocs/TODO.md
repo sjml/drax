@@ -39,9 +39,12 @@
 * need to store repository info too... 😬
 
 ## Features
-1. Testing
-    - Annotation
-    - BinaryViewer
+1. UI 
+    - flash messages
+    - spinners
+    - warn before refreshing from server
+2. Image uploading
+3. Testing
     - AnnotationContainer
     - DraxModal (might all just get punted to e2e)
       - DataRequestModal
@@ -52,11 +55,6 @@
     - GitHubService
     - routing
     - e2e?
-2. UI 
-    - flash messages
-    - spinners
-    - warn before refreshing from server
-3. Image uploading
 4. GitHub caching
     - at least check if we've gotten an item in the last second or so and share
     - maybe isolate the constructors and move everyone to get items from the service
