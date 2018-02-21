@@ -28,5 +28,6 @@ xdescribe('AnnotationContainerComponent', () => {
   // two annotations by same author have same color
   // five annotation authors have different colors; sixth is the same
 
+  // test annotations changing height when their content changes
 
 });

@@ -113,25 +113,29 @@ export class AnnotationComponent implements OnInit, AfterViewInit, OnDestroy {
     this.colorString = `color${AnnotationComponent.getColorIndex(this.ann.author)}`;
   }
 
-  tryEdit() {
-    if (!this.editing) {
-      this.editing = true;
-      this.oldText = this.ann.text;
-      setTimeout(() => {
-        this.textArea.nativeElement.focus();
-      });
+  tryEdit(): boolean {
+    if (this.editing) {
+      return false;
     }
+    this.editing = true;
+    this.oldText = this.ann.text;
+    setTimeout(() => {
+      this.textArea.nativeElement.focus();
+    });
+    return true;
   }
 
-  stopEdit() {
-    if (this.editing) {
-      this.editing = false;
-      if (this.ann.text.length > 0 && this.oldText !== this.ann.text) {
-        this.ann.timestamp = Date.now();
-      }
-      this.setStrings();
-      this.change.emit();
+  stopEdit(): boolean {
+    if (!this.editing) {
+      return false;
     }
+    this.editing = false;
+    if (this.ann.text.length > 0 && this.oldText !== this.ann.text) {
+      this.ann.timestamp = Date.now();
+    }
+    this.setStrings();
+    this.change.emit();
+    return true;
   }
 
   removeMe() {

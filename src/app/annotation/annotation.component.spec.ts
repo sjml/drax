@@ -1,9 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, fakeAsync, tick, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AnnotationComponent } from './annotation.component';
 import { Annotation } from './annotation';
+
+import * as c from 'cassowary';
 
 @Component({
   template: '<app-annotation [ann]="ann"></app-annotation>'
@@ -82,6 +84,16 @@ describe('AnnotationComponent', () => {
       component = testHost.annComp;
     });
 
+    it('handles color requests properly', () => {
+      AnnotationComponent.clearColorMapping();
+      const authors = ['A', 'B', 'C', 'D', 'E', 'F'];
+      const maxColors = 5;
+      for (let i = 0; i < authors.length; i++) {
+        const colorIndex = AnnotationComponent.getColorIndex(authors[i]);
+        expect(colorIndex).toEqual((i % maxColors) + 1);
+      }
+    });
+
     it('starts displayed if timestamp is non-zero', () => {
       expect(component.ann.timestamp).not.toEqual(0);
       expect(component.editing).toEqual(false);
@@ -102,19 +114,50 @@ describe('AnnotationComponent', () => {
       expect(component.checkInterval).toBeNull();
     });
 
-    // check heightvar, same as nativeelement height
-    // do editing --> height difference check
-    // set topvar to something different
-    // make sure they reset when resetVars is called
+    it('has a non-zero height that matches the native element', () => {
+      expect(component.heightVar.value).toBeGreaterThan(0);
+      expect(component.heightVar.value).toEqual(component.annChild.nativeElement.offsetHeight);
+    });
 
-    // ensure tryEdit doesn't do anything if we're already editing
-    // same with stopEdit if we're not
+    it('resets values appropriately', () => {
+      component.topVar.value = 1;
+      component.heightVar.value = 0;
+      component.resetVars();
+      expect(component.topVar.value).not.toEqual(1);
+      expect(component.heightVar.value).not.toEqual(0);
+      expect(component.topVar.value).toEqual(component.ann.extents.top);
+      expect(component.heightVar.value).toEqual(component.annChild.nativeElement.offsetHeight);
+    });
 
-    // check that nothing else changes if text didn't change
-    // check for new timestamp when text changed
-    // check that setStrings was called and new values are in place
+    it('checks editing status for starting and stopping', fakeAsync(() => {
+      expect(component.stopEdit()).toEqual(false);
+      expect(component.tryEdit()).toEqual(true);
 
-    // ensure that removeme sets values and emits
+      fixture.detectChanges();
+      tick();
+
+      expect(component.tryEdit()).toEqual(false);
+      expect(component.stopEdit()).toEqual(true);
+    }));
+
+    it('changes timestamp when the text is updated', fakeAsync(() => {
+      const origStamp = component.ann.timestamp;
+      component.tryEdit();
+      fixture.detectChanges();
+      tick();
+      component.ann.text = 'New text';
+      component.stopEdit();
+      expect(component.ann.timestamp).toBeGreaterThan(origStamp);
+    }));
+
+    it('keeps the timestamp if the text is the same', fakeAsync(() => {
+      const origStamp = component.ann.timestamp;
+      component.tryEdit();
+      fixture.detectChanges();
+      tick();
+      component.stopEdit();
+      expect(component.ann.timestamp).toEqual(origStamp);
+    }));
   });
 
 });
