@@ -2,11 +2,8 @@ const puppeteer = require('puppeteer');
 
 const BASENAME = 'DraxLogo';
 const SHOTS = [
-  // { simple: false, width: 750, height: 750, scale: 1, outputName: `${BASENAME}.png` },
-  // { simple: false, width: 750, height: 750, scale: 1, outputName: `${BASENAME}-750.png` },
-  // { simple: false, width: 750, height: 750, scale: 2, outputName: `${BASENAME}-750@2x.png` },
-  // { simple: false, width: 300, height: 300, scale: 1, outputName: `${BASENAME}-300.png` },
-  // { simple: false, width: 300, height: 300, scale: 2, outputName: `${BASENAME}-300@2x.png` },
+  { simple: false, width: 512, height: 512, scale: 1, outputName: `${BASENAME}.png` },
+  { simple: true,  width: 512, height: 512, scale: 1, outputName: `${BASENAME}Simple.png` },
 
   { simple: true, width:  16, height:  16, scale: 1, outputName: `favicon-16.png` },
   { simple: true, width:  24, height:  24, scale: 1, outputName: `favicon-24.png` },
