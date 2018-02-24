@@ -1,0 +1,19 @@
+<div id="notation-container">
+  <div *ngFor="let not of notifications" class="notification"
+    [ngClass]="not.type"
+    [@notificationState]=""
+    (mouseenter)="pauseTimeout(not)"
+    (mouseleave)="resumeTimeout(not)"
+    >
+    <div class="icon fa"
+      [class.fa-times-circle]="not.type === 'error'"
+      [class.fa-exclamation-triangle]="not.type === 'warning'"
+      [class.fa-check-circle]="not.type === 'info'"
+    ></div>
+    <div class="notificationContent">
+      <div class="icon close fa fa-times" (click)="remove(not)"></div>
+      <div class="header">{{not.title}}</div>
+      <div class="text">{{not.text}}</div>
+    </div>
+  </div>
+</div>

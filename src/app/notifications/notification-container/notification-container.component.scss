@@ -1,0 +1,60 @@
+#notation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  position: absolute;
+  left: 0px;
+  top: 5px;
+  width: 100%;
+  z-index: 40;
+}
+
+.notification {
+  transition: all 0.3s ease-in;
+  width: 350px;
+  margin-top: 5px;
+  margin-right: 10px;
+  padding: 10px 5px;
+  display: flex;
+  align-items: center;
+
+  opacity: 0.8;
+
+  .header {
+    font-weight: bolder;
+    font-size: 20px;
+  }
+
+  .notificationContent {
+    width: 100%;
+  }
+
+  .icon {
+    font-size: 45px;
+  }
+
+  .icon.close {
+    font-size: 20px;
+    font-weight: normal;
+    float: right;
+    cursor: pointer;
+  }
+}
+
+.notification:hover {
+  cursor: default;
+  opacity: 1.0;
+}
+
+.notification.error {
+  background-color: rgb(255, 114, 114);
+}
+
+.notification.warning {
+  background-color: rgb(255, 255, 136);
+}
+
+.notification.info {
+  background-color: rgb(162, 202, 255);
+}

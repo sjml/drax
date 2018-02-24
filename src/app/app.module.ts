@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,6 +9,7 @@ import { TextareaAutosizeModule } from 'ngx-textarea-autosize';
 import { ConfigService } from './config.service';
 import { GitHubService } from './githubservice/github.service';
 import { ModalService } from './modals/modal.service';
+import { NotificationService } from './notifications/notification.service';
 import { MobileGuard } from './mobile.guard';
 
 import { AppComponent } from './app.component';
@@ -19,11 +21,12 @@ import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './modals/drax-modal/drax-modal.component';
 import { DataRequestModalComponent } from './modals/data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './modals/file-history-modal/file-history-modal.component';
-import { AnnotationContainerComponent } from './annotation-container/annotation-container.component';
-import { AnnotationComponent } from './annotation/annotation.component';
+import { AnnotationContainerComponent } from './annotations/annotation-container/annotation-container.component';
+import { AnnotationComponent } from './annotations/annotation/annotation.component';
 import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';
 import { PlaygroundComponent } from './playground/playground.component';
 import { BinaryViewerComponent } from './binaryviewer/binaryviewer.component';
+import { NotificationContainerComponent } from './notifications/notification-container/notification-container.component';
 
 @NgModule({
   declarations: [
@@ -39,10 +42,12 @@ import { BinaryViewerComponent } from './binaryviewer/binaryviewer.component';
     AnnotationContainerComponent,
     AnnotationComponent,
     PlaygroundComponent,
-    BinaryViewerComponent
+    BinaryViewerComponent,
+    NotificationContainerComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
     AppRoutingModule,
@@ -52,6 +57,7 @@ import { BinaryViewerComponent } from './binaryviewer/binaryviewer.component';
     ConfigService,
     GitHubService,
     ModalService,
+    NotificationService,
     MobileGuard,
     {
       provide: APP_INITIALIZER,

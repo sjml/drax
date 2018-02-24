@@ -1,8 +1,9 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 
 import { EditorComponent } from '../editor/editor.component';
-import { Annotation } from '../annotation/annotation';
-import { AnnotationComponent } from '../annotation/annotation.component';
+import { Annotation } from '../annotations/annotation/annotation';
+import { AnnotationComponent } from '../annotations/annotation/annotation.component';
+import { NotificationService } from '../notifications/notification.service';
 
 import * as CodeMirror from 'codemirror';
 import * as fns from 'date-fns';
@@ -42,7 +43,9 @@ export class PlaygroundComponent implements AfterViewInit {
   @ViewChild(EditorComponent)
   editor: EditorComponent = null;
 
-  constructor() { }
+  constructor(
+    private notService: NotificationService
+  ) { }
 
   ngAfterViewInit() {
     setTimeout(() => {

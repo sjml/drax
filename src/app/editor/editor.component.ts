@@ -30,9 +30,9 @@ import { FileHistoryModalComponent } from '../modals/file-history-modal/file-his
 
 import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
 import { ButtonState } from '../toolbar/toolbar-items';
-import { Annotation, AnnotationSort } from '../annotation/annotation';
-import { AnnotationComponent } from '../annotation/annotation.component';
-import { AnnotationContainerComponent } from '../annotation-container/annotation-container.component';
+import { Annotation, AnnotationSort } from '../annotations/annotation/annotation';
+import { AnnotationComponent } from '../annotations/annotation/annotation.component';
+import { AnnotationContainerComponent } from '../annotations/annotation-container/annotation-container.component';
 
 export enum EditorMode {
   Edit = 'edit',
