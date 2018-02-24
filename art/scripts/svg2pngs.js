@@ -4,8 +4,8 @@ const BASENAME = 'DraxLogo';
 const SHOTS = [
   { simple: false, width: 512, height: 512, scale: 1, outputName: `${BASENAME}.png` },
   { simple: true,  width: 512, height: 512, scale: 1, outputName: `${BASENAME}Simple.png` },
-  { simple: false,  width: 1200, height: 675, scale: 1, outputName: `${BASENAME}-sm.png` },
-  { simple: true,  width: 1200, height: 675, scale: 1, outputName: `${BASENAME}Simple-sm.png` },
+  { simple: false,  width: 876, height: 438, scale: 1, outputName: `${BASENAME}-sm.png` },
+  { simple: true,  width: 876, height: 438, scale: 1, outputName: `${BASENAME}Simple-sm.png` },
 
   { simple: true, width:  16, height:  16, scale: 1, outputName: `favicon-16.png` },
   { simple: true, width:  24, height:  24, scale: 1, outputName: `favicon-24.png` },
