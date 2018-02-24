@@ -22,7 +22,7 @@ export class ToolbarComponent implements OnInit, AfterViewInit {
       new Button('Save', 'Sync your changes back to GitHub', 'floppy-o',
                   (execute) => this.editor.prepForSave(execute)),
       new Button('Refresh', 'Refresh file from GitHub', 'refresh',
-                  (execute) => this.editor.refreshContents(execute)),
+                  (execute) => this.editor.prepRefresh(execute)),
       new Button('History', 'View history of file changes', 'history',
                   (execute) => this.editor.showHistory(execute)),
       new Separator(),

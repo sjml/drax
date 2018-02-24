@@ -581,34 +581,61 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         return;
       }
       if (this._file.item.lastGet !== response['object']['oid']) {
+        if (!this.fileOutOfSync) {
+          this.notificationService.notify(
+            'File Changed',
+            `The file "${this._file.item.fileName}" has been changed on the repository. Click the "Refresh" button to see the new version.`,
+            7000,
+            NotificationLevel.Warning
+          );
+        }
         this.fileOutOfSync = true;
         this.change.emit();
       }
     });
   }
 
-  refreshContents(execute: boolean): ButtonState {
+  prepRefresh(execute: boolean): ButtonState {
     if (this.isPlayground || !this.fileOutOfSync) {
       return null;
     }
     if (execute) {
-      this.gitHubService.getFile(this._file.item)
-        .then(newFile => {
-          if (newFile === null) {
-            this.notificationService.notify(
-              'File Error',
-              `Couldn\'t refresh "${this._file.item.fileName}".`,
-              7000,
-              NotificationLevel.Error
-            );
+      const fields = [];
+      this.modalService.generate(
+        DataRequestModalComponent,
+        {
+          display: {
+            title: 'Refresh File',
+            description: 'There\'s a new version of the file on GitHub. Loading it will replace your current work. Is that all right?',
+            fields: []
+          },
+          callback: (pressedOK, values) => {
+            if (pressedOK) {
+              this.refreshContents();
+            }
           }
-          else {
-            this.file = newFile;
-          }
-        })
-      ;
+        }
+      );
     }
     return ButtonState.Active;
+  }
+
+  refreshContents() {
+    this.gitHubService.getFile(this._file.item)
+      .then(newFile => {
+        if (newFile === null) {
+          this.notificationService.notify(
+            'File Error',
+            `Couldn\'t refresh "${this._file.item.fileName}".`,
+            7000,
+            NotificationLevel.Error
+          );
+        }
+        else {
+          this.file = newFile;
+        }
+      })
+    ;
   }
 
   showHistory(execute: boolean): ButtonState {
