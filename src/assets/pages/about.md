@@ -21,24 +21,15 @@ Drax is still [being developed](https://github.com/sjml/drax). Or maybe not; it 
 Things to expect:
 * Overall UI polish. 
     * Including a logo that's not as weird. Hopefully. Maybe. 
-* Better error handling.
-    * At the moment, if something goes wrong (you lose internet connection, the repository no longer exists, etc.), things just silently fail. This will be more graceful.
 * Image uploading. 
 
-Things not to expect:
+Things Drax intentionally doesn't do:
 * **Real-time collaboration**: unless there is some magic wand to wave to make this trivial and not require a server component. 
 * **WYSIWYG editor**: The goal is to make Markdown a little more manageable, not pretend you aren't writing Markdown. 
 * **Things other than GitHub for storing files**: other online editors become super clunky as they try to support multiple backends. 
 * **Editing non-Markdown files**: actually, you can already do this as they just show up as plaintext, but it's not really the most interesting use case. 
 * **Advanced Git features**: Drax is not meant to replace the command line or other fancy tools; it's aimed squarely at writers and thus purposely abstracts away a lot of Git's underbelly.
 
-Feedback that Would be Useful:
-* Bug reports! 
-* Feature requests (taking into account the above "things not to expect")
-* Places that might confuse people
-* Spots where someone using more advanced Git features makes Drax look broken
-
-Please use the [GitHub project's issues page](https://github.com/sjml/drax/issues) to submit your feedback. 
 
 <div class="deployInfo">
   <span class="icon fa fa-github"></span><a href="https://github.com/sjml/drax/commit/%%GIT_FULL_REV%%">%%GIT_REV%%</a> deployed at %%DEPLOY_TIME%%

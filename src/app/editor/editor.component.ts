@@ -25,6 +25,7 @@ import '../../js-util/toml-frontmatter';
 import { ConfigService } from '../config.service';
 import { GitHubService } from '../githubservice/github.service';
 import { ModalService } from '../modals/modal.service';
+import { NotificationService } from '../notifications/notification.service';
 import { DataRequestModalComponent } from '../modals/data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from '../modals/file-history-modal/file-history-modal.component';
 
@@ -33,6 +34,7 @@ import { ButtonState } from '../toolbar/toolbar-items';
 import { Annotation, AnnotationSort } from '../annotations/annotation/annotation';
 import { AnnotationComponent } from '../annotations/annotation/annotation.component';
 import { AnnotationContainerComponent } from '../annotations/annotation-container/annotation-container.component';
+import { NotificationLevel } from '../notifications/notification';
 
 export enum EditorMode {
   Edit = 'edit',
@@ -102,7 +104,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private config: ConfigService,
     private modalService: ModalService,
-    private gitHubService: GitHubService
+    private gitHubService: GitHubService,
+    private notificationService: NotificationService
   ) {
     this.mode = EditorMode.Edit;
   }
@@ -214,6 +217,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // TODO: try to do this with only one remote call
     const itemLoaded = await this.gitHubService.loadItemData(data.item);
     if (!itemLoaded) {
+      this.notificationService.notify(
+        'Loading Error',
+        `Couldn't load "${this._file.item.fileName}" from GitHub.`,
+        7000,
+        NotificationLevel.Error
+      );
       this.router.navigateByUrl('/');
       return;
     }
@@ -222,6 +231,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.file = await this.gitHubService.getFile(data.item);
+    if (this.file === null) {
+      this.notificationService.notify(
+        'File Gone',
+        `Couldn't load "${this._file.item.fileName}" from GitHub.`,
+        7000,
+        NotificationLevel.Error
+      );
+      this.router.navigateByUrl('/');
+    }
   }
 
   private processFileContents() {
@@ -299,7 +317,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (annData.parentOid !== this._file.item.lastGet) {
-      // TODO: grace
       const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
       if (oldFileContents !== null) {
         const diffs = JSDiff.diffChars(oldFileContents, this._file.contents);
@@ -353,13 +370,26 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
           doc.clearHistory();
           doc.markClean();
+          this.notificationService.notify(
+            'Annotations Repaired',
+            'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
+            7500,
+            NotificationLevel.Warning
+          );
         });
       }
       else {
+        this.notificationService.notify(
+          'Annotations Repaired',
+          'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
+          7500,
+          NotificationLevel.Warning
+        );
         this.initialMarkText(newAnns);
       }
     }
     else {
+      // we're in sync; no worries
       this.initialMarkText(newAnns);
     }
 
@@ -448,12 +478,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         return true;
                       })
                       .catch((err) => {
-                        console.error(err);
+                        this.notificationService.notify(
+                          'Couldn\'t Save Annotations',
+                          'An error occurred saving to GitHub.',
+                          5000,
+                          NotificationLevel.Error
+                        );
                         return false;
                       });
                   })
                   .catch((err) => {
-                    console.error(err);
+                    this.notificationService.notify(
+                      'Couldn\'t Save File',
+                      'An error occurred saving to GitHub.',
+                      5000,
+                      NotificationLevel.Error
+                    );
                     return false;
                   });
   }
@@ -531,6 +571,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     this.gitHubService.getPathInfo(this._file.item).then(response => {
       if (response === null || response['object'] === null) {
+        this.notificationService.notify(
+          'File Gone',
+          `The file "${this._file.item.fileName}" has been deleted from the repository.`,
+          7000,
+          NotificationLevel.Error
+        );
         console.error('File no longer exists.');
         return;
       }
@@ -546,9 +592,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
     if (execute) {
-      this.gitHubService.getFile(this._file.item).then(newFile => {
-        this.file = newFile;
-      });
+      this.gitHubService.getFile(this._file.item)
+        .then(newFile => {
+          if (newFile === null) {
+            this.notificationService.notify(
+              'File Error',
+              `Couldn\'t refresh "${this._file.item.fileName}".`,
+              7000,
+              NotificationLevel.Error
+            );
+          }
+          else {
+            this.file = newFile;
+          }
+        })
+      ;
     }
     return ButtonState.Active;
   }
@@ -574,13 +632,23 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadOldVersion(oid: string) {
-    this.gitHubService.getFileContentsFromCommit(this._file.item, oid).then((contents) => {
-      if (contents !== null) {
-        this.instance.setValue(contents);
-        this.annotations = [];
-        this.instance.refresh();
-      }
-    });
+    this.gitHubService.getFileContentsFromCommit(this._file.item, oid)
+      .then((contents) => {
+        if (contents !== null) {
+          this.instance.setValue(contents);
+          this.annotations = [];
+          this.instance.refresh();
+        }
+        else {
+          this.notificationService.notify(
+            'Loading Error',
+            'Couldn\'t load old version of file.',
+            7500,
+            NotificationLevel.Error
+          );
+        }
+      })
+    ;
   }
 
   toggleAnnotationGutter(execute: boolean): ButtonState {

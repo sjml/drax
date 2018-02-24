@@ -13,7 +13,10 @@ import { GitHubFile,
 import { GitHubService } from '../githubservice/github.service';
 import { ConfigService } from '../config.service';
 import { ModalService } from '../modals/modal.service';
+import { NotificationService } from '../notifications/notification.service';
+
 import { DataRequestModalComponent, ModalField } from '../modals/data-request-modal/data-request-modal.component';
+import { NotificationLevel } from '../notifications/notification';
 
 
 @Component({
@@ -38,6 +41,7 @@ export class FileBrowserComponent implements OnInit {
     private config: ConfigService,
     private modalService: ModalService,
     public gitHubService: GitHubService,
+    private notificationService: NotificationService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location
@@ -188,12 +192,14 @@ export class FileBrowserComponent implements OnInit {
       index = this.currentNavList.length;
     }
     this.gitHubService.getRepoList(cursor).then(response => {
-      for (const newRepo of response.repos) {
-        this.currentNavList[index++] = newRepo;
-      }
-      this.currentNavList.length = index;
+      if (response !== null) {
+        for (const newRepo of response.repos) {
+          this.currentNavList[index++] = newRepo;
+        }
+        this.currentNavList.length = index;
 
-      this.repositoryListCursor = response.continuation;
+        this.repositoryListCursor = response.continuation;
+      }
     });
   }
 
@@ -232,10 +238,12 @@ export class FileBrowserComponent implements OnInit {
 
     this.repositoryListCursor = null;
     const itemList = await this.gitHubService.getFileList(item);
-    for (let i = 0; i < itemList.length; i++) {
-      this.currentNavList[i] = itemList[i];
+    if (itemList) {
+      for (let i = 0; i < itemList.length; i++) {
+        this.currentNavList[i] = itemList[i];
+      }
+      this.currentNavList.length = itemList.length;
     }
-    this.currentNavList.length = itemList.length;
   }
 
   createNewRepoButtonResponse() {
@@ -254,7 +262,13 @@ export class FileBrowserComponent implements OnInit {
           this.gitHubService.createRepo(values['repoName'], values['repoDesc'])
             .then(response => {
               if (!response['success']) {
-                // TODO: grace
+                this.notificationService.notify(
+                  'GitHub Error',
+                  'Couldn\'t create new repository for some reason. Try again?',
+                  5000,
+                  NotificationLevel.Error
+                );
+                console.error(response['error']);
               }
               else {
                 this.loadNode(response['repo']);
@@ -315,7 +329,12 @@ export class FileBrowserComponent implements OnInit {
           this.gitHubService.pushFile(f, values['commitMessage'], true)
                 .then((response) => {
                   if (!response['success']) {
-                    // TODO: grace
+                    this.notificationService.notify(
+                      'GitHub Error',
+                      `Couldn\'t create new ${pathType.toLowerCase()} for some reason. Try again?`,
+                      5000,
+                      NotificationLevel.Error
+                    );
                     console.error(response['error']);
                   }
                   else {

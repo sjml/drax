@@ -8,6 +8,7 @@ import { Component,
 import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
 import { GitHubItem } from '../../githubservice/githubclasses';
 import { GitHubService } from '../../githubservice/github.service';
+import { NotificationService } from '../../notifications/notification.service';
 
 @Component({
   selector: 'app-file-history-modal',
@@ -35,7 +36,8 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
   }
 
   constructor(
-    private gitHubService: GitHubService
+    private gitHubService: GitHubService,
+    private notificationService: NotificationService
   ) {}
 
   ngAfterViewInit() {
@@ -61,10 +63,20 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
   }
 
   getHistory() {
-    this.gitHubService.getFileHistory(this.item, this.continuation).then(response => {
-      this.historyData = this.historyData.concat(response['history']);
-      this.continuation = response['continuation'];
-    });
+    this.gitHubService.getFileHistory(this.item, this.continuation)
+      .then(response => {
+        this.historyData = this.historyData.concat(response['history']);
+        this.continuation = response['continuation'];
+      })
+      .catch(error => {
+        this.notificationService.notify(
+          'No History',
+          'Couldn\'t find history for this file.',
+          3000
+        );
+        this.close();
+      })
+    ;
   }
 
   clickedItem(oid: string) {

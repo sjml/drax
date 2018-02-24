@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Notification, NotificationType, NotificationComponentInterface } from './notification';
+import { Notification, NotificationLevel, NotificationComponentInterface } from './notification';
 
 @Injectable()
 export class NotificationService {
@@ -13,7 +13,7 @@ export class NotificationService {
     this.comp = comp;
   }
 
-  notify(title: string, text: string, timing: number = 3250, type: NotificationType = NotificationType.Info) {
+  notify(title: string, text: string, timing: number = 3250, type: NotificationLevel = NotificationLevel.Info) {
     if (this.comp == null) {
       console.error('No notification container.');
       return;
@@ -25,4 +25,7 @@ export class NotificationService {
     this.comp.add(n, timing);
   }
 
+  push(notification: Notification, timing: number) {
+    this.comp.add(notification, timing);
+  }
 }

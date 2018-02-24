@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, transition, animate, style, state } from '@angular/animations';
 
-import { Notification, NotificationType, NotificationComponentInterface } from '../notification';
+import { Notification, NotificationLevel, NotificationComponentInterface } from '../notification';
 import { NotificationService } from '../notification.service';
 
 
@@ -83,17 +83,17 @@ export class NotificationContainerComponent implements OnInit, NotificationCompo
 
   fakeNotify() {
     const n = new Notification();
-    n.type = NotificationType.Warning;
+    n.type = NotificationLevel.Warning;
     n.title = 'Something Odd';
     n.text = 'This is a notification of something odd having happened, that the user maybe needs to know about. ';
 
     const n2 = new Notification();
-    n2.type = NotificationType.Error;
+    n2.type = NotificationLevel.Error;
     n2.title = 'Something Bad';
     n2.text = 'Something has gone seriously wrong.';
 
     const n3 = new Notification();
-    n3.type = NotificationType.Info;
+    n3.type = NotificationLevel.Info;
     n3.title = 'Something Normal';
     n3.text = 'Just a regular occurrence we want you to know about.';
 

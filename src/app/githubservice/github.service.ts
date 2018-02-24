@@ -12,6 +12,8 @@ import { GitHubFile,
          GitHubUser
        } from './githubclasses';
 import { ConfigService } from '../config.service';
+import { NotificationService } from '../notifications/notification.service';
+import { NotificationLevel, Notification } from '../notifications/notification';
 
 @Injectable()
 export class GitHubService {
@@ -22,7 +24,8 @@ export class GitHubService {
 
   constructor(
     private http: HttpClient,
-    private config: ConfigService
+    private config: ConfigService,
+    private notificationService: NotificationService
   ) {}
 
   getCurrentUser(): Promise<GitHubUser> {
@@ -46,7 +49,12 @@ export class GitHubService {
                     return this.user;
                   })
                   .catch(err => {
-                    console.error('Could not load GitHub user.');
+                    this.notificationService.notify(
+                      'User Failure',
+                      'Couldn\'t load GitHub user.',
+                      4000,
+                      NotificationLevel.Error
+                    );
                     console.error(err);
                     return null;
                   });
@@ -189,7 +197,7 @@ export class GitHubService {
 
   getDataFromUrl(urlSegs: UrlSegment[]): {repo: GitHubRepo, item: GitHubItem } {
     if (urlSegs.length < 2) {
-      return { repo: null, item: null }; // TODO: grace
+      return { repo: null, item: null };
     }
 
     const repo = new GitHubRepo();
@@ -220,14 +228,30 @@ export class GitHubService {
     return {repo: repo, item: item};
   }
 
-  /***** Data Access *****/
+  /***********************************************/
+  /***************** Data Access *****************/
+  /***********************************************/
+
+  private connErrNotification() {
+    this.notificationService.notify(
+      'GitHub Error',
+      'Couldn\'t connect to GitHub. You may not be connected to the internet, or GitHub may be experiencing problems. Try again later.',
+      5000,
+      NotificationLevel.Error
+    );
+  }
+
   private graphQlQuery(query: object, queryLog: string): Observable<object> {
     if (!environment.production) {
       console.log(`Query: ${queryLog}`);
-      // console.log(query);
     }
     if (this.bearerToken === null) {
-      console.error('No bearer token.');
+      this.notificationService.notify(
+        'No Credentials',
+        'Log in to GitHub to continue.',
+        3000,
+        NotificationLevel.Error
+      );
       return null;
     }
     return this.http.post(
@@ -240,47 +264,68 @@ export class GitHubService {
   }
 
   getUserData(): Promise<object> {
-    return this.graphQlQuery(Queries.getUserInfo(), 'userData').toPromise().then(response => {
-      return response['data']['viewer'];
-    });
+    return this.graphQlQuery(Queries.getUserInfo(), 'userData').toPromise()
+      .then(response => {
+        return response['data']['viewer'];
+      })
+      .catch(error => {
+        this.connErrNotification();
+      })
+    ;
   }
 
   getSingleRepo(repo: GitHubRepo): Promise<object> {
-    return this.graphQlQuery(Queries.getSingleRepoInfo(repo), 'singleRepo').toPromise().then(response => {
-      return response['data']['repository'];
-    });
+    return this.graphQlQuery(Queries.getSingleRepoInfo(repo), 'singleRepo').toPromise()
+      .then(response => {
+        return response['data']['repository'];
+      })
+      .catch(error => {
+        this.connErrNotification();
+      })
+    ;
   }
 
   getRepoList(cursor: string = null): Promise<{continuation: string, repos: GitHubRepo[]}> {
-    return this.graphQlQuery(Queries.getRepoInfo(cursor), 'repoList').toPromise().then(response => {
-      const repList = response['data']['viewer']['repositories'];
-      let continuation: string = null;
-      if (repList['pageInfo']['hasNextPage']) {
-        continuation = repList['pageInfo']['endCursor'];
-      }
+    return this.graphQlQuery(Queries.getRepoInfo(cursor), 'repoList').toPromise()
+      .then(response => {
+        const repList = response['data']['viewer']['repositories'];
+        let continuation: string = null;
+        if (repList['pageInfo']['hasNextPage']) {
+          continuation = repList['pageInfo']['endCursor'];
+        }
 
-      const repos: GitHubRepo[] = [];
-      for (const repoNode of repList['edges']) {
-        const repo = repoNode.node;
-        const newRepo = new GitHubRepo();
-        newRepo.name = repo.name;
-        newRepo.isPrivate = repo.isPrivate;
-        newRepo.description = repo.description;
-        newRepo.owner = repo.owner.login;
-        // TODO: play around with a repo that has no default branch (no pushes)
-        newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : '';
-        newRepo.lastFetchTime = Date.now();
-        repos.push(newRepo);
-      }
+        const repos: GitHubRepo[] = [];
+        for (const repoNode of repList['edges']) {
+          const repo = repoNode.node;
+          const newRepo = new GitHubRepo();
+          newRepo.name = repo.name;
+          newRepo.isPrivate = repo.isPrivate;
+          newRepo.description = repo.description;
+          newRepo.owner = repo.owner.login;
+          // TODO: play around with a repo that has no default branch (no pushes)
+          newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : '';
+          newRepo.lastFetchTime = Date.now();
+          repos.push(newRepo);
+        }
 
-      return {continuation: continuation, repos: repos};
-    });
+        return {continuation: continuation, repos: repos};
+      })
+      .catch(error => {
+        this.connErrNotification();
+        return null;
+      })
+    ;
   }
 
   getPathInfo(item: GitHubItem): Promise<object> {
-    return this.graphQlQuery(Queries.getPathInfo(item), 'pathInfo').toPromise().then(response => {
-      return response['data']['repository'];
-    });
+    return this.graphQlQuery(Queries.getPathInfo(item), 'pathInfo').toPromise()
+      .then(response => {
+        return response['data']['repository'];
+      })
+      .catch(error => {
+        this.connErrNotification();
+      })
+    ;
   }
 
   getFileList(dir: GitHubItem): Promise<GitHubItem[]> {
@@ -289,47 +334,58 @@ export class GitHubService {
       return null;
     }
 
-    return this.graphQlQuery(Queries.getFileList(dir), 'fileList').toPromise().then(response => {
-      const items: GitHubItem[] = [];
-      for (const entry of response['data']['repository']['object']['entries']) {
-        const ghItem = new GitHubItem();
-        ghItem.repo = dir.repo;
-        ghItem.branch = dir.branch;
-        ghItem.fileName = entry['name'];
-        if (entry['type'] === 'tree') {
-          ghItem.isDirectory = true;
-        }
-        else if (entry['type'] === 'blob') {
-          ghItem.isDirectory = false;
-          ghItem.isBinary = entry['object']['isBinary'];
-        }
-        ghItem.dirPath = dir.getFullPath();
+    return this.graphQlQuery(Queries.getFileList(dir), 'fileList').toPromise()
+      .then(response => {
+        const items: GitHubItem[] = [];
+        for (const entry of response['data']['repository']['object']['entries']) {
+          const ghItem = new GitHubItem();
+          ghItem.repo = dir.repo;
+          ghItem.branch = dir.branch;
+          ghItem.fileName = entry['name'];
+          if (entry['type'] === 'tree') {
+            ghItem.isDirectory = true;
+          }
+          else if (entry['type'] === 'blob') {
+            ghItem.isDirectory = false;
+            ghItem.isBinary = entry['object']['isBinary'];
+          }
+          ghItem.dirPath = dir.getFullPath();
 
-        if (!dir.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
-          items.push(ghItem);
+          if (!dir.repo.config['ignoreHiddenFiles'] || !ghItem.fileName.startsWith('.')) {
+            items.push(ghItem);
+          }
         }
-      }
 
-      return items;
-    });
+        return items;
+      })
+      .catch(error => {
+        this.connErrNotification();
+        return null;
+      })
+    ;
   }
 
   getFile(item: GitHubItem): Promise<GitHubFile> {
-    return this.graphQlQuery(Queries.getFileContents(item), `fileContents ${item.fileName}`).toPromise().then(response => {
-      const obj = response['data']['repository']['object'];
-      if (obj === null) {
+    return this.graphQlQuery(Queries.getFileContents(item), `fileContents ${item.fileName}`).toPromise()
+      .then(response => {
+        const obj = response['data']['repository']['object'];
+        if (obj === null) {
+          return null;
+        }
+        const file = new GitHubFile(obj['text']);
+        file.item = item;
+        file.item.lastGet = obj['oid'];
+        return file;
+      })
+      .catch(error => {
+        this.connErrNotification();
         return null;
-      }
-      const file = new GitHubFile(obj['text']);
-      file.item = item;
-      file.item.lastGet = obj['oid'];
-      return file;
-    });
+      })
+    ;
   }
 
   // this stuff annoyingly has to be done with the old API. :'(
   getFileContentsFromCommit(item: GitHubItem, commit: string): Promise<string> {
-    // TODO: grace
     const url = `https://api.github.com/repos/${item.repo.owner}/${item.repo.name}/contents/${item.getFullPath()}?ref=${commit}`;
     return this.http.get(
       url,
@@ -339,23 +395,32 @@ export class GitHubService {
     ).toPromise()
       .then(response => {
         return atob(response['content']);
-      });
+      })
+      .catch(error => {
+        console.error(error);
+        return null;
+      })
+    ;
   }
 
   getFileContentsFromOid(repo: GitHubRepo, oid: string): Promise<string> {
-    return this.graphQlQuery(Queries.getOidContents(repo, oid), `oidContents`).toPromise().then(response => {
-      const obj = response['data']['repository']['object'];
-      if (obj === null) {
-        return null;
-      }
-      return obj['text'];
-    });
+    return this.graphQlQuery(Queries.getOidContents(repo, oid), `oidContents`).toPromise()
+      .then(response => {
+        const obj = response['data']['repository']['object'];
+        if (obj === null) {
+          return null;
+        }
+        return obj['text'];
+      })
+      .catch(error => {
+        this.connErrNotification();
+      })
+    ;
   }
 
   pushFile(file: GitHubFile, message: string, newFile: boolean = false): Promise<object> {
     return this.getPathInfo(file.item).then<object>(info => {
       if (!newFile) {
-        // TODO: grace
         if (!info || !info['object'] || !info['object']['oid']) {
           return {success: false, message: 'Non-existent object.'};
         }
@@ -395,7 +460,6 @@ export class GitHubService {
           return {success: true};
         })
         .catch(error => {
-          // TODO: grace
           return {success: false, message: 'PUT failed!', error: error};
         })
       ;
@@ -426,33 +490,41 @@ export class GitHubService {
       return {success: true, repo: newRepo};
     })
     .catch(error => {
-      // TODO: grace
-      console.error(error);
-      return {success: false};
+      return {success: false, error: error};
     });
   }
 
   getFileHistory(item: GitHubItem, cursor: string): Promise<object> {
-    return this.graphQlQuery(Queries.getFileHistory(item, cursor), 'fileHistory').toPromise().then(response => {
-      const history = [];
-      const historyNode = response['data']['repository']['ref']['target']['history'];
-      const entries = historyNode['nodes'];
-      const pageInfo = historyNode['pageInfo'];
-      for (const entry of entries) {
-        let person = entry['author']['user'];
-        if (person === null) {
-          person = entry['committer']['user'];
+    return this.graphQlQuery(Queries.getFileHistory(item, cursor), 'fileHistory').toPromise()
+      .then(response => {
+        const history = [];
+        const historyNode = response['data']['repository']['ref']['target']['history'];
+        const entries = historyNode['nodes'];
+        const pageInfo = historyNode['pageInfo'];
+        for (const entry of entries) {
+          let person = entry['author']['user'];
+          if (person === null) {
+            person = entry['committer']['user'];
+          }
+          history.push({
+            userLogin: person ? person['login'] : null,
+            userAvatar: person ? person['avatarUrl'] : null,
+            commitDate: entry['committedDate'],
+            message: entry['message'],
+            messageHeadline: entry['messageHeadline'],
+            oid: entry['oid']
+          });
         }
-        history.push({
-          userLogin: person ? person['login'] : null,
-          userAvatar: person ? person['avatarUrl'] : null,
-          commitDate: entry['committedDate'],
-          message: entry['message'],
-          messageHeadline: entry['messageHeadline'],
-          oid: entry['oid']
-        });
-      }
-      return {continuation: pageInfo['hasNextPage'] ? pageInfo['endCursor'] : null, history: history};
-    });
+        return {
+          success: true,
+          continuation: pageInfo['hasNextPage'] ? pageInfo['endCursor'] : null,
+          history: history
+        };
+      })
+      .catch(error => {
+        this.connErrNotification();
+        return { success: false, error: error };
+      })
+    ;
   }
 }

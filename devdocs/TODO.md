@@ -40,9 +40,8 @@
 
 ## Features
 1. UI 
-    - flash messages
     - spinners
-    - warn before refreshing from server
+    - warn with modal before refreshing from server
 2. Image uploading
 3. Testing
     - AnnotationContainer

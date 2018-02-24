@@ -1,9 +1,9 @@
-export enum NotificationType {
+export enum NotificationLevel {
   Info = 'info', Warning = 'warning', Error = 'error'
 }
 
 export class Notification {
-  type: NotificationType;
+  type: NotificationLevel;
   title: string = null;
   text: string = null;
 }

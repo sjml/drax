@@ -2,7 +2,10 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
+import { NotificationService } from '../notifications/notification.service';
+
 import * as MD from 'markdown-it';
+import { NotificationLevel } from '../notifications/notification';
 
 @Component({
   selector: 'app-pages',
@@ -16,7 +19,8 @@ export class PagesComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -40,15 +44,24 @@ export class PagesComponent implements OnInit {
           window.scrollTo(0, 0);
         })
         .catch((err) => {
-          // redirect to base
-          // console.error(err);
+          this.notificationService.notify(
+            'No Such Page',
+            `Couldn\'t load page "${pageName}."`,
+            2000,
+            NotificationLevel.Error
+          );
           this.router.navigateByUrl('/');
         })
-        ;
-      }
-      else {
-        // console.error('No page given to PagesComponent.');
-        this.router.navigateByUrl('/');
+      ;
+    }
+    else {
+      this.notificationService.notify(
+        'No Such Page',
+        'Couldn\'t load page.',
+        2000,
+        NotificationLevel.Error
+      );
+      this.router.navigateByUrl('/');
     }
   }
 

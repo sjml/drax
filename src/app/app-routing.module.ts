@@ -16,6 +16,10 @@ export const routes: Routes = [
     redirectTo: '/pages/about'
   },
   {
+    path: 'pages',
+    component: PagesComponent
+  },
+  {
     path: 'pages/:pageName',
     component: PagesComponent
   },
