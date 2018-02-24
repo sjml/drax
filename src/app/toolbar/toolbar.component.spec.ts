@@ -13,7 +13,7 @@ let stubButtonReturn: ButtonState = null;
 })
 class EditorMockComponent {
   prepForSave = this.stubButtonFunction;
-  refreshContents = this.stubButtonFunction;
+  prepRefresh = this.stubButtonFunction;
   showHistory = this.stubButtonFunction;
   toggleBold = this.stubButtonFunction;
   toggleItalics = this.stubButtonFunction;

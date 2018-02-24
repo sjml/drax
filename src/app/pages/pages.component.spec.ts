@@ -4,6 +4,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 
 import { PagesComponent } from './pages.component';
 import { ActivatedRouteStub } from '../../testing/router-stubs';
+import { NotificationService } from '../notifications/notification.service';
+import { NotificationLevel } from '../notifications/notification';
 
 class RouterStub {
   routedUrl: string;
@@ -11,6 +13,12 @@ class RouterStub {
   navigateByUrl(url: string) {
     this.routedUrl = url;
     return this.routedUrl;
+  }
+}
+
+class NotificationServiceStub {
+  notify(title: string, text: string, timing: number = 3250, type: NotificationLevel = NotificationLevel.Info) {
+    // nada
   }
 }
 
@@ -27,7 +35,8 @@ describe('PagesComponent', () => {
       declarations: [ PagesComponent ],
       providers: [
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: activatedRouteStub }
+        { provide: ActivatedRoute, useValue: activatedRouteStub },
+        { provide: NotificationService, useClass: NotificationServiceStub }
       ]
     })
     .compileComponents();
