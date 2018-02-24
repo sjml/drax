@@ -1,6 +1,9 @@
 # Drax
 [![Build Status](https://travis-ci.org/sjml/drax.svg?branch=master)](https://travis-ci.org/sjml/drax)
 
+* Stable version deployed at [drax.io](https://drax.io)
+* Development build auto-deployed at [dev.drax.io](https://dev.drax.io)
+
 Drax is a web-hosted text editor designed for use with GitHub repos and Markdown. It is named for a Bond villain, not the destroyer.
 
 Unlike other online collaboration tools, it only does GitHub, and it only does Markdown. This lets it be more lightweight and streamlined. Deployment is incredibly simple -- just put a directory on a webhost and you're golden. No big server bills or complicated setup. 
