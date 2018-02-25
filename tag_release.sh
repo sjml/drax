@@ -20,7 +20,6 @@ if [ -z $message ]; then
 fi
 
 npm version $version
-# git tag -a $version -m "$message"
 
 echo -n "Push tag and local commits to origin repo? (default - yes): "
 read pushResponse
