@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -n "$(git status --porcelain)" ]; then
+  >&2 echo "Working directory has to be clean."
+  exit 1
+fi
+
 echo -n "Input tag name (usually a version string starting with \"v\"): "
 read version
 
@@ -14,7 +19,8 @@ if [ -z $message ]; then
   message="Tagging $version"
 fi
 
-git tag -a $version -m "$message"
+npm version $version
+# git tag -a $version -m "$message"
 
 echo -n "Push tag and local commits to origin repo? (default - yes): "
 read pushResponse
