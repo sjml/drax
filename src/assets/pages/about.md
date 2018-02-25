@@ -22,8 +22,9 @@ Things to expect:
 * Overall UI polish. 
     * Including a logo that's not as weird. Hopefully. Maybe. 
 * Support for Git branches.
-    * It works if you manually change from `master` in the URL, but no UI for it yet.
+    * Right now it automatically loads the default branch for each respository. You can manually change the branch in the URL, and that works, but there's no fancier UI for it yet.
 * Image uploading. 
+    * Maybe? It depends on how easily the GitHub API can handle larger files.
 
 Things Drax intentionally doesn't do:
 * **Real-time collaboration**: unless there is some magic wand to wave to make this trivial and not require a server component. 
