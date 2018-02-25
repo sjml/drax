@@ -54,4 +54,18 @@ if [ "$push" = true ]; then
     tar -czvf tmp/drax-$version.tar.gz -C tmp ./drax-$version
     hub release create -a tmp/drax-$version.tar.gz $version
   fi
+
+  echo -n "Do you want to deploy this version to production? (default - yes): "
+  read depResponse
+  case ${depResponse:0:1} in
+    n|N )
+      deploy=false
+    ;;
+    * )
+      deploy=true
+    ;;
+  esac
+  if [ "$deploy" = true ]; then
+    npm run deploy
+  fi
 fi
