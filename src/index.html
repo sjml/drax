@@ -34,7 +34,10 @@
     if (window.location.hash === '') {
       window.location = location.protocol + '//' + location.host + '/#' + location.pathname;
     }
-    if (window.location.hash.endsWith('index.html')) {
+    // '#/index.html'.length === 12
+    if (   window.location.hash.length > 12
+        && window.location.hash.endsWith('index.html')
+       ) {
       window.location.hash = window.location.hash
                                 .substring(0, window.location.hash.length - 10)
                                 + 'index%2Ehtml';
