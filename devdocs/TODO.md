@@ -1,7 +1,6 @@
 # TODO
 
 ## UI
-* let you choose different branches
 * fix layout of long directory names (consider tooltip for long names in general?)
   * once we're doing tooltips, show description of repos?
 * check with rotated monitor how continuations go
@@ -11,9 +10,6 @@
 * if there's a stored bearerToken that is no longer valid, the login prompt will hang
 * some weirdness on reload if a repo in the list no longer exists
 * navlist gets screwy on logout
-* blockquote toggling across multiple paragraphs
-    * also bullet lists
-* single-character selections mess up post-formatting selection on ** and _
 * annotation lines get screwy when view gets widened and sidebar locks in
 * set up a lock so onScroll response can't get double-called
 * chevrons can get out of alignment on long names (isbw-python-widget is example)
@@ -26,12 +22,10 @@
 * update to use proper GraphQL variables instead of replacing
     - also unify formatting of all the various queries
 * surface an error if authorization status is not 'OK'
-* give back nothing from graphql query if we're not logged in
 * use getenv('variable_name') as option when constructing secrets in PHP
     - conditional include of secrets file, pull from env if not there, show error
 * add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
 * add indicator for when repo has remote configuration ("Drax-enabled!")
-* icon work, script to generate sizes, favicon, responsive svg? 
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
@@ -39,16 +33,19 @@
 * need to store repository info too... 😬
 
 ## Features
-1. UI 
+1. Image uploading
+2. UI 
+    - ability to select alternate branches
     - spinners
-2. Image uploading
-3. Testing
+3. Complete testing suite
     - AnnotationContainer
+    - NotificationContainer
     - DraxModal (might all just get punted to e2e)
       - DataRequestModal
       - FileHistoryModal
       - ModalService
     - Editor
+    - NotificationService?
     - FileBrowser
     - GitHubService
     - routing

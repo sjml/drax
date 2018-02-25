@@ -21,6 +21,8 @@ Drax is still [being developed](https://github.com/sjml/drax). Or maybe not; it 
 Things to expect:
 * Overall UI polish. 
     * Including a logo that's not as weird. Hopefully. Maybe. 
+* Support for Git branches.
+    * It works if you manually change from `master` in the URL, but no UI for it yet.
 * Image uploading. 
 
 Things Drax intentionally doesn't do:
@@ -28,7 +30,7 @@ Things Drax intentionally doesn't do:
 * **WYSIWYG editor**: The goal is to make Markdown a little more manageable, not pretend you aren't writing Markdown. 
 * **Things other than GitHub for storing files**: other online editors become super clunky as they try to support multiple backends. 
 * **Editing non-Markdown files**: actually, you can already do this as they just show up as plaintext, but it's not really the most interesting use case. 
-* **Advanced Git features**: Drax is not meant to replace the command line or other fancy tools; it's aimed squarely at writers and thus purposely abstracts away a lot of Git's underbelly.
+* **Advanced Git features**: Drax is not meant to replace the command line, GitHub itself, or other fancy tools; it's aimed squarely at writers and thus purposely abstracts away a lot of Git's underbelly.
 
 
 <div class="deployInfo">

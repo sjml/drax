@@ -1002,12 +1002,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     let lineCount = 0;
     let quoteCount = 0;
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
-      lineCount++;
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
       if (!startTok) {
         continue;
       }
 
+      lineCount++;
       const state = this.getMarkdownStateFromToken(startTok);
       if (state === null) {
         return null;
@@ -1057,12 +1057,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     let bulletedCount = 0;
 
     for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
-      lineCount++;
       const startTok = this.instance.getLineTokens(lineIndex, true)[0];
       if (!startTok) {
         continue;
       }
 
+      lineCount++;
       const state = this.getMarkdownStateFromToken(startTok);
       if (state === null) {
         return null;
@@ -1295,8 +1295,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           }
 
           const from = workingRange.from();
-          from.ch += formatting[0].length;
           const to = workingRange.to();
+          from.ch += formatting[0].length;
 
           const paraStartLines: number[] = [];
           for (const tok of paragraphStarts) {
