@@ -1,7 +1,18 @@
 {
   "name": "drax",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
+  "author": {
+    "name": "Shane Liesegang, SJ",
+    "url": "https://shaneliesegang.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sjml/drax.git"
+  },
+  "bugs": "https://github.com/sjml/drax/issues",
+  "homepage": "https://drax.io",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "dev": "./php_wrap.sh",
@@ -17,7 +28,6 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "5.2.5",
     "@angular/common": "5.2.5",
