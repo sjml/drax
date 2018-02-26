@@ -87,10 +87,10 @@ export class FileBrowserComponent implements OnInit {
       const item = new GitHubItem();
       item.repo = node;
       item.dirPath = null;
-      if (node.config['contentRoot'].length > 0) {
-        item.dirPath = node.config['contentRoot'];
-      }
       item.fileName = '';
+      if (node.config['contentRoot'].length > 0) {
+        item.fileName = node.config['contentRoot'];
+      }
       item.isDirectory = true;
       item.branch = item.repo.defaultBranch;
       this.loadNode(item);
