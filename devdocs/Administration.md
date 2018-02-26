@@ -12,7 +12,7 @@ As the owner of a repository, you can add some configuration options for Drax th
 
 The following values are supported:
 * `ignoreHiddenFiles`: Any file that starts with a `.` won't be displayed in the Drax file explorer. If a user tries to navigate to one directly from the URL, they'll be redirected to the repository root. Default value: `true`
-* `contentRoot`: If you only want to limit the editable area of the repository, you can set a root directory that user's won't be able to explore or edit above. If you're working with [Hugo](https://gohugo.io/), for example, this might be `content`. Default value: empty string (entire repository is available)
+* `contentRoot`: If you only want to limit the editable area of the repository, you can set a root directory that users won't be able to explore or edit above. If you're working with [Hugo](https://gohugo.io/), for example, this might be `content`. Default value: empty string (entire repository is available)
 
 
 ## Installation
