@@ -35,5 +35,5 @@ Things Drax intentionally doesn't do:
 
 
 <div class="deployInfo">
-  <span class="icon fa fa-github"></span><a href="https://github.com/sjml/drax/commit/%%GIT_FULL_REV%%">%%GIT_REV%%</a> deployed at %%DEPLOY_TIME%%
+  <span class="icon fa fa-github"></span><a href="%%GIT_LINK%%">%%GIT_REV%%</a> deployed at %%DEPLOY_TIME%%
 </div>

@@ -21,7 +21,7 @@ const config = {
     servers: `${keys.user}@${keys.server}`,
     deployTo: keys.stableDir,
     keepReleases: 10,
-    deleteOnRollback: true
+    deleteOnRollback: false
   },
   dev: {
     deployTo: keys.devDir,
@@ -59,17 +59,34 @@ module.exports = function(shipit) {
     let rev = execSync('git rev-parse --short HEAD',
                     {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
 
+    let tag = null;
+    let oldTag = null;
     try {
-      rev = execSync('git describe --exact-match --tags $(git log -n1 --pretty=\'%h\')',
+      tag = execSync('git describe --exact-match --tags $(git log -n1 --pretty=\'%h\')',
                     {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+      oldTag = execSync('git tag | tail -2 | head -1',
+                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+      rev = tag;
     }
-    catch(err) { /* no-op; keep it as the short-rev */ }
+    catch(err) {
+      /* no-op; keep it as the short-rev */
+      tag = null;
+      oldTag = null;
+    }
+
+    let link = '';
+    if (tag !== null && oldTag !== null) {
+      link = `https://github.com/sjml/drax/compare/${oldTag}...${tag}`
+    }
+    else {
+      link = `https://github.com/sjml/drax/commit/${fullRev}`;
+    }
 
     const aboutFile = `${shipit.config.workspace}/dist/assets/pages/about.md`;
     const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
     const stamped = aboutContents
                       .replace('%%DEPLOY_TIME%%', time)
-                      .replace('%%GIT_FULL_REV%%', fullRev)
+                      .replace('%%GIT_LINK%%', link)
                       .replace('%%GIT_REV%%', rev);
     fs.writeFileSync(aboutFile, stamped);
     return shipit.local('pwd').then(function () {
