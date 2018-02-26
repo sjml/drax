@@ -81,11 +81,15 @@ export class FileBrowserComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
-  loadNode(node: GitHubNavNode, initial: boolean = false) {
+  async loadNode(node: GitHubNavNode, initial: boolean = false) {
     if (node instanceof GitHubRepo) {
+      await this.gitHubService.loadRepoData(node);
       const item = new GitHubItem();
       item.repo = node;
       item.dirPath = null;
+      if (node.config['contentRoot'].length > 0) {
+        item.dirPath = node.config['contentRoot'];
+      }
       item.fileName = '';
       item.isDirectory = true;
       item.branch = item.repo.defaultBranch;

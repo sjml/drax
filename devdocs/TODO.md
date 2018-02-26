@@ -33,6 +33,7 @@
 * need to store repository info too... 😬
 
 ## Features
+0. More comprehensive fix for contentRoot
 1. Image uploading
 2. UI 
     - ability to select alternate branches

@@ -139,6 +139,13 @@ export class GitHubService {
       if (confObject !== null) {
         const remoteConfig = JSON.parse(confObject.text);
         repo.config = Object.assign(repo.config, remoteConfig);
+        if (typeof repo.config['contentRoot'] !== 'string') {
+          repo.config['contentRoot'] = '';
+        }
+        if (repo.config['contentRoot'].length > 0) {
+          // remove leading and trailing slashes
+          repo.config['contentRoot'] = repo.config['contentRoot'].replace(/(^\/*)/, '').replace(/(\/*$)/, '');
+        }
         repo.config['hasConfig'] = true;
       }
       return true;
@@ -304,7 +311,7 @@ export class GitHubService {
           newRepo.owner = repo.owner.login;
           // TODO: play around with a repo that has no default branch (no pushes)
           newRepo.defaultBranch = repo.defaultBranchRef ? repo.defaultBranchRef.name : '';
-          newRepo.lastFetchTime = Date.now();
+          // newRepo.lastFetchTime = Date.now();
           repos.push(newRepo);
         }
 
