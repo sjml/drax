@@ -1017,7 +1017,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    if (lineCount === quoteCount) {
+    if (lineCount === quoteCount && lineCount === 0) {
+      if (execute) {
+        this.instance.operation(() => {
+          const lineStart = CodeMirror.Pos(range.from().line, 0);
+          doc.replaceRange('> ', lineStart, lineStart, 'bqCycle');
+        });
+      }
+      return ButtonState.Active;
+    }
+    else if (lineCount === quoteCount) {
       // turning them off
       if (execute) {
         this.instance.operation(() => {
@@ -1073,7 +1082,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    if (lineCount === bulletedCount) {
+    if (lineCount === bulletedCount && lineCount === 0) {
+      if (execute) {
+        this.instance.operation(() => {
+          const lineStart = CodeMirror.Pos(range.from().line, 0);
+          doc.replaceRange('* ', lineStart, lineStart, 'bulletToggle');
+        });
+      }
+      return ButtonState.Active;
+    }
+    else if (lineCount === bulletedCount) {
       if (execute) {
         this.instance.operation(() => {
           for (let lineIndex = range.from().line; lineIndex <= range.to().line; lineIndex++) {
