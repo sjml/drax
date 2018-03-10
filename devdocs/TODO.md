@@ -25,7 +25,6 @@
 * use getenv('variable_name') as option when constructing secrets in PHP
     - conditional include of secrets file, pull from env if not there, show error
 * add server config files to dist: https://angular.io/guide/deployment#routed-apps-must-fallback-to-indexhtml
-* add indicator for when repo has remote configuration ("Drax-enabled!")
 
 ## Offline Mode
 * cache docs in local storage until they're pushed? 
@@ -35,6 +34,9 @@
 ## Features
 0. Fixes
     - More comprehensive fix for contentRoot
+    - see if it's possible to merge cleanly when refreshing
+    - don't push annotations file if there's no change or no annotations
+      - remove if all annotations gone?
 1. Image uploading
 2. UI 
     - ability to select alternate branches
