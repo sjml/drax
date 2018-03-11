@@ -425,6 +425,12 @@ export class GitHubService {
     ;
   }
 
+  _b64EncodeUnicode(str: string): string {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode(parseInt(p1, 16));
+    }));
+  }
+
   pushFile(file: GitHubFile, message: string, newFile: boolean = false): Promise<object> {
     return this.getPathInfo(file.item).then<object>(info => {
       if (!newFile) {
@@ -443,7 +449,7 @@ export class GitHubService {
 
       const args = {
         message: message,
-        content: btoa(file.contents),
+        content: this._b64EncodeUnicode(file.contents),
         branch: file.item.branch
       };
 

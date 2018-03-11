@@ -35,8 +35,7 @@
 0. Fixes
     - More comprehensive fix for contentRoot
     - see if it's possible to merge cleanly when refreshing
-    - don't push annotations file if there's no change or no annotations
-      - remove if all annotations gone?
+    - remove annotation file if all annotations gone?
 1. Image uploading
 2. UI 
     - ability to select alternate branches

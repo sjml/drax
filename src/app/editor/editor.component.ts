@@ -472,6 +472,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   save(commitMessage: string): Promise<boolean> {
     return this.pushMainFile(commitMessage)
                   .then((mainPushRes) => {
+                    if (!this.annotationsDirty) {
+                      this.change.emit();
+                      return Promise.resolve(true);
+                    }
                     return this.pushAnnotationsFile(commitMessage)
                       .then((annPushRes) => {
                         this.change.emit();
@@ -488,6 +492,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                       });
                   })
                   .catch((err) => {
+                    console.log(err);
                     this.notificationService.notify(
                       'Couldn\'t Save File',
                       'An error occurred saving to GitHub.',
