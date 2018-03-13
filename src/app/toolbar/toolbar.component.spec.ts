@@ -72,7 +72,7 @@ describe('ToolbarComponent', () => {
     }
   });
 
-  it('should be created with 13 buttons and 4 separators', () => {
+  it('should be created with 13 buttons and 5 separators', () => {
     let buttonCount = 0;
     let sepCount = 0;
     for (const item of component.items) {
@@ -85,12 +85,12 @@ describe('ToolbarComponent', () => {
     }
 
     expect(buttonCount).toEqual(13);
-    expect(sepCount).toEqual(4);
+    expect(sepCount).toEqual(5);
   });
 
   it('has the expected button ordering for tests', () => {
     const save = component.items[0];
-    const bold = component.items[4];
+    const bold = component.items[5];
     expect(save.itemType).toBe('BUTTON');
     expect(bold.itemType).toBe('BUTTON');
     const saveButton = save as Button;
@@ -116,7 +116,7 @@ describe('ToolbarComponent', () => {
       }
     }
 
-    const button = component.items[4] as Button;
+    const button = component.items[5] as Button;
     stubButtonReturn = ButtonState.Active;
     testHost.change.emit();
     expect(button.state).toEqual(ButtonState.Inactive);
@@ -127,7 +127,7 @@ describe('ToolbarComponent', () => {
   });
 
   it('does not respond to clicks when disabled', () => {
-    const button = component.items[4] as Button;
+    const button = component.items[5] as Button;
     button.state = ButtonState.Disabled;
 
     const preClickScc = testHost.stubCalledCount;
@@ -137,7 +137,7 @@ describe('ToolbarComponent', () => {
   });
 
   it('responds to clicks when active or inactive', () => {
-    const button = component.items[4] as Button;
+    const button = component.items[5] as Button;
     button.state = ButtonState.Active;
 
     const preClickScc = testHost.stubCalledCount;
@@ -149,7 +149,7 @@ describe('ToolbarComponent', () => {
   it('partially disables when editor is not in markdown mode', () => {
     stubButtonReturn = ButtonState.Inactive;
     const save = component.items[0] as Button;
-    const bold = component.items[4] as Button;
+    const bold = component.items[5] as Button;
     save.state = ButtonState.Active;
     bold.state = ButtonState.Active;
     testHost.markdownConfig.name = '';

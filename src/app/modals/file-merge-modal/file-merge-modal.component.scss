@@ -1,0 +1,27 @@
+@import '~sass/variables';
+
+.closeButton {
+  position: relative;
+  float: right;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.buttonBar {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: row-reverse;
+
+  button {
+    color: white;
+    margin-right: 8px;
+  }
+
+  button.ok {
+    background-color: $okColor;
+  }
+
+  button.cancel {
+    background-color: $cancelColor;
+  }
+}

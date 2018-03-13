@@ -21,6 +21,7 @@ import { PagesComponent } from './pages/pages.component';
 import { DraxModalComponent } from './modals/drax-modal/drax-modal.component';
 import { DataRequestModalComponent } from './modals/data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from './modals/file-history-modal/file-history-modal.component';
+import { FileMergeModalComponent } from './modals/file-merge-modal/file-merge-modal.component';
 import { AnnotationContainerComponent } from './annotations/annotation-container/annotation-container.component';
 import { AnnotationComponent } from './annotations/annotation/annotation.component';
 import { FileBrowserEntryComponent } from './filebrowserentry/filebrowserentry.component';
@@ -39,6 +40,7 @@ import { NotificationContainerComponent } from './notifications/notification-con
     DraxModalComponent,
     DataRequestModalComponent,
     FileHistoryModalComponent,
+    FileMergeModalComponent,
     AnnotationContainerComponent,
     AnnotationComponent,
     PlaygroundComponent,

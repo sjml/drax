@@ -45,9 +45,11 @@ export class NotificationContainerComponent implements OnInit, NotificationCompo
       return;
     }
 
-    notification['timeout'] = setTimeout(() => {
-      this.remove(notification);
-    }, duration);
+    if (duration > 0) {
+      notification['timeout'] = setTimeout(() => {
+        this.remove(notification);
+      }, duration);
+    }
     this.notifications.push(notification);
   }
 

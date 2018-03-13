@@ -11,6 +11,7 @@ import { Component,
 
 import { DataRequestModalComponent } from '../data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from '../file-history-modal/file-history-modal.component';
+import { FileMergeModalComponent } from '../file-merge-modal/file-merge-modal.component';
 
 import { ModalService } from '../modal.service';
 
@@ -24,7 +25,8 @@ export interface DraxModalType {
   selector: 'app-drax-modal',
   entryComponents: [
     DataRequestModalComponent,
-    FileHistoryModalComponent
+    FileHistoryModalComponent,
+    FileMergeModalComponent
   ],
   templateUrl: './drax-modal.component.html',
   styleUrls: ['./drax-modal.component.scss']

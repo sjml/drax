@@ -35,9 +35,11 @@
 0. Fixes
     - More comprehensive fix for contentRoot
     - see if it's possible to merge cleanly when refreshing
+      - deal with annotations after merge.... 
     - remove annotation file if all annotations gone?
 1. Image uploading
 2. UI 
+    - notifications blocking clicks on toolbar?
     - ability to select alternate branches
     - spinners
 3. Complete testing suite

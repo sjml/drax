@@ -28,6 +28,7 @@ import { ModalService } from '../modals/modal.service';
 import { NotificationService } from '../notifications/notification.service';
 import { DataRequestModalComponent } from '../modals/data-request-modal/data-request-modal.component';
 import { FileHistoryModalComponent } from '../modals/file-history-modal/file-history-modal.component';
+import { FileMergeModalComponent } from '../modals/file-merge-modal/file-merge-modal.component';
 
 import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
 import { ButtonState } from '../toolbar/toolbar-items';
@@ -578,8 +579,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (response === null || response['object'] === null) {
         this.notificationService.notify(
           'File Gone',
-          `The file "${this._file.item.fileName}" has been deleted from the repository.`,
-          7000,
+          `The file "${this._file.item.fileName}" has been deleted from the repository. Saving your current work will restore it.`,
+          0,
           NotificationLevel.Error
         );
         console.error('File no longer exists.');
@@ -589,8 +590,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.fileOutOfSync) {
           this.notificationService.notify(
             'File Changed',
-            `The file "${this._file.item.fileName}" has been changed on the repository. Click the "Refresh" button to see the new version.`,
-            7000,
+            `The file "${this._file.item.fileName}" has been changed on the repository. Click the "Refresh" button to update your version.`,
+            0,
             NotificationLevel.Warning
           );
         }
@@ -606,41 +607,29 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (execute) {
       const fields = [];
+
       this.modalService.generate(
-        DataRequestModalComponent,
+        FileMergeModalComponent,
         {
-          display: {
-            title: 'Refresh File',
-            description: 'There\'s a new version of the file on GitHub. Loading it will replace your current work. Is that all right?',
-            fields: []
-          },
-          callback: (pressedOK, values) => {
+          ghFile: this._file,
+          callback: (pressedOK, newContents, newFile) => {
             if (pressedOK) {
-              this.refreshContents();
+              this.fileOutOfSync = false;
+
+              this.instance.setValue(newContents);
+
+              this._file.item.lastGet = newFile.item.lastGet;
+              this._file.contents = newContents;
+              this.processFileContents();
+              // TODO: get annotations? eeeeek
+
+              this.change.emit();
             }
           }
         }
       );
     }
     return ButtonState.Active;
-  }
-
-  refreshContents() {
-    this.gitHubService.getFile(this._file.item)
-      .then(newFile => {
-        if (newFile === null) {
-          this.notificationService.notify(
-            'File Error',
-            `Couldn\'t refresh "${this._file.item.fileName}".`,
-            7000,
-            NotificationLevel.Error
-          );
-        }
-        else {
-          this.file = newFile;
-        }
-      })
-    ;
   }
 
   showHistory(execute: boolean): ButtonState {
