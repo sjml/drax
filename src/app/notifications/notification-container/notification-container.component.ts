@@ -68,15 +68,13 @@ export class NotificationContainerComponent implements OnInit, NotificationCompo
 
   pauseTimeout(notification: Notification) {
     if (notification['timeout']) {
-      console.log('pausing timeout');
       clearTimeout(notification['timeout']);
-      notification['timeout'] = null;
+      // notification['timeout'] = null;
     }
   }
 
   resumeTimeout(notification: Notification) {
-    if (!notification['timeout']) {
-      console.log('resuming timeout');
+    if (notification['timeout']) {
       notification['timeout'] = setTimeout(() => {
         this.remove(notification);
       }, 1000);

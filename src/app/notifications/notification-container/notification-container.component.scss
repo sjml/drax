@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: flex-end;
 
+  pointer-events: none;
   position: absolute;
   left: 0px;
   top: 5px;
@@ -16,6 +17,7 @@
   margin-top: 5px;
   margin-right: 10px;
   padding: 10px 5px;
+  pointer-events: all;
   display: flex;
   align-items: center;
 

@@ -40,7 +40,6 @@
     - remove annotation file if all annotations gone?
 1. Image uploading
 2. UI 
-    - notifications blocking clicks on toolbar?
     - ability to select alternate branches
     - spinners
 3. Complete testing suite
