@@ -37,6 +37,7 @@
     - see if it's possible to merge cleanly when refreshing
       - deal with annotations after merge.... 
       - disable save button if user hasn't dealt with sync
+      - clear notification once we hit refresh
     - remove annotation file if all annotations gone?
 1. Image uploading
 2. UI 

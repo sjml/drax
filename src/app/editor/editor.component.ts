@@ -493,7 +493,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                       });
                   })
                   .catch((err) => {
-                    console.log(err);
+                    console.error(err);
                     this.notificationService.notify(
                       'Couldn\'t Save File',
                       'An error occurred saving to GitHub.',
@@ -711,7 +711,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const selectedRange = this.getWorkingRange();
     a.from = selectedRange.from();
     a.to = selectedRange.to();
-    console.log('from:', a.from, 'to:', a.to);
+    // console.log('from:', a.from, 'to:', a.to);
 
     const doc = this.instance.getDoc();
     a.marker = doc.markText(a.from, a.to, {
@@ -1137,7 +1137,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (hasLink) {
       if (execute) {
-        console.log('kill it');
+        // console.log('kill it');
       }
       return null;
     }
