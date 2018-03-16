@@ -335,6 +335,17 @@ export class GitHubService {
     ;
   }
 
+  getPathAndAnnotationInfo(item: GitHubItem): Promise<object> {
+    return this.graphQlQuery(Queries.getFileAndAnnotationInfo(item), 'pathAndAnnotations').toPromise()
+      .then(response => {
+        return response['data'];
+      })
+      .catch(error => {
+        this.connErrNotification();
+      })
+    ;
+  }
+
   getFileList(dir: GitHubItem): Promise<GitHubItem[]> {
     if (!dir.isDirectory) {
       console.error('Cannot load listing of non-directory.');

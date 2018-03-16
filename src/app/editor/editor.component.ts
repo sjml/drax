@@ -80,6 +80,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   set file(v: GitHubFile) {
     if (v !== this._file) {
       this.fileOutOfSync = false;
+      this.annFileOutOfSync = false;
       window.clearInterval(this.checkInterval);
       this.checkInterval = null;
 
@@ -90,13 +91,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this._file !== null) {
         this.checkInterval = window.setInterval(() =>
-          this.checkAgainstServer(), 5 * 1000
+          this.checkAgainstServer(), 60 * 1000
         );
       }
     }
   }
   get file(): GitHubFile { return this._file; }
   fileOutOfSync: boolean;
+  annFileOutOfSync: boolean;
+  annFileLastGet: string;
   outwardFileData: { prefix: string, name: string, link: string } = null;
 
   @HostListener('window:resize') onResize() {
@@ -308,6 +311,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (fileResponse === null) {
         return finalize();
       }
+      this.annFileLastGet = item.lastGet;
 
       annData = JSON.parse(fileResponse.contents);
     }
@@ -335,7 +339,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // GET TEXT THAT ANNOTATIONS REFERS TO
+    // get text that annotations refers to
 
     let annotatedContents = this._file.contents;
     const newContents = this._file.contents;
@@ -368,7 +372,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return finalize(annsToProc);
     }
 
-    // REPAIR ANNOTATIONS
+    // repair annotations
 
     if (params[0] === null && params[1] === null) {
       this.notificationService.notify(
@@ -473,6 +477,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (
          this.isPlayground
       || this.fileOutOfSync
+      || this.annFileOutOfSync
       || !this._file
       || !(this._file.isDirty || this.annotationsDirty)) {
       return null;
@@ -606,6 +611,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (val['success']) {
           this.originalRawAnnotations = annFileObj['annotations'];
           this.annotationsDirty = false;
+          this.annFileLastGet = item.lastGet;
           return Promise.resolve(true);
         }
         else {
@@ -621,8 +627,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isPlayground || this._file === null) {
       return;
     }
-    this.gitHubService.getPathInfo(this._file.item).then(response => {
-      if (response === null || response['object'] === null) {
+    if (this.fileOutOfSync || this.annFileOutOfSync) {
+      // we know we're out of sync; don't bother hitting the server
+      return;
+    }
+    this.gitHubService.getPathAndAnnotationInfo(this._file.item).then(response => {
+      if (response === null || response['file']['object'] === null) {
         this.notificationService.notify(
           'File Gone',
           `The file "${this._file.item.fileName}" has been deleted from the repository. Saving your current work will restore it.`,
@@ -632,23 +642,41 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         console.error('File no longer exists.');
         return;
       }
-      if (this._file.item.lastGet !== response['object']['oid']) {
+      let changed = false;
+      if (this._file.item.lastGet !== response['file']['object']['oid']) {
         if (!this.fileOutOfSync) {
           this.notificationService.notify(
             'File Changed',
-            `The file "${this._file.item.fileName}" has been changed on the repository. Click the "Refresh" button to update your version.`,
+            `The file "${this._file.item.fileName}" ` +
+            'has been changed on the repository. Click the "Refresh" button to update your version.',
             0,
             NotificationLevel.Warning
           );
         }
         this.fileOutOfSync = true;
+        changed = true;
+      }
+      if (this.annFileLastGet !== response['annotations']['object']['oid']) {
+        if (!this.annFileOutOfSync) {
+          this.notificationService.notify(
+            'File Changed',
+            `The annotations for "${this._file.item.fileName}" ` +
+            'have changed on the repository. Click the "Refresh" button to update your version.',
+            0,
+            NotificationLevel.Warning
+          );
+        }
+        this.annFileOutOfSync = true;
+        changed = true;
+      }
+      if (changed) {
         this.change.emit();
       }
     });
   }
 
   prepRefresh(execute: boolean): ButtonState {
-    if (this.isPlayground || !this.fileOutOfSync) {
+    if (this.isPlayground || (!this.fileOutOfSync && !this.annFileOutOfSync)) {
       return null;
     }
     if (execute) {
@@ -658,9 +686,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         FileMergeModalComponent,
         {
           ghFile: this._file,
+          annData: {
+            annotations: this.annotations,
+            outOfSync: this.annFileOutOfSync,
+          },
           callback: (pressedOK, newContents, newFile) => {
             if (pressedOK) {
               this.fileOutOfSync = false;
+              this.annFileOutOfSync = false;
 
               this.notificationService.clearNotifications('File Changed');
 

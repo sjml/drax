@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { DraxModalType, DraxModalComponent } from '../drax-modal/drax-modal.component';
 import { GitHubFile } from '../../githubservice/githubclasses';
+import { Annotation } from '../../annotations/annotation/annotation';
 import { GitHubService } from '../../githubservice/github.service';
 import { NotificationLevel } from '../../notifications/notification';
 import { NotificationService } from '../../notifications/notification.service';
@@ -34,6 +35,10 @@ export class FileMergeModalComponent implements OnInit, DraxModalType {
 
   display(data: {
             ghFile: GitHubFile,
+            annData: {
+              annotations: Annotation[],
+              outOfSync: boolean,
+            },
             callback: (pressedOK: boolean, newContents: string, newFile: GitHubFile) => void
           }) {
     this.callback = data.callback;

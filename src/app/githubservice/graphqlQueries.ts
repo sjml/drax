@@ -184,6 +184,38 @@ export module Queries {
     return {query: qString};
   }
 
+  const fileAndAnnotationStatus = `
+    {
+      file: repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(expression: "%%EXPRESSION%%") {
+          __typename
+          oid
+          ... on Blob {
+            isBinary
+          }
+        }
+      }
+      annotations: repository(owner: "%%OWNER%%", name: "%%NAME%%") {
+        object(expression: "%%ANNEXPRESSION%%") {
+          __typename
+          oid
+        }
+      }
+    }
+  `;
+  export function getFileAndAnnotationInfo(item: GitHubItem): object {
+    let branch = item.branch;
+    if (branch === null || branch.length === 0) {
+      branch = item.repo.defaultBranch;
+    }
+    const qString = fileAndAnnotationStatus
+                      .replace(/%%OWNER%%/g, item.repo.owner)
+                      .replace(/%%NAME%%/g, item.repo.name)
+                      .replace(/%%EXPRESSION%%/g, `${branch}:${item.getFullPath()}`)
+                      .replace(/%%ANNEXPRESSION%%/g, `${branch}:.drax/annotations/${item.getFullPath()}.json`);
+    return {query: qString};
+  }
+
   const fileHistoryTemplate = `
     {
       repository(owner: "%%OWNER%%", name: "%%NAME%%") {
