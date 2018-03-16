@@ -88,7 +88,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (this._file !== null) {
-        this.checkInterval = window.setInterval(() => this.checkAgainstServer(), 60 * 1000);
+        this.checkInterval = window.setInterval(() =>
+          this.checkAgainstServer(), 5 * 1000
+        );
       }
     }
   }
@@ -274,7 +276,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.takeFocus();
   }
 
-  private async processAnnotations() {
+  private async processAnnotations(annsToProc: Annotation[] = null, originalText: string = null) {
     const finalize = (anns: Annotation[] = null) => {
       if (anns !== null) {
         this.annotations = anns;
@@ -291,110 +293,142 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       return finalize();
     }
 
-    // check for accompanying annotation file
-    const item = new GitHubItem();
-    item.repo = this._file.item.repo;
-    item.branch = this._file.item.branch;
-    item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
-    item.fileName = `${this._file.item.fileName}.json`;
-    const fileResponse = await this.gitHubService.getFile(item);
-    if (fileResponse === null) {
-      return finalize();
+    let annData: any = null;
+    if (annsToProc === null || originalText === null) {
+      // check for accompanying annotation file
+      const item = new GitHubItem();
+      item.repo = this._file.item.repo;
+      item.branch = this._file.item.branch;
+      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+      item.fileName = `${this._file.item.fileName}.json`;
+      const fileResponse = await this.gitHubService.getFile(item);
+      if (fileResponse === null) {
+        return finalize();
+      }
+
+      annData = JSON.parse(fileResponse.contents);
     }
 
-    const annData = JSON.parse(fileResponse.contents);
-    const newAnns: Annotation[] = [];
-    if (annData.annotations) {
-      this.originalRawAnnotations = annData.annotations;
-      for (const ann of annData.annotations) {
-        const newAnn = new Annotation();
-        newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
-        newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
-        newAnn.author = ann.author;
-        newAnn.timestamp = ann.timestamp;
-        newAnn.text = ann.text;
-        newAnns.push(newAnn);
-      }
-    }
-
-    if (annData.parentOid !== this._file.item.lastGet) {
-      const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
-      if (oldFileContents !== null) {
-        const diffs = JSDiff.diffChars(oldFileContents, this._file.contents);
-        const doc = this.instance.getDoc();
-        this.instance.operation(() => {
-          doc.setValue(oldFileContents);
-          this.initialMarkText(newAnns);
-
-          let lineIndex = 0;
-          let chIndex = 0;
-          for (const change of diffs) {
-            if (change.added === undefined && change.removed === undefined) {
-              for (const c of change.value) {
-                if (c === '\n') {
-                  lineIndex += 1;
-                  chIndex = 0;
-                }
-                else {
-                  chIndex += 1;
-                }
-              }
-            }
-            else if (change.removed === true) {
-              const from = { line: lineIndex, ch: chIndex };
-              const to = { line: lineIndex, ch: chIndex };
-              for (const c of change.value) {
-                if (c === '\n') {
-                  to.line += 1;
-                  to.ch = 0;
-                }
-                else {
-                  to.ch += 1;
-                }
-              }
-              doc.replaceRange('', from, to);
-            }
-            else if (change.added === true) {
-              const from = { line: lineIndex, ch: chIndex };
-              doc.replaceRange(change.value, from);
-              for (const c of change.value) {
-                if (c === '\n') {
-                  lineIndex += 1;
-                  chIndex = 0;
-                }
-                else {
-                  chIndex += 1;
-                }
-              }
-            }
-          }
-
-          doc.clearHistory();
-          doc.markClean();
-          this.notificationService.notify(
-            'Annotations Repaired',
-            'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
-            7500,
-            NotificationLevel.Warning
-          );
-        });
-      }
-      else {
-        this.notificationService.notify(
-          'Annotations Repaired',
-          'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
-          7500,
-          NotificationLevel.Warning
-        );
-        this.initialMarkText(newAnns);
+    if (annsToProc === null) {
+      annsToProc = [];
+      if (annData.annotations) {
+        this.originalRawAnnotations = annData.annotations;
+        for (const ann of annData.annotations) {
+          const newAnn = new Annotation();
+          newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
+          newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
+          newAnn.author = ann.author;
+          newAnn.timestamp = ann.timestamp;
+          newAnn.text = ann.text;
+          annsToProc.push(newAnn);
+        }
       }
     }
     else {
-      // we're in sync; no worries
-      this.initialMarkText(newAnns);
+      for (const ann of annsToProc) {
+        ann.marker.clear();
+        ann.marker = null;
+      }
     }
 
-    return finalize(newAnns);
+    // GET TEXT THAT ANNOTATIONS REFERS TO
+
+    let annotatedContents = this._file.contents;
+    const newContents = this._file.contents;
+
+    if (originalText === null) {
+      if (annData.parentOid !== this._file.item.lastGet) {
+        const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
+        if (oldFileContents !== null) {
+          annotatedContents = oldFileContents;
+        }
+        else {
+          this.notificationService.notify(
+            'Annotations Repaired',
+            'This file was edited outside of Drax, and the older version couldn\'t be found. The annotations may be out of sync.',
+            7500,
+            NotificationLevel.Error
+          );
+          this.initialMarkText(annsToProc);
+          return finalize(annsToProc);
+        }
+      }
+    }
+    else {
+      annotatedContents = originalText;
+    }
+
+    if (newContents === annotatedContents) {
+      // we're in sync; no worries
+      this.initialMarkText(annsToProc);
+      return finalize(annsToProc);
+    }
+
+    // REPAIR ANNOTATIONS
+
+    if (annsToProc === null && originalText === null) {
+      this.notificationService.notify(
+        'Annotations Repaired',
+        'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
+        7500,
+        NotificationLevel.Warning
+      );
+    }
+
+    const diffs = JSDiff.diffChars(annotatedContents, newContents);
+    const doc = this.instance.getDoc();
+    return this.instance.operation(() => {
+      doc.setValue(annotatedContents);
+      this.initialMarkText(annsToProc);
+
+      let lineIndex = 0;
+      let chIndex = 0;
+      for (const change of diffs) {
+        if (change.added === undefined && change.removed === undefined) {
+          for (const c of change.value) {
+            if (c === '\n') {
+              lineIndex += 1;
+              chIndex = 0;
+            }
+            else {
+              chIndex += 1;
+            }
+          }
+        }
+        else if (change.removed === true) {
+          const from = { line: lineIndex, ch: chIndex };
+          const to = { line: lineIndex, ch: chIndex };
+          for (const c of change.value) {
+            if (c === '\n') {
+              to.line += 1;
+              to.ch = 0;
+            }
+            else {
+              to.ch += 1;
+            }
+          }
+          doc.replaceRange('', from, to);
+        }
+        else if (change.added === true) {
+          const from = { line: lineIndex, ch: chIndex };
+          doc.replaceRange(change.value, from);
+          for (const c of change.value) {
+            if (c === '\n') {
+              lineIndex += 1;
+              chIndex = 0;
+            }
+            else {
+              chIndex += 1;
+            }
+          }
+        }
+      }
+
+      doc.clearHistory();
+      doc.markClean();
+
+      return finalize(annsToProc);
+    });
   }
 
   loadFreshFile() {
@@ -616,12 +650,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (pressedOK) {
               this.fileOutOfSync = false;
 
-              this.instance.setValue(newContents);
+              const oldContents = this._file.contents;
+              const oldAnnDirtyStatus = this.annotationsDirty;
 
               this._file.item.lastGet = newFile.item.lastGet;
               this._file.contents = newContents;
               this.processFileContents();
-              // TODO: get annotations? eeeeek
+              this.processAnnotations(this.annotations, oldContents);
+              this.annotationsDirty = oldAnnDirtyStatus;
 
               this.change.emit();
             }
