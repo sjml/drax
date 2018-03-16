@@ -10,4 +10,5 @@ export class Notification {
 
 export interface NotificationComponentInterface {
   add(notification: Notification, duration: number);
+  clearNotifications(title: string);
 }

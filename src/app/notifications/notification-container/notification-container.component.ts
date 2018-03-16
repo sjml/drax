@@ -53,6 +53,14 @@ export class NotificationContainerComponent implements OnInit, NotificationCompo
     this.notifications.push(notification);
   }
 
+  clearNotifications(title: string) {
+    for (const notification of this.notifications) {
+      if (notification.title === title) {
+        this.remove(notification);
+      }
+    }
+  }
+
   remove(notification: Notification) {
     if (!this.notifications.includes(notification)) {
       console.error('Trying to remove notification that is not inserted.');

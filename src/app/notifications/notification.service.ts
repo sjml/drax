@@ -28,4 +28,9 @@ export class NotificationService {
   push(notification: Notification, timing: number) {
     this.comp.add(notification, timing);
   }
+
+  // TODO: make this some kind of enum
+  clearNotifications(title: string) {
+    this.comp.clearNotifications(title);
+  }
 }

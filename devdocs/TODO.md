@@ -34,9 +34,6 @@
 ## Features
 0. Fixes
     - More comprehensive fix for contentRoot
-    - see if it's possible to merge cleanly when refreshing
-      - disable save button if user hasn't dealt with sync
-      - clear notification once we hit refresh
     - enable refresh if it's only a new annotation file
       - add uuids to annotations
       - back-compat: if they don't have one when loaded, generate and add it so it'll get pushed happily

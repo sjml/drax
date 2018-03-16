@@ -466,7 +466,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepForSave(execute: boolean): ButtonState {
-    if (this.isPlayground || !this._file || !(this._file.isDirty || this.annotationsDirty)) {
+    if (
+         this.isPlayground
+      || this.fileOutOfSync
+      || !this._file
+      || !(this._file.isDirty || this.annotationsDirty)) {
       return null;
     }
     if (execute) {
@@ -649,6 +653,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           callback: (pressedOK, newContents, newFile) => {
             if (pressedOK) {
               this.fileOutOfSync = false;
+
+              this.notificationService.clearNotifications('File Changed');
 
               const oldContents = this._file.contents;
               const oldAnnDirtyStatus = this.annotationsDirty;
