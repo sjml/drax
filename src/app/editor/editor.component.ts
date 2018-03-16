@@ -11,6 +11,7 @@ import { Component,
        } from '@angular/core';
 import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 
+import * as uuid from 'uuid';
 import * as JSDiff from 'diff';
 
 import * as CodeMirror from 'codemirror';
@@ -285,6 +286,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.change.emit();
     };
 
+    const params = [annsToProc, originalText];
+
     this.annotations = [];
     this.originalRawAnnotations = null;
     this.annotationsDirty = false;
@@ -315,6 +318,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.originalRawAnnotations = annData.annotations;
         for (const ann of annData.annotations) {
           const newAnn = new Annotation();
+          newAnn.uuid = ann.uuid; // this may be undefined; it's ok
           newAnn.from = CodeMirror.Pos(ann.from.line, ann.from.ch);
           newAnn.to = CodeMirror.Pos(ann.to.line, ann.to.ch);
           newAnn.author = ann.author;
@@ -366,7 +370,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // REPAIR ANNOTATIONS
 
-    if (annsToProc === null && originalText === null) {
+    if (params[0] === null && params[1] === null) {
       this.notificationService.notify(
         'Annotations Repaired',
         'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
@@ -569,6 +573,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         continue;
       }
       const annObj = {};
+      if (ann.uuid === undefined) {
+        ann.uuid = uuid.v4();
+      }
+      annObj['uuid'] = ann.uuid;
       annObj['from'] = { line: ann.from.line, ch: ann.from.ch };
       annObj['to'] = { line: ann.to.line, ch: ann.to.ch };
       annObj['author'] = ann.author;

@@ -4,6 +4,7 @@ export class Annotation {
   to: CodeMirror.Position;
   author: string;
   timestamp: number;
+  uuid: string;
   text: string;
 
   marker: CodeMirror.TextMarker = null;
