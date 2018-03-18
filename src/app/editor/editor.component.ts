@@ -203,6 +203,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.annContComp.annotationChanges.subscribe(() => {
       const oldDirty = this.annotationsDirty;
+      this.updateAnnotations();
       this.checkAnnotations();
       if (oldDirty !== this.annotationsDirty) {
         this.change.emit();

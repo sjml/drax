@@ -77,13 +77,16 @@ export class AnnotationContainerComponent implements AfterViewInit {
         this._childChanges.push(annComp.change.subscribe(() => {
           if (annComp.ann.text.length === 0 && annComp.ann.timestamp === 0) {
             this.removeAnnotation(annComp);
+            setTimeout(() => {
+              this.annotationChanges.emit();
+            });
           }
           else {
             setTimeout(() => {
               this.calculatePositions();
             });
+            this.annotationChanges.emit();
           }
-          this.annotationChanges.emit();
         }));
       });
     });
