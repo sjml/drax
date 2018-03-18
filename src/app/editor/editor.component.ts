@@ -33,7 +33,7 @@ import { FileMergeModalComponent } from '../modals/file-merge-modal/file-merge-m
 
 import { GitHubFile, GitHubItem, GitHubRepo } from '../githubservice/githubclasses';
 import { ButtonState } from '../toolbar/toolbar-items';
-import { Annotation, AnnotationSort } from '../annotations/annotation/annotation';
+import { Annotation, AnnotationSort, AdjustAnnotations } from '../annotations/annotation/annotation';
 import { AnnotationComponent } from '../annotations/annotation/annotation.component';
 import { AnnotationContainerComponent } from '../annotations/annotation-container/annotation-container.component';
 import { NotificationLevel } from '../notifications/notification';
@@ -91,7 +91,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this._file !== null) {
         this.checkInterval = window.setInterval(() =>
-          this.checkAgainstServer(), 60 * 1000
+          this.checkAgainstServer(), 5 * 1000
         );
       }
     }
@@ -334,9 +334,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     else {
+      this.originalRawAnnotations = annsToProc;
       for (const ann of annsToProc) {
-        ann.marker.clear();
-        ann.marker = null;
+        if (ann.marker) {
+          ann.marker.clear();
+          ann.marker = null;
+        }
       }
     }
 
@@ -384,60 +387,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     }
 
-    const diffs = JSDiff.diffChars(annotatedContents, newContents);
+    annsToProc = AdjustAnnotations(annsToProc, annotatedContents, newContents);
+    this.initialMarkText(annsToProc);
+
     const doc = this.instance.getDoc();
-    return this.instance.operation(() => {
-      doc.setValue(annotatedContents);
-      this.initialMarkText(annsToProc);
+    doc.clearHistory();
+    doc.markClean();
 
-      let lineIndex = 0;
-      let chIndex = 0;
-      for (const change of diffs) {
-        if (change.added === undefined && change.removed === undefined) {
-          for (const c of change.value) {
-            if (c === '\n') {
-              lineIndex += 1;
-              chIndex = 0;
-            }
-            else {
-              chIndex += 1;
-            }
-          }
-        }
-        else if (change.removed === true) {
-          const from = { line: lineIndex, ch: chIndex };
-          const to = { line: lineIndex, ch: chIndex };
-          for (const c of change.value) {
-            if (c === '\n') {
-              to.line += 1;
-              to.ch = 0;
-            }
-            else {
-              to.ch += 1;
-            }
-          }
-          doc.replaceRange('', from, to);
-        }
-        else if (change.added === true) {
-          const from = { line: lineIndex, ch: chIndex };
-          doc.replaceRange(change.value, from);
-          for (const c of change.value) {
-            if (c === '\n') {
-              lineIndex += 1;
-              chIndex = 0;
-            }
-            else {
-              chIndex += 1;
-            }
-          }
-        }
-      }
-
-      doc.clearHistory();
-      doc.markClean();
-
-      return finalize(annsToProc);
-    });
+    return finalize(annsToProc);
   }
 
   loadFreshFile() {
@@ -628,7 +585,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isPlayground || this._file === null) {
       return;
     }
-    if (this.fileOutOfSync || this.annFileOutOfSync) {
+    if (this.fileOutOfSync && this.annFileOutOfSync) {
       // we know we're out of sync; don't bother hitting the server
       return;
     }
@@ -690,11 +647,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
           annData: {
             annotations: this.annotations,
             outOfSync: this.annFileOutOfSync,
+            originalAnnotations: this.originalRawAnnotations
           },
-          callback: (pressedOK, newContents, newFile) => {
+          callback: (pressedOK, newContents, newFile, newAnnotations, annLastGet) => {
             if (pressedOK) {
               this.fileOutOfSync = false;
               this.annFileOutOfSync = false;
+              this.annFileLastGet = annLastGet;
 
               this.notificationService.clearNotifications('File Changed');
 
@@ -704,6 +663,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
               this._file.item.lastGet = newFile.item.lastGet;
               this._file.contents = newContents;
               this.processFileContents();
+              this.annotations = newAnnotations;
               this.processAnnotations(this.annotations, oldContents);
               this.annotationsDirty = oldAnnDirtyStatus;
 
@@ -791,6 +751,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     a.text = '';
     a.timestamp = 0;
+    a.uuid = uuid.v4();
 
     const selectedRange = this.getWorkingRange();
     a.from = selectedRange.from();
@@ -834,7 +795,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // creating the CM markers initially
     const doc = this.instance.getDoc();
     for (const ann of anns) {
-      if (ann.marker === null) {
+      if (!ann.marker) {
         ann.marker = doc.markText(ann.from, ann.to, {
           className: `annotation color${AnnotationComponent.getColorIndex(ann.author)}`,
           startStyle: 'annotationStart',
