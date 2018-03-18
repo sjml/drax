@@ -79,7 +79,7 @@ export class GitHubItem extends GitHubNavNode {
       return this.fileName;
     }
     else {
-      return `${this.dirPath}/${this.fileName}`;
+      return `${this.dirPath}${this.fileName}`;
     }
   }
 
@@ -95,12 +95,7 @@ export class GitHubItem extends GitHubNavNode {
 
   public getGitHubLink(): string {
     let link = `https://github.com/${this.repo.owner}/${this.repo.name}/blob/${this.branch}/`;
-    if (this.dirPath === null || this.dirPath.length === 0) {
-      link += this.fileName;
-    }
-    else {
-      link += `${this.dirPath}/${this.fileName}`;
-    }
+    link += this.getFullPath();
     return link;
   }
 

@@ -67,7 +67,7 @@ export class FileMergeModalComponent implements OnInit, DraxModalType {
     const annItem = new GitHubItem();
     annItem.repo = this.newFile.item.repo;
     annItem.branch = this.newFile.item.branch;
-    annItem.dirPath = `.drax/annotations${this.newFile.item.dirPath}`;
+    annItem.dirPath = `.drax/annotations/${this.newFile.item.dirPath}`;
     annItem.fileName = `${this.newFile.item.fileName}.json`;
     this.newAnnFile = await this.ghService.getFile(annItem);
 

@@ -306,7 +306,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       const item = new GitHubItem();
       item.repo = this._file.item.repo;
       item.branch = this._file.item.branch;
-      item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+      item.dirPath = `.drax/annotations/${this._file.item.dirPath}`;
       item.fileName = `${this._file.item.fileName}.json`;
       const fileResponse = await this.gitHubService.getFile(item);
       if (fileResponse === null) {
@@ -552,7 +552,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const item = new GitHubItem();
     item.repo = this._file.item.repo;
     item.branch = this._file.item.branch;
-    item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
+    item.dirPath = `.drax/annotations/${this._file.item.dirPath}`;
     item.fileName = `${this._file.item.fileName}.json`;
 
     return this.gitHubService.getFile(item).then(fileResponse => {
