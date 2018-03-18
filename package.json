@@ -19,7 +19,7 @@
     "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
     "build": "ng build --prod",
     "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
-    "postinstall": "cd php/auth; ./install.sh; curl https://patch-diff.githubusercontent.com/raw/DefinitelyTyped/DefinitelyTyped/pull/24365.diff | sed -E 's/\/types/\/@types/g' | patch -d node_modules -p1",
+    "postinstall": "curl https://patch-diff.githubusercontent.com/raw/DefinitelyTyped/DefinitelyTyped/pull/24365.diff | sed -E 's/\/types/\/@types/g' | patch -d node_modules -p1; cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
     "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --single-run",
