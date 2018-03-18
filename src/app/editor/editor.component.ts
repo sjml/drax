@@ -91,7 +91,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this._file !== null) {
         this.checkInterval = window.setInterval(() =>
-          this.checkAgainstServer(), 5 * 1000
+          this.checkAgainstServer(), 60 * 1000
         );
       }
     }
@@ -281,7 +281,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.takeFocus();
   }
 
-  private async processAnnotations(annsToProc: Annotation[] = null, originalText: string = null) {
+  private async processAnnotations(annsToProc: Annotation[] = null) {
     const finalize = (anns: Annotation[] = null) => {
       if (anns !== null) {
         this.annotations = anns;
@@ -290,7 +290,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.change.emit();
     };
 
-    const params = [annsToProc, originalText];
+    const paramsAnns = annsToProc;
 
     this.annotations = [];
     this.originalRawAnnotations = null;
@@ -301,7 +301,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     let annData: any = null;
-    if (annsToProc === null || originalText === null) {
+    if (annsToProc === null) {
       // check for accompanying annotation file
       const item = new GitHubItem();
       item.repo = this._file.item.repo;
@@ -315,9 +315,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.annFileLastGet = item.lastGet;
 
       annData = JSON.parse(fileResponse.contents);
-    }
-
-    if (annsToProc === null) {
       annsToProc = [];
       if (annData.annotations) {
         this.originalRawAnnotations = annData.annotations;
@@ -348,26 +345,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     let annotatedContents = this._file.contents;
     const newContents = this._file.contents;
 
-    if (originalText === null) {
-      if (annData.parentOid !== this._file.item.lastGet) {
-        const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
-        if (oldFileContents !== null) {
-          annotatedContents = oldFileContents;
-        }
-        else {
-          this.notificationService.notify(
-            'Annotations Repaired',
-            'This file was edited outside of Drax, and the older version couldn\'t be found. The annotations may be out of sync.',
-            7500,
-            NotificationLevel.Error
-          );
-          this.initialMarkText(annsToProc);
-          return finalize(annsToProc);
-        }
+    if (annData && annData.parentOid !== this._file.item.lastGet) {
+      const oldFileContents = await this.gitHubService.getFileContentsFromOid(this._file.item.repo, annData.parentOid);
+      if (oldFileContents !== null) {
+        annotatedContents = oldFileContents;
       }
-    }
-    else {
-      annotatedContents = originalText;
+      else {
+        this.notificationService.notify(
+          'Annotations Repaired',
+          'This file was edited outside of Drax, and the older version couldn\'t be found. The annotations may be out of sync.',
+          7500,
+          NotificationLevel.Error
+        );
+        this.initialMarkText(annsToProc);
+        return finalize(annsToProc);
+      }
     }
 
     if (newContents === annotatedContents) {
@@ -378,7 +370,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // repair annotations
 
-    if (params[0] === null && params[1] === null) {
+    if (paramsAnns !== null) {
       this.notificationService.notify(
         'Annotations Repaired',
         'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
@@ -663,8 +655,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
               this._file.item.lastGet = newFile.item.lastGet;
               this._file.contents = newContents;
               this.processFileContents();
-              this.annotations = newAnnotations;
-              this.processAnnotations(this.annotations, oldContents);
+              this.processAnnotations(newAnnotations);
               this.annotationsDirty = oldAnnDirtyStatus;
 
               this.change.emit();

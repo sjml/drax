@@ -54,11 +54,13 @@ export class NotificationContainerComponent implements OnInit, NotificationCompo
   }
 
   clearNotifications(title: string) {
+    const dead: Notification[] = [];
     for (const notification of this.notifications) {
       if (notification.title === title) {
-        this.remove(notification);
+        dead.push(notification);
       }
     }
+    dead.map(n => this.remove(n));
   }
 
   remove(notification: Notification) {
