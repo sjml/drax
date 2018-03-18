@@ -370,14 +370,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // repair annotations
 
-    if (paramsAnns !== null) {
-      this.notificationService.notify(
-        'Annotations Repaired',
-        'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
-        7500,
-        NotificationLevel.Warning
-      );
-    }
+    this.notificationService.notify(
+      'Annotations Repaired',
+      'This file was edited outside of Drax. The annotations were repaired, but may be out of sync.',
+      7500,
+      NotificationLevel.Warning
+    );
 
     annsToProc = AdjustAnnotations(annsToProc, annotatedContents, newContents);
     this.initialMarkText(annsToProc);
