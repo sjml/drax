@@ -148,10 +148,21 @@ export class FileMergeModalComponent implements OnInit, DraxModalType {
               currentAnnotations.splice(currentAnnotations.indexOf(fromCurrent), 1);
 
               if (fromNewer.text !== fromCurrent.text) {
-                // if newer and current are different, keep both as separate (generate new uuid)
-                fromCurrent.uuid = uuid.v4();
-                currentBased.push(fromCurrent);
-                newBased.push(fromNewer);
+                // newer and current are different
+                if (fromNewer.text === parentAnn.text) {
+                  // newer is same as parent; take current
+                  currentBased.push(fromCurrent);
+                }
+                else if (fromCurrent.text === parentAnn.text) {
+                  // current is same as parent; take newer
+                  newBased.push(fromNewer);
+                }
+                else {
+                  // both different from parent text; preserve both with new uuid for one
+                  fromCurrent.uuid = uuid.v4();
+                  currentBased.push(fromCurrent);
+                  newBased.push(fromNewer);
+                }
               }
               else {
                 // take the newer

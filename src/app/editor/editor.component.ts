@@ -381,6 +381,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initialMarkText(annsToProc);
 
     const doc = this.instance.getDoc();
+    this.annotationsDirty = true;
     doc.clearHistory();
     doc.markClean();
 
@@ -469,8 +470,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.pushMainFile(commitMessage)
                   .then((mainPushRes) => {
                     if (!this.annotationsDirty) {
-                      this.change.emit();
-                      return Promise.resolve(true);
+                      // still need to push to keep the parent ID in sync
                     }
                     return this.pushAnnotationsFile(commitMessage)
                       .then((annPushRes) => {
