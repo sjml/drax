@@ -34,9 +34,6 @@
 ## Features
 0. Fixes
     - More comprehensive fix for contentRoot
-    - enable refresh if it's only a new annotation file
-      - add uuids to annotations
-      - back-compat: if they don't have one when loaded, generate and add it so it'll get pushed happily
     - remove annotation file if all annotations gone?
 1. Image uploading
 2. UI 
