@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if ! type hub > /dev/null 2>&1; then
+  >&2 echo "No working hub installation detected. https://hub.github.com/"
+  exit 1
+fi
+
+if ! type node > /dev/null 2>&1; then
+  >&2 echo "No working Node.js installation detected. https://nodejs.org/en/"
+  exit 1
+fi
+
 if [ -n "$(git status --porcelain)" ]; then
   >&2 echo "Working directory has to be clean."
   exit 1
