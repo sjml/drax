@@ -604,7 +604,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fileOutOfSync = true;
         changed = true;
       }
-      if (this.annFileLastGet !== response['annotations']['object']['oid']) {
+      if (this.annFileLastGet && this.annFileLastGet !== response['annotations']['object']['oid']) {
         if (!this.annFileOutOfSync) {
           this.notificationService.notify(
             'File Changed',
