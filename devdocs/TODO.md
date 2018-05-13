@@ -33,6 +33,8 @@
 
 ## Features
 0. Fixes
+    - look at annotation change check; quickpatch was deployed but is there a problem such that the check ends up undefined? 
+      - https://github.com/sjml/drax/compare/v0.3.0...v0.3.1#diff-2fb4f671e18302a72b5e3600bb1e90a9
     - More comprehensive fix for contentRoot
     - remove annotation file if all annotations gone?
 1. Image uploading

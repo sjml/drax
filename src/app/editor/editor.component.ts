@@ -555,7 +555,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         fPush = new GitHubFile(outputString);
         fPush.item = item;
       }
-      return this.gitHubService.pushFile(fPush, commitMessage, fileResponse === null).then(val => {
+      return this.gitHubService.pushFile(fPush, commitMessage + ' [annotations]', fileResponse === null).then(val => {
         if (val['success']) {
           this.originalRawAnnotations = annFileObj['annotations'];
           this.annotationsDirty = false;
