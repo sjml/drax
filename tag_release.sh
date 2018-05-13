@@ -5,7 +5,8 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-echo -n "Input tag name (usually a version string starting with \"v\"): "
+currentVersion=$(node -p "require('./package.json').version")
+echo -n "Input tag name (usually a version string starting with \"v\"; currently $currentVersion): "
 read version
 
 if [ -z "$version" ]; then
