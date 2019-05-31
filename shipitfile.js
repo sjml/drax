@@ -13,7 +13,7 @@ const keys = {
 
 const config = {
   default: {
-    workspace: './tmp/drax-build',
+    // workspace: './tmp/drax-build',
     repositoryUrl: keys.repo,
     branch: 'master',
     shallowClone: true,
@@ -40,11 +40,12 @@ module.exports = function(shipit) {
     shipit.log(chalk.green('Making fresh production build'));
     const commands = [
       'npm install --production',
+      'npm install @angular-devkit/build-angular',
       'npm run build'
     ];
     return shipit.local(
             commands.join('; '),
-            {cwd: shipit.config.workspace}
+            {cwd: shipit.workspace}
           )
           .then(function () {
             shipit.emit('built');
@@ -56,17 +57,17 @@ module.exports = function(shipit) {
     const time = execSync(`TZ=${keys.stampZone} date +"%l:%M %p %Z, %d %B %Y"`,
                     {encoding: 'utf-8'}).toString().trim();
     const fullRev = execSync('git rev-parse HEAD',
-                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+                    {encoding: 'utf-8', cwd: shipit.workspace}).toString().trim();
     let rev = execSync('git rev-parse --short HEAD',
-                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+                    {encoding: 'utf-8', cwd: shipit.workspace}).toString().trim();
 
     let tag = null;
     let oldTag = null;
     try {
       tag = execSync('git describe --exact-match --tags $(git log -n1 --pretty=\'%h\')',
-                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+                    {encoding: 'utf-8', cwd: shipit.workspace}).toString().trim();
       oldTag = execSync('git tag | tail -2 | head -1',
-                    {encoding: 'utf-8', cwd: shipit.config.workspace}).toString().trim();
+                    {encoding: 'utf-8', cwd: shipit.workspace}).toString().trim();
       rev = tag;
     }
     catch(err) {
@@ -83,7 +84,7 @@ module.exports = function(shipit) {
       link = `https://github.com/sjml/drax/commit/${fullRev}`;
     }
 
-    const aboutFile = `${shipit.config.workspace}/dist/assets/pages/about.md`;
+    const aboutFile = `${shipit.workspace}/dist/assets/pages/about.md`;
     const aboutContents = fs.readFileSync(aboutFile, 'utf-8');
     const stamped = aboutContents
                       .replace('%%DEPLOY_TIME%%', time)

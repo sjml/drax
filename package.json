@@ -17,12 +17,12 @@
     "ng": "ng",
     "dev": "./php_wrap.sh",
     "start": "echo 'ERROR: Use `npm run dev` for development. For deployment, use the `dist` directory.'",
-    "build": "ng build --prod",
+    "build": "npx ng build --prod",
     "postbuild": "./php_dist.sh; rm dist/drax-config.dev.json",
     "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
-    "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --watch=false",
+    "ci": "ng test --browsers ChromeHeadless --watch=false",
     "test": "ng test",
     "test:nomap": "ng test --sourcemap=false",
     "lint": "ng lint",
@@ -53,7 +53,7 @@
     "rxjs-compat": "^6.0.0-rc.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.800.0",
+    "@angular-devkit/build-angular": "^0.800.1",
     "@angular/cli": "^8.0.1",
     "@angular/compiler-cli": "8.0.0",
     "@angular/language-service": "8.0.0",
