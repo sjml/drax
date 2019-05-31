@@ -34,7 +34,6 @@
     "@angular/compiler": "5.2.9",
     "@angular/core": "5.2.9",
     "@angular/forms": "5.2.9",
-    "@angular/http": "5.2.9",
     "@angular/platform-browser": "5.2.9",
     "@angular/platform-browser-dynamic": "5.2.9",
     "@angular/router": "5.2.9",
@@ -47,11 +46,13 @@
     "ngx-textarea-autosize": "^1.1.1",
     "node-diff3": "^1.0.0",
     "rxjs": "^5.5.10",
+    "tslib": "^1.9.0",
     "uuid": "^3.2.1",
-    "web-animations-js": "^2.3.1",
-    "zone.js": "^0.8.26"
+    "web-animations-js": "github:angular/web-animations-js#release_pr208",
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~0.800.0",
     "@angular/cli": "^8.0.1",
     "@angular/compiler-cli": "5.2.9",
     "@angular/language-service": "5.2.9",
@@ -63,7 +64,7 @@
     "@types/node": "^6.14.6",
     "@types/puppeteer": "^1.12.4",
     "@types/uuid": "^3.4.4",
-    "codelyzer": "^4.5.0",
+    "codelyzer": "^5.0.1",
     "jasmine-core": "~2.8.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "^4.1.0",
