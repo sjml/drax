@@ -227,7 +227,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!itemLoaded) {
       this.notificationService.notify(
         'Loading Error',
-        `Couldn't load "${this._file.item.fileName}" from GitHub.`,
+        `Couldn't load "${data.item.fileName}" from GitHub.`,
         7000,
         NotificationLevel.Error
       );
@@ -242,7 +242,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.file === null) {
       this.notificationService.notify(
         'File Gone',
-        `Couldn't load "${this._file.item.fileName}" from GitHub.`,
+        `Couldn't load "${data.item.fileName}" from GitHub.`,
         7000,
         NotificationLevel.Error
       );

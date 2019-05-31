@@ -79,7 +79,7 @@ export class GitHubItem extends GitHubNavNode {
       return this.fileName;
     }
     else {
-      return `${this.dirPath}${this.fileName}`;
+      return `${this.dirPath}/${this.fileName}`;
     }
   }
 

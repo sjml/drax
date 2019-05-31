@@ -165,41 +165,38 @@ export class GitHubService {
     return false;
   }
 
-  loadItemData(item: GitHubItem): Promise<boolean> {
+  async loadItemData(item: GitHubItem): Promise<boolean> {
     if (item === null) {
       return Promise.resolve(false);
     }
 
-    return this.loadRepoData(item.repo).then(repoResponse => {
-      if (repoResponse === false) {
-        item.lastGet = null;
-        return false;
-      }
-      if (item.branch === null) {
-        item.branch = item.repo.defaultBranch;
-      }
-      return this.getPathInfo(item).then(itemResponse => {
-        if (itemResponse === null) {
-          item.lastGet = null;
-          return false;
-        }
-        if (itemResponse['object'] === null) {
-          item.lastGet = null;
-          return false;
-        }
-        if (!this.checkRoot(item.getFullPath(), item.repo.config['contentRoot'])) {
-          item.lastGet = null;
-          return false;
-        }
-
-        item.isDirectory = itemResponse['object']['__typename'] === 'Tree';
-        if (!item.isDirectory) {
-          item.isBinary = itemResponse['object']['isBinary'];
-        }
-        item.lastGet = itemResponse['object']['oid'];
-        return true;
-      });
-    });
+    const repoResponse = await this.loadRepoData(item.repo);
+    if (repoResponse === false) {
+      item.lastGet = null;
+      return Promise.resolve(false);
+    }
+    if (item.branch === null) {
+      item.branch = item.repo.defaultBranch;
+    }
+    const itemResponse = await this.getPathInfo(item);
+    if (itemResponse === null) {
+      item.lastGet = null;
+      return Promise.resolve(false);
+    }
+    if (itemResponse['object'] === null) {
+      item.lastGet = null;
+      return Promise.resolve(false);
+    }
+    if (!this.checkRoot(item.getFullPath(), item.repo.config['contentRoot'])) {
+      item.lastGet = null;
+      return Promise.resolve(false);
+    }
+    item.isDirectory = itemResponse['object']['__typename'] === 'Tree';
+    if (!item.isDirectory) {
+      item.isBinary = itemResponse['object']['isBinary'];
+    }
+    item.lastGet = itemResponse['object']['oid'];
+    return Promise.resolve(true);
   }
 
   getDataFromUrl(urlSegs: UrlSegment[]): {repo: GitHubRepo, item: GitHubItem } {
