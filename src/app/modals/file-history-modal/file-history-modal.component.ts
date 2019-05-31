@@ -96,7 +96,7 @@ export class FileHistoryModalComponent implements AfterViewInit, DraxModalType {
     }
 
     if (this.continuation !== null) {
-      const src = event.srcElement;
+      const src = event.srcElement as HTMLElement;
       const offset = src.scrollTop + src.clientHeight;
       const max = src.scrollHeight;
 

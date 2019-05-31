@@ -34,7 +34,7 @@ export interface DraxModalType {
 export class DraxModalComponent implements OnInit {
 
   childComponent: ComponentRef<DraxModalType> = null;
-  @ViewChild('modalContent', { read: ViewContainerRef }) childContainer: ViewContainerRef;
+  @ViewChild('modalContent', { read: ViewContainerRef, static: true }) childContainer: ViewContainerRef;
 
   isVisible = false;
 

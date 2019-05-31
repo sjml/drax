@@ -11,7 +11,7 @@ import * as c from 'cassowary';
   template: '<app-annotation [ann]="ann"></app-annotation>'
 })
 class AnnotationContainerMockComponent {
-  @ViewChild(AnnotationComponent) annComp;
+  @ViewChild(AnnotationComponent, {static: true}) annComp;
   ann: Annotation;
 }
 

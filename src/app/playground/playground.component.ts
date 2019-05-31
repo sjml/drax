@@ -40,7 +40,7 @@ interface SampleAnnotation {
 })
 export class PlaygroundComponent implements AfterViewInit {
 
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent = null;
 
   constructor(

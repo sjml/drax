@@ -14,7 +14,7 @@ import { NotificationLevel } from '../notifications/notification';
 })
 export class PagesComponent implements OnInit {
 
-  @ViewChild('renderedPage') host: ElementRef;
+  @ViewChild('renderedPage', { static: true }) host: ElementRef;
 
   constructor(
     private router: Router,

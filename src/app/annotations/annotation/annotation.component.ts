@@ -23,8 +23,8 @@ export class AnnotationComponent implements OnInit, AfterViewInit, OnDestroy {
   private static _maxColorIndex = 5;
   private static _nameColorMapping = {};
 
-  @ViewChild('annotation') annChild: ElementRef;
-  @ViewChild('textArea') textArea: ElementRef;
+  @ViewChild('annotation', { static: true }) annChild: ElementRef;
+  @ViewChild('textArea', { static: false }) textArea: ElementRef;
 
   @Input() ann: Annotation;
 

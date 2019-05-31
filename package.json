@@ -22,21 +22,21 @@
     "postinstall": "cd php/auth; ./install.sh;",
     "deploy": "npx shipit default deploy; rm -rf ./tmp",
     "deploy:dev": "npx shipit dev deploy; rm -rf ./tmp",
-    "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --single-run",
+    "ci": "ng test --browsers ChromeHeadless,FirefoxHeadless --watch=false",
     "test": "ng test",
     "test:nomap": "ng test --sourcemap=false",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
   "dependencies": {
-    "@angular/animations": "5.2.9",
-    "@angular/common": "5.2.9",
-    "@angular/compiler": "5.2.9",
-    "@angular/core": "5.2.9",
-    "@angular/forms": "5.2.9",
-    "@angular/platform-browser": "5.2.9",
-    "@angular/platform-browser-dynamic": "5.2.9",
-    "@angular/router": "5.2.9",
+    "@angular/animations": "8.0.0",
+    "@angular/common": "8.0.0",
+    "@angular/compiler": "8.0.0",
+    "@angular/core": "8.0.0",
+    "@angular/forms": "8.0.0",
+    "@angular/platform-browser": "8.0.0",
+    "@angular/platform-browser-dynamic": "8.0.0",
+    "@angular/router": "8.0.0",
     "cassowary": "0.0.2",
     "codemirror": "^5.37.0",
     "core-js": "^2.5.6",
@@ -45,17 +45,18 @@
     "markdown-it": "^8.4.0",
     "ngx-textarea-autosize": "^1.1.1",
     "node-diff3": "^1.0.0",
-    "rxjs": "^5.5.10",
+    "rxjs": "^6.5.2",
     "tslib": "^1.9.0",
     "uuid": "^3.2.1",
     "web-animations-js": "github:angular/web-animations-js#release_pr208",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "rxjs-compat": "^6.0.0-rc.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.800.0",
     "@angular/cli": "^8.0.1",
-    "@angular/compiler-cli": "5.2.9",
-    "@angular/language-service": "5.2.9",
+    "@angular/compiler-cli": "8.0.0",
+    "@angular/language-service": "8.0.0",
     "@types/codemirror": "^0.0.56",
     "@types/diff": "^3.5.3",
     "@types/jasmine": "^2.8.16",
@@ -81,6 +82,6 @@
     "svgo": "^1.2.2",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",
-    "typescript": "2.6.2"
+    "typescript": "3.4.5"
   }
 }

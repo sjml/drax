@@ -51,11 +51,11 @@ export enum EditorMode {
 })
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('host') host: ElementRef;
+  @ViewChild('host', { static: true }) host: ElementRef;
   @Output() change = new EventEmitter();
   @Output() cursorActivity = new EventEmitter();
 
-  @ViewChild(AnnotationContainerComponent) annContComp: AnnotationContainerComponent;
+  @ViewChild(AnnotationContainerComponent, { static: true }) annContComp: AnnotationContainerComponent;
 
   instance: CodeMirror.Editor = null;
   mode: EditorMode;
@@ -307,6 +307,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
       item.repo = this._file.item.repo;
       item.branch = this._file.item.branch;
       item.dirPath = `.drax/annotations/${this._file.item.dirPath}`;
+      if (item.dirPath.endsWith('/')) {
+        item.dirPath = item.dirPath.slice(0, -1);
+      }
       item.fileName = `${this._file.item.fileName}.json`;
       const fileResponse = await this.gitHubService.getFile(item);
       if (fileResponse === null) {

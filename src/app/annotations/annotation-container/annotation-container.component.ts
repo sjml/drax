@@ -56,7 +56,7 @@ export class AnnotationContainerComponent implements AfterViewInit {
     this.updateSize();
   }
 
-  @ViewChild('svgAnnotationLines')
+  @ViewChild('svgAnnotationLines', { static: true })
   private _svgAnnLines: ElementRef;
   lines: string[] = [];
 

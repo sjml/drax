@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute, UrlSegment, NavigationEnd } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { GitHubFile,
@@ -176,8 +176,9 @@ export class FileBrowserComponent implements OnInit {
     }
 
     if (this.repositoryListCursor !== null) {
-      const offset = event.srcElement.scrollTop + event.srcElement.clientHeight;
-      const max = event.srcElement.scrollHeight;
+      const srcEl = event.srcElement as HTMLElement;
+      const offset = srcEl.scrollTop + srcEl.clientHeight;
+      const max = srcEl.scrollHeight;
 
       if (max - offset < 20) {
         this.loadRepositoryList(this.repositoryListCursor);

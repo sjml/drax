@@ -32,7 +32,7 @@ class EditorMockComponent {
   change = new EventEmitter();
   cursorActivity = new EventEmitter();
 
-  @ViewChild(ToolbarComponent) toolbar;
+  @ViewChild(ToolbarComponent, {static: true}) toolbar;
 
   stubCalledCount = 0;
   stubButtonFunction(execute: boolean): ButtonState {
