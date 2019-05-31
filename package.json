@@ -75,7 +75,7 @@
     "protractor": "^5.4.2",
     "puppeteer": "^1.17.0",
     "shipit-cli": "^4.2.0",
-    "shipit-deploy": "^2.5.1",
+    "shipit-deploy": "^4.1.4",
     "ssh2": "^0.5.5",
     "svgo": "^1.2.2",
     "ts-node": "~4.1.0",

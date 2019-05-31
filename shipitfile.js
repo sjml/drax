@@ -15,6 +15,7 @@ const config = {
   default: {
     workspace: './tmp/drax-build',
     repositoryUrl: keys.repo,
+    branch: 'master',
     shallowClone: true,
     dirToCopy: 'dist',
 
