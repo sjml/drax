@@ -545,16 +545,31 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     const item = new GitHubItem();
     item.repo = this._file.item.repo;
     item.branch = this._file.item.branch;
-    item.dirPath = `.drax/annotations/${this._file.item.dirPath}`;
+    item.dirPath = `.drax/annotations${this._file.item.dirPath}`;
     item.fileName = `${this._file.item.fileName}.json`;
 
     return this.gitHubService.getFile(item).then(fileResponse => {
       let fPush: GitHubFile = null;
       if (fileResponse !== null) {
+        if (annFileObj['annotations'].length === 0) {
+          // there's a file, but no annotations; delete it
+          return this.gitHubService.deleteFile(fileResponse, 'Removing extraneous attributions file').then(response => {
+            if (response['success'] === false) {
+              return Promise.reject('Could not delete attributions file.');
+            }
+            else {
+              return Promise.resolve(true);
+            }
+          });
+        }
         fPush = fileResponse;
         fPush.contents = outputString;
       }
       else {
+        if (annFileObj['annotations'].length === 0) {
+          // there's no existing file, but also no annotations; don't bother pushing
+          return Promise.resolve(false);
+        }
         fPush = new GitHubFile(outputString);
         fPush.item = item;
       }

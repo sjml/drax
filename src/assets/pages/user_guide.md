@@ -10,7 +10,7 @@ When you create or edit a file in Drax, it stores it in the cloud at a site call
 
 Git was originally made for programmers working with computer language files, but it works great with normal text as well. The important thing to remember is that Git saves every version of a document that you've made, so you can always go back and see how it's changed over time. You don't need to worry about losing your work or forgetting that thing you deleted. Every time you press the Save button in Drax, it creates a new version of the document that you can return to any time. (That's why it asks you to write a little note describing your changes: so you can have a record of what you did over time.)
 
-Collections of documents are called "repositories," or "repos" for short. When you use Drax, you first see a list of the repositories that you can access. You can also create a new one, if you want. Note that if you want to create private repositories, you'll need to get a paid account, but the free version works fine otherwise. If you have questions, ask the person who directed you to Drax to help you. 
+Collections of documents are called "repositories," or "repos" for short. When you use Drax, you first see a list of the repositories that you can access. You can also create a new one, if you want. If you have questions, ask the person who directed you to Drax to help you. 
 
 
 ## Markdown

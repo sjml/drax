@@ -487,6 +487,25 @@ export class GitHubService {
     });
   }
 
+  // this stuff annoyingly has to be done with the old API. :'(
+  deleteFile(file: GitHubFile, message: string): Promise<object> {
+    const url = `https://api.github.com/repos/${file.item.repo.owner}/${file.item.repo.name}/contents/${file.item.getFullPath()}`;
+    return this.http.delete(
+      url,
+      {
+        headers: new HttpHeaders().set('Authorization', 'Bearer ' + this.bearerToken),
+        params: { message: message, sha: file.item.lastGet }
+      }
+    ).toPromise()
+      .then(response => {
+        return {success: true};
+      })
+      .catch(err => {
+        return {success: false};
+      })
+    ;
+  }
+
   createRepo(name: string, description: string): Promise<object> {
     return this.http.post(
       'https://api.github.com/user/repos',
