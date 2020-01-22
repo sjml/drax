@@ -8,6 +8,9 @@ branches:
   only:
     - master
 
+services:
+  - xvfb
+
 addons:
   ssh_known_hosts: drax.io
   chrome: stable
@@ -18,7 +21,6 @@ before_install:
   - chmod 600 /tmp/deploy_rsa
   - ssh-add /tmp/deploy_rsa
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
   - phpenv global 7.0.25
 
 script:
