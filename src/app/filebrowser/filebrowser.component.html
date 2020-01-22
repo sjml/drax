@@ -50,8 +50,12 @@
             <span>{{upwardsLinkLabel}}</span>
           </div>
         </li>
+        <li class="gitHubNavList loader" [ngClass]="{'on': this.isLoading}">
+          <div class="lds-dual-ring"></div>
+        </li>
         <li *ngFor="let node of currentNavList"
           class="gitHubNode pure-menu-item"
+          [ngClass]="{'off': this.isLoading}"
           >
           <app-filebrowserentry [parent]="this" [navItem]="node"></app-filebrowserentry>
         </li>

@@ -28,6 +28,8 @@ export class FileBrowserComponent implements OnInit {
   isOpen = false;
   isInSingleRepoMode = false;
 
+  isLoading = false;
+
   repo: GitHubRepo = null;
   item: GitHubItem = null;
 
@@ -83,7 +85,9 @@ export class FileBrowserComponent implements OnInit {
 
   async loadNode(node: GitHubNavNode, initial: boolean = false) {
     if (node instanceof GitHubRepo) {
+      this.isLoading = true;
       await this.gitHubService.loadRepoData(node);
+      this.isLoading = false;
       const item = new GitHubItem();
       item.repo = node;
       item.dirPath = null;
@@ -161,12 +165,16 @@ export class FileBrowserComponent implements OnInit {
     }
 
     if (data.item === null) {
+      this.isLoading = true;
       await this.gitHubService.loadRepoData(data.repo);
+      this.isLoading = false;
       this.loadNode(data.repo);
       return;
     }
 
+    this.isLoading = true;
     await this.gitHubService.loadItemData(data.item);
+    this.isLoading = false;
     this.loadNode(data.item, true);
   }
 
@@ -196,7 +204,9 @@ export class FileBrowserComponent implements OnInit {
     if (cursor !== null) {
       index = this.currentNavList.length;
     }
+    this.isLoading = true;
     this.gitHubService.getRepoList(cursor).then(response => {
+      this.isLoading = false;
       if (response !== null) {
         for (const newRepo of response.repos) {
           this.currentNavList[index++] = newRepo;
@@ -214,7 +224,9 @@ export class FileBrowserComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     await this.gitHubService.loadItemData(this.item);
+    this.isLoading = false;
 
     if (item.dirPath !== null) {
       if (item.getFullPath() === item.repo.config['contentRoot']) {
@@ -242,7 +254,9 @@ export class FileBrowserComponent implements OnInit {
     }
 
     this.repositoryListCursor = null;
+    this.isLoading = true;
     const itemList = await this.gitHubService.getFileList(item);
+    this.isLoading = false;
     if (itemList) {
       for (let i = 0; i < itemList.length; i++) {
         this.currentNavList[i] = itemList[i];

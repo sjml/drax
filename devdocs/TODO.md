@@ -39,7 +39,7 @@
 1. Image uploading
 2. UI 
     - ability to select alternate branches
-    - spinners
+    - spinners (on file display area)
 3. Complete testing suite
     - AnnotationContainer
     - NotificationContainer
