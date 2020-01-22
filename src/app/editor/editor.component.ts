@@ -573,11 +573,30 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         fPush = new GitHubFile(outputString);
         fPush.item = item;
       }
+
       return this.gitHubService.pushFile(fPush, commitMessage + ' [annotations]', fileResponse === null).then(val => {
         if (val['success']) {
           this.originalRawAnnotations = annFileObj['annotations'];
           this.annotationsDirty = false;
           this.annFileLastGet = item.lastGet;
+
+          if (!this._file.item.repo.config['hasConfig']) {
+            // no existing configuration file for this repo; push an empty one
+            const configItem = new GitHubItem();
+            configItem.repo = this._file.item.repo;
+            configItem.branch = this._file.item.branch;
+            configItem.dirPath = ".drax";
+            configItem.fileName = "config.json";
+            const configPush = new GitHubFile("{}");
+            configPush.item = configItem;
+            this.gitHubService.pushFile(configPush, "Adding Drax configuration file", true).then(val => {
+              if (!val['success']) {
+                console.error(val['message']);
+                return Promise.reject("Could not create config file: " + val['message']);
+              }
+            });
+          }
+
           return Promise.resolve(true);
         }
         else {
