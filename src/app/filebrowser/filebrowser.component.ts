@@ -28,7 +28,7 @@ export class FileBrowserComponent implements OnInit {
   isOpen = false;
   isInSingleRepoMode = false;
 
-  isLoading = true;
+  isLoading = false;
 
   repo: GitHubRepo = null;
   item: GitHubItem = null;
