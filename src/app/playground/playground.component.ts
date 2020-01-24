@@ -54,7 +54,7 @@ export class PlaygroundComponent implements AfterViewInit {
   }
 
   setupPlayground() {
-    this.editor.instance.setValue(pgmd);
+    this.editor.instance.setValue(pgmd.default);
     this.editor.instance.refresh();
 
     const doc = this.editor.instance.getDoc();
