@@ -409,7 +409,7 @@ export class GitHubService {
       }
     ).toPromise()
       .then(response => {
-        return atob(response['content']);
+        return this._b64DecodeUnicode(response['content']);;
       })
       .catch(error => {
         console.error(error);
@@ -437,6 +437,12 @@ export class GitHubService {
     return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
         return String.fromCharCode(parseInt(p1, 16));
     }));
+  }
+
+  _b64DecodeUnicode(str: string): string {
+    return decodeURIComponent(atob(str).split("").map((c) => {
+      return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(""));
   }
 
   pushFile(file: GitHubFile, message: string, newFile: boolean = false): Promise<object> {
