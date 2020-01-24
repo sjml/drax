@@ -10,6 +10,7 @@ import { Component,
          HostListener
        } from '@angular/core';
 import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 import * as uuid from 'uuid';
 import * as JSDiff from 'diff';
@@ -112,7 +113,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private config: ConfigService,
     private modalService: ModalService,
     private gitHubService: GitHubService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private titleService: Title,
   ) {
     this.mode = EditorMode.Edit;
   }
@@ -251,6 +253,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private processFileContents() {
+    this.titleService.setTitle(
+      `drax.io | ${this._file.item.fileName} (${this._file.item.repo.owner}/${this._file.item.repo.name})`
+    );
+
     const mdFileTypes = [
       'markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn',
       'mdtxt', 'mdtext', 'text', 'txt', 'Rmd'
