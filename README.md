@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./src/assets/images/DraxLogoSimple.svg" width="400px">
+</p>
+
 # Drax
 [![Build Status](https://travis-ci.org/sjml/drax.svg?branch=master)](https://travis-ci.org/sjml/drax)
 
