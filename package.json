@@ -42,7 +42,7 @@
     "core-js": "^2.6.11",
     "date-fns": "^1.29.0",
     "diff": "^3.4.0",
-    "markdown-it": "^8.4.0",
+    "markdown-it": "^12.3.2",
     "ngx-textarea-autosize": "^1.1.1",
     "node-diff3": "^1.0.0",
     "rxjs": "^6.5.4",
